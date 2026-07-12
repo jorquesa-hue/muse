@@ -1,12 +1,9 @@
 /* Muse — service worker (offline-first app shell) */
 /* bump this version string on every deploy so returning users get the update */
-const CACHE = 'muse-v3';
+const CACHE = 'muse-v6';
 const ASSETS = [
   './index.html',
   './manifest.webmanifest',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/maskable-512.png',
   './apple-touch-icon.png'
 ];
 

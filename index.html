@@ -7,7 +7,6 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0c0e">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -107,9 +106,9 @@
   .searchrow>.mag{flex:none;color:var(--dim)}
   #q{flex:1;background:none;border:none;outline:none;color:var(--ink);font:inherit;font-size:16px;padding:11px 0;min-width:0}
   #q::placeholder{color:var(--dim)}
-  .dice{flex:none;display:flex;align-items:center;justify-content:center;color:var(--mut);
-    width:38px;height:38px;border-radius:9px;border:1px solid var(--line);transition:color .2s,border-color .2s}
-  .dice:hover,.dice:active{color:var(--ink);border-color:var(--line2)}
+  .dice{flex:none;display:flex;align-items:center;justify-content:center;color:#fff;
+    width:38px;height:38px;border-radius:9px;background:var(--acc);border:1px solid transparent;transition:opacity .2s,background .5s}
+  .dice:hover,.dice:active{opacity:.85}
   .dice svg{width:16px;height:16px}
   .dice span{display:none}
 
@@ -133,7 +132,7 @@
   .cat{display:flex;align-items:center;gap:7px;white-space:nowrap;padding:8px 12px;border-radius:10px;flex:none;scroll-snap-align:start;
     border:1px solid var(--line);color:var(--mut);font-size:12.5px;font-weight:500;transition:border-color .2s,color .2s,background .2s}
   .cat:active{color:var(--ink)}
-  .cat .ico{width:16px;height:16px;color:var(--dim);transition:color .2s}
+  .cat .ico{width:16px;height:16px;color:var(--c);transition:color .2s}
   .cat .ico svg{width:16px;height:16px}
   .cat.on{color:var(--ink);border-color:color-mix(in srgb,var(--c) 60%,transparent);background:color-mix(in srgb,var(--c) 10%,transparent)}
   .cat.on .ico{color:var(--c)}
@@ -334,19 +333,19 @@ const CAT_ORDER = ['movies','tv','books','music','games','anime','food','travel'
 
 /* ================= category config ================= */
 const CATS = {
-  movies:{acc:'#e8514c',sigma:12,name:{en:'Movies',es:'Películas',pt:'Filmes'},unit:{en:'a movie',es:'una película',pt:'um filme'},
+  movies:{acc:'#ff4d5a',sigma:12,name:{en:'Movies',es:'Películas',pt:'Filmes'},unit:{en:'a movie',es:'una película',pt:'um filme'},
     intro:{en:'From slow-burn noir to blockbuster spectacle — find films that share the soul of the one you love.',
            es:'Del noir pausado al espectáculo taquillero: encuentra películas que comparten alma con la que amas.',
            pt:'Do noir lento ao blockbuster: encontre filmes que dividem a alma com aquele que você ama.'}},
-  tv:{acc:'#8e6ff0',sigma:10,name:{en:'TV Series',es:'Series',pt:'Séries'},unit:{en:'a series',es:'una serie',pt:'uma série'},
+  tv:{acc:'#a06bff',sigma:10,name:{en:'TV Series',es:'Series',pt:'Séries'},unit:{en:'a series',es:'una serie',pt:'uma série'},
     intro:{en:'Series that hook you the same way — same tone, same pull, same “one more episode” at 3am.',
            es:'Series que te atrapan igual: mismo tono, mismo tirón, mismo “un capítulo más” a las 3am.',
            pt:'Séries que fisgam do mesmo jeito — mesmo tom, mesma pegada, mesmo “só mais um episódio” às 3h.'}},
-  books:{acc:'#d99a3e',sigma:25,name:{en:'Books',es:'Libros',pt:'Livros'},unit:{en:'a book',es:'un libro',pt:'um livro'},
+  books:{acc:'#ffb020',sigma:25,name:{en:'Books',es:'Libros',pt:'Livros'},unit:{en:'a book',es:'un libro',pt:'um livro'},
     intro:{en:'Books with the same pulse — prose, themes and worlds that rhyme with your favorite.',
            es:'Libros con el mismo pulso: prosa, temas y mundos que riman con tu favorito.',
            pt:'Livros com o mesmo pulso — prosa, temas e mundos que rimam com o seu favorito.'}},
-  music:{acc:'#2fb877',sigma:8,name:{en:'Music',es:'Música',pt:'Música'},unit:{en:'an album',es:'un álbum',pt:'um álbum'},
+  music:{acc:'#22c98a',sigma:8,name:{en:'Music',es:'Música',pt:'Música'},unit:{en:'an album',es:'un álbum',pt:'um álbum'},
     intro:{en:'Albums that hit the same nerve — matched by mood, sound profile and era.',
            es:'Álbumes que tocan el mismo nervio: emparejados por ánimo, perfil sonoro y época.',
            pt:'Álbuns que tocam o mesmo nervo — combinados por clima, perfil sonoro e época.'}},
@@ -354,15 +353,15 @@ const CATS = {
     intro:{en:'Games that feel the same in your hands — mechanics, mood and worlds aligned.',
            es:'Juegos que se sienten igual en tus manos: mecánicas, ánimo y mundos alineados.',
            pt:'Jogos com a mesma sensação nas mãos — mecânicas, clima e mundos alinhados.'}},
-  anime:{acc:'#e56a86',sigma:10,name:{en:'Anime',es:'Anime',pt:'Anime'},unit:{en:'an anime',es:'un anime',pt:'um anime'},
+  anime:{acc:'#ff6ec7',sigma:10,name:{en:'Anime',es:'Anime',pt:'Anime'},unit:{en:'an anime',es:'un anime',pt:'um anime'},
     intro:{en:'From Ghibli warmth to cyberpunk dread — anime cut from the same cloth as yours.',
            es:'Del calor de Ghibli a la angustia cyberpunk: anime cortado de la misma tela que el tuyo.',
            pt:'Do calor Ghibli ao pavor cyberpunk — animes cortados do mesmo tecido que o seu.'}},
-  food:{acc:'#e08a3c',sigma:0,name:{en:'Food & Dishes',es:'Comida',pt:'Comida'},unit:{en:'a dish',es:'un plato',pt:'um prato'},
+  food:{acc:'#ff8a3c',sigma:0,name:{en:'Food & Dishes',es:'Comida',pt:'Comida'},unit:{en:'a dish',es:'un plato',pt:'um prato'},
     intro:{en:'Loved a dish? Trace its flavor DNA to your next food obsession.',
            es:'¿Amaste un plato? Sigue su ADN de sabor hasta tu próxima obsesión.',
            pt:'Amou um prato? Siga o DNA de sabor até a sua próxima obsessão.'}},
-  travel:{acc:'#20b4a1',sigma:0,name:{en:'Travel',es:'Viajes',pt:'Viagens'},unit:{en:'a destination',es:'un destino',pt:'um destino'},
+  travel:{acc:'#1fd1c1',sigma:0,name:{en:'Travel',es:'Viajes',pt:'Viagens'},unit:{en:'a destination',es:'un destino',pt:'um destino'},
     intro:{en:'Places that feel like the places you loved — destinations matched by vibe, not by distance.',
            es:'Lugares que se sienten como los que amaste: destinos unidos por la vibra, no la distancia.',
            pt:'Lugares com a sensação dos que você amou — destinos combinados pela vibe, não pela distância.'}},
@@ -385,9 +384,9 @@ const DICE_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 /* ================= i18n ================= */
 const T = {
   proto:{en:'prototype',es:'prototipo',pt:'protótipo'},
-  tagline:{en:'Love <em>one thing</em>. Find everything like it.',
-           es:'Ama <em>una cosa</em>. Encuentra todo lo que se le parece.',
-           pt:'Ame <em>uma coisa</em>. Encontre tudo parecido.'},
+  tagline:{en:'Love <em>one thing</em>. Find <em>everything</em> like it.',
+           es:'Ama <em>una cosa</em>. Encuentra <em>todo</em> lo que se le parece.',
+           pt:'Ame <em>uma coisa</em>. Encontre <em>tudo</em> parecido.'},
   stats:{en:'<b>{n}</b> works<i>·</i><b>8</b> worlds<i>·</i><b>14</b> algorithms<i>·</i>on-device',
          es:'<b>{n}</b> obras<i>·</i><b>8</b> mundos<i>·</i><b>14</b> algoritmos<i>·</i>local',
          pt:'<b>{n}</b> obras<i>·</i><b>8</b> mundos<i>·</i><b>14</b> algoritmos<i>·</i>no aparelho'},
@@ -402,7 +401,7 @@ const T = {
   topSub:{en:'ranked by 8 weighted algorithms',es:'según 8 algoritmos ponderados',pt:'por 8 algoritmos ponderados'},
   beyond:{en:'Beyond — same DNA, different medium',es:'Más allá — mismo ADN, otro medio',pt:'Além — mesmo DNA, outro meio'},
   beyondSub:{en:'the best echo of this work in every other world',es:'el mejor eco de esta obra en cada otro mundo',pt:'o melhor eco desta obra em cada outro mundo'},
-  lab:{en:'Algorithm lab — how VIBRA matches {cat}',es:'Laboratorio — cómo VIBRA empareja {cat}',pt:'Laboratório — como o VIBRA combina {cat}'},
+  lab:{en:'Algorithm lab — how Muse matches {cat}',es:'Laboratorio — cómo Muse empareja {cat}',pt:'Laboratório — como o Muse combina {cat}'},
   expand:{en:'Full breakdown',es:'Análisis completo',pt:'Análise completa'},
   collapse:{en:'Close',es:'Cerrar',pt:'Fechar'},
   exploreFrom:{en:'Search from this one →',es:'Buscar desde esta →',pt:'Buscar a partir desta →'},
@@ -548,6 +547,18 @@ const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 function cosSets(a,b){ a=a||[]; b=b||[]; if(!a.length||!b.length) return 0;
   const A=new Set(a), B=new Set(b); let i=0; A.forEach(x=>{ if(B.has(x)) i++; });
   return i/Math.sqrt(A.size*B.size); }
+/* IDF weighting: sharing a rare tag ("cyberpunk") counts far more than a generic one ("drama") */
+const themeIDF={}, genreIDF={};
+function buildIDF(list){ const N=Math.max(1,list.length), td={}, gd={};
+  list.forEach(it=>{ Array.from(new Set(it.th||[])).forEach(t=>td[t]=(td[t]||0)+1);
+    Array.from(new Set(it.g||[])).forEach(g=>gd[g]=(gd[g]||0)+1); });
+  for(const t in td) themeIDF[t]=Math.log(N/td[t])+1;
+  for(const g in gd) genreIDF[g]=Math.log(N/gd[g])+1; }
+function wCos(a,b,idf){ a=a||[]; b=b||[]; if(!a.length||!b.length) return 0;
+  const A=new Set(a), B=new Set(b); let dot=0, na=0, nb=0;
+  A.forEach(t=>{ const w=idf[t]||1; na+=w*w; if(B.has(t)) dot+=w*w; });
+  B.forEach(t=>{ const w=idf[t]||1; nb+=w*w; });
+  return (na&&nb)? dot/Math.sqrt(na*nb) : 0; }
 function dnaSim(a,b){ if(!a||!b||a.length!==8||b.length!==8) return .4;
   let s=0; for(let i=0;i<8;i++){ const d=(a[i]-b[i])/100; s+=d*d; }
   return Math.max(0, 1-Math.sqrt(s/8)*1.7); }
@@ -579,9 +590,9 @@ const CRAFT_FN = {
   travel:(a,b)=>{const xa=a.x||{},xb=b.x||{};return featSim(xa,xb,['nat','adv','bud','off']);},
 };
 const ALGO_FN = {
-  theme:(a,b)=>cosSets(a.th,b.th),
+  theme:(a,b)=>wCos(a.th,b.th,themeIDF),
   mood:(a,b)=>dnaSim(a.dna,b.dna),
-  genre:(a,b)=>cosSets(a.g,b.g),
+  genre:(a,b)=>wCos(a.g,b.g,genreIDF),
   creator:creatorSim,
   culture:cultureSim,
   audience:audSim,
@@ -613,7 +624,7 @@ function score(a,b,cat){
   return { parts, total, pct: Math.min(99, Math.round(100*Math.pow(total,.8))) };
 }
 function crossScore(a,b){
-  const v=.55*dnaSim(a.dna,b.dna)+.35*cosSets(a.th,b.th)+.10*audSim(a,b);
+  const v=.55*dnaSim(a.dna,b.dna)+.35*wCos(a.th,b.th,themeIDF)+.10*audSim(a,b);
   return Math.min(99, Math.round(100*Math.pow(v,.9)));
 }
 function lev(a,b,max){
@@ -636,6 +647,7 @@ if(dataOK){
     it._cat=k; it._keys=[norm(it.t)].concat((it.alt||[]).map(norm)).filter(Boolean);
     byId[it.id]=it; ALL.push(it);
   }));
+  buildIDF(ALL);
 }
 const tr=(o,vars)=>{ let s=(o&&(o[state.lang]||o.en))||''; if(vars) Object.keys(vars).forEach(k=>{ s=s.split('{'+k+'}').join(vars[k]); }); return s; };
 const themeLabel=t=>{ const m=THEME_I18N[t]; const s=(state.lang!=='en'&&m)?m[state.lang]:t.replace(/-/g,' '); return s; };
@@ -711,10 +723,7 @@ function renderChrome(){
 function suggCards(items){ return '<div class="sugg">'+items.map(it=>
   '<button class="sg" data-sel="'+esc(it.id)+'">'+tile(it)+'<span class="t">'+esc(it.t)+'</span><span class="y">'+(it.y||esc((it.x&&it.x.reg)||it.c||''))+'</span></button>').join('')+'</div>'; }
 function renderEmpty(){
-  const picks=['movies','music','books','games','travel'];
-  const exs=picks.map(k=>((D[k]||[]).slice().sort((a,b)=>b.pop-a.pop))[0]).filter(Boolean);
-  $('out').innerHTML='<div class="starter"><span class="lead">'+tr(T.tryThese)+'</span>'+
-    exs.map(it=>'<button class="ex" data-sel="'+esc(it.id)+'">'+esc(it.t)+'</button>').join('')+'</div>';
+  $('out').innerHTML='';
 }
 function matchCard(src,m,i){
   const open=state.open===m.it.id;
@@ -758,9 +767,13 @@ function whyCross(a,b){
   if(sh.length){ const s=tr(WHY_THEME,{x:sh.join(' + ')}); return s.charAt(0).toUpperCase()+s.slice(1); }
   return tr(WHY.mood).charAt(0).toUpperCase()+tr(WHY.mood).slice(1);
 }
-function renderAll(){ setAccent(); renderChrome(); const pit=$('pitch');
+function renderAll(){ setAccent(); renderChrome(); const pit=$('pitch'),lab=$('lab'),foot=$('foot');
   if(!dataOK){ if(pit) pit.hidden=false; $('out').innerHTML='<p class="hint">'+tr(T.dataMissing)+'</p>'; return; }
-  renderResults(); if(pit) pit.hidden=!!state.sel; animateFills(document.body); }
+  renderResults(); const home=!state.sel;
+  if(pit) pit.hidden=!home;
+  if(lab) lab.style.display=home?'none':'';
+  if(foot) foot.style.display='none';
+  animateFills(document.body); }
 
 /* ================= autocomplete ================= */
 let acItems=[], acIdx=-1;
