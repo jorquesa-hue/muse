@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f6f4">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0c0e">
-<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0c0e"><link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -290,10 +289,16 @@
   @media (max-width:560px){
     body{padding:0;display:block;background:var(--bg)}
     .device{width:100%;max-width:100%;padding:0;border-radius:0;box-shadow:none;background:var(--bg)}
-    .screen{height:100vh;height:100dvh;border-radius:0}
+    /* Android fix: scroll the DOCUMENT, not a nested overflow region.
+       A clipped (overflow:hidden) fixed-height .screen wrapping an inner scroll
+       area + a position:sticky header tears on repaint when the soft keyboard
+       opens/closes during search. Letting the page itself scroll (sticky topbar
+       pinned to the real viewport) is the robust mobile pattern. */
+    .screen{display:block;height:auto;min-height:100dvh;overflow:visible;border-radius:0}
+    .appscroll{flex:none;overflow:visible;-webkit-overflow-scrolling:auto;
+      padding-bottom:calc(env(safe-area-inset-bottom) + 10px)}
+    .topbar{padding-top:calc(12px + env(safe-area-inset-top))}
     .island,.statusbar,.homebar{display:none}
-    .appscroll{padding-top:env(safe-area-inset-top)}
-    .appscroll{padding-bottom:env(safe-area-inset-bottom)}
   }
 </style>
 
@@ -848,7 +853,9 @@ function pairScore(a,b){
 function renderResults(){
   const src=byId[state.sel]; if(!src){ renderEmpty(); return; }
   const cat=state.cat;
-  let scored=(D[cat]||[]).filter(x=>x.id!==src.id).map(it=>({it,s:score(src,it,cat)}));
+  let pool0=(D[cat]||[]).filter(x=>x.id!==src.id);
+  if(cat==='food'){ const sb=(src.g||[]).includes('beverage'); pool0=pool0.filter(x=>((x.g||[]).includes('beverage'))===sb); }  // dishes match dishes, drinks match drinks
+  let scored=pool0.map(it=>({it,s:score(src,it,cat)}));
   let elig=scored.filter(x=>x.s.eligible);            // v2: coverage gate
   if(elig.length<5) elig=scored;                       // safety: never strand the user on an over-aggressive gate
   elig.sort((a,b)=>b.s.total-a.s.total);
@@ -867,8 +874,13 @@ function renderResults(){
     return '<div class="bx" data-sel="'+esc(b.it.id)+'" style="--acc:'+c.acc+'"><div class="cathead" style="color:'+c.acc+'">'+(CAT_ICON[b.cat]||'')+esc(tr(c.name))+'</div><div class="row">'+tile(b.it)+'<div><div class="nm">'+esc(b.it.t)+'</div><div class="subby">'+esc(b.it.by||'')+'</div></div><span class="pc" style="color:'+c.acc+'">'+b.pct+'</span></div><div class="why">'+esc(whyCross(src,b.it))+'</div></div>'; }).join('')+'</div>';
   let pairs='';
   if(cat==='food'){
-    const pl=(D.food||[]).filter(x=>x.id!==src.id).map(it=>({it,p:pairScore(src,it)})).filter(x=>x.p>=28).sort((a,b)=>b.p-a.p).slice(0,6);
-    if(pl.length) pairs='<div class="sechead"><h3>'+esc(tr({en:'Perfect pairings',es:'Maridajes perfectos',pt:'Harmonizações perfeitas'}))+'</h3><span class="sub">'+esc(tr({en:'dishes that round out the meal',es:'platos que completan la comida',pt:'pratos que completam a refeição'}))+'</span></div><div class="beyond">'+
+    const isBev=it=>(it.g||[]).includes('beverage'), srcBev=isBev(src), allf=(D.food||[]).filter(x=>x.id!==src.id);
+    let pl;
+    if(srcBev){ pl=allf.filter(x=>!isBev(x)).map(it=>({it,p:pairScore(src,it)})).filter(x=>x.p>=25).sort((a,b)=>b.p-a.p).slice(0,6); }
+    else { const bevs=allf.filter(isBev).map(it=>({it,p:pairScore(src,it)})).sort((a,b)=>b.p-a.p).slice(0,3);
+      const dishes=allf.filter(x=>!isBev(x)).map(it=>({it,p:pairScore(src,it)})).filter(x=>x.p>=28).sort((a,b)=>b.p-a.p).slice(0,3);
+      pl=bevs.concat(dishes); }
+    if(pl.length) pairs='<div class="sechead"><h3>'+esc(tr({en:'Perfect pairings',es:'Maridajes perfectos',pt:'Harmonizações perfeitas'}))+'</h3><span class="sub">'+esc(tr({en:'drinks & dishes that complete the meal',es:'bebidas y platos que completan la comida',pt:'bebidas e pratos que completam a refeição'}))+'</span></div><div class="beyond">'+
       pl.map(x=>'<div class="bx" data-sel="'+esc(x.it.id)+'" style="--acc:'+CATS.food.acc+'"><div class="cathead" style="color:'+CATS.food.acc+'">'+(CAT_ICON.food||'')+esc(((x.it.x&&x.it.x.reg)||x.it.c||'dish'))+'</div><div class="row">'+tile(x.it)+'<div><div class="nm">'+esc(x.it.t)+'</div></div><span class="pc" style="color:'+CATS.food.acc+'">'+x.p+'</span></div></div>').join('')+'</div>';
   }
   $('out').innerHTML=srcCard+pairs+bey+list;
@@ -906,19 +918,17 @@ function suggScore(qq,it){
   return best? best+(it.pop||0)*.08 : 0;
 }
 function suggest(qq){
-  qq=norm(qq); if(!qq) return {same:[],other:[]};
-  const scored=ALL.map(it=>({it,s:suggScore(qq,it)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
-  return { same:scored.filter(x=>x.it._cat===state.cat).slice(0,6), other:scored.filter(x=>x.it._cat!==state.cat).slice(0,4) };
+  qq=norm(qq); if(!qq) return {list:[]};
+  const scored=ALL.map(it=>({it,s:suggScore(qq,it)+(it._cat===state.cat?12:0)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+  return { list:scored.slice(0,9) };   // globally ranked; a strong exact/prefix match wins over a weak same-category one
 }
 function renderAC(){
   const el=$('ac'); const v=$('q').value;
   if(!v.trim()){ el.hidden=true; acItems=[]; return; }
-  const {same,other}=suggest(v); acItems=same.concat(other); acIdx=acItems.length?0:-1;
+  const {list}=suggest(v); acItems=list; acIdx=acItems.length?0:-1;
   if(!acItems.length){ el.innerHTML='<div class="grp" style="padding-bottom:12px">'+tr(T.notFound)+'</div>'; el.hidden=false; return; }
-  let h='';
-  if(same.length){ h+='<div class="grp">'+esc(tr(CATS[state.cat].name))+'</div>'+same.map((x,i)=>acOpt(x.it,i)).join(''); }
-  if(other.length){ h+='<div class="grp">'+tr(T.otherWorlds)+'</div>'+other.map((x,i)=>acOpt(x.it,same.length+i)).join(''); }
-  el.innerHTML=h; el.hidden=false;
+  el.innerHTML=list.map((x,i)=>acOpt(x.it,i)).join('');
+  el.hidden=false;
 }
 function acOpt(it,i){
   const c=CATS[it._cat]; const h=(it.hue==null?222:it.hue)%360;
@@ -944,7 +954,7 @@ function surprise(){
 document.addEventListener('click',e=>{
   const lb=e.target.closest('[data-lang]');
   if(lb){ state.lang=lb.dataset.lang; try{localStorage.setItem('vibra-lang',state.lang);}catch(err){} renderAll(); return; }
-  if(e.target.closest('[data-home]')){ state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; return; }
+  if(e.target.closest('[data-home]')){ state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; if(window.scrollTo) window.scrollTo(0,0); return; }
   const cb=e.target.closest('[data-cat]');
   if(cb){ state.cat=cb.dataset.cat; state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); const qi=$('q'); if(qi&&qi.focus) qi.focus(); return; }
   const sb=e.target.closest('[data-sel]');
@@ -970,7 +980,7 @@ $('q').addEventListener('keydown',e=>{
     const el=$('ac'); el.querySelectorAll('.opt').forEach(o=>o.classList.toggle('sel',+o.dataset.i===acIdx));
   } else if(e.key==='Enter'){
     if(acItems.length) pick(Math.max(0,acIdx));
-    else { const {same,other}=suggest($('q').value); const first=same[0]||other[0]; if(first) select(first.it.id,true); }
+    else { const {list}=suggest($('q').value); const first=list[0]; if(first) select(first.it.id,true); }
   } else if(e.key==='Escape'){ hideAC(); }
 });
 $('dice').addEventListener('click',surprise);
@@ -990,8 +1000,6 @@ else { fetch('data.json').then(r=>r.json()).then(j=>{ D=j; finishInit(); }).catc
 })();
 </script>
 
-<script>
-if ('serviceWorker' in navigator) { window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('SW registration failed', e); }); }); }
-</script>
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('SW registration failed', e); }); }); }</script>
 </body>
 </html>
