@@ -89,7 +89,9 @@
     background:radial-gradient(135% 135% at 106% -34%, color-mix(in srgb, var(--acc) 14%, transparent), transparent 56%), var(--bg)}
   .brandrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
   .brand{display:flex;align-items:center;gap:9px;user-select:none}
-  .wordmark{font-size:19px;font-weight:600;letter-spacing:-.01em;display:inline-flex;align-items:baseline;gap:2px}
+  .wordmark{font-size:19px;font-weight:600;letter-spacing:-.01em;display:inline-flex;align-items:baseline;gap:2px;cursor:pointer;padding:0;transition:opacity .15s}
+  .wordmark:hover{opacity:.75}
+  .wordmark:active{opacity:.55}
   .wordmark .dot{width:5px;height:5px;border-radius:50%;background:var(--acc);align-self:flex-end;margin-bottom:3px;transition:background .5s ease}
   .proto{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
     border:1px solid var(--line2);padding:2px 6px;border-radius:5px}
@@ -313,7 +315,7 @@
       <div class="topbar">
         <div class="brandrow">
           <div class="brand">
-            <span class="wordmark">muse<span class="dot" aria-hidden="true"></span></span>
+            <button class="wordmark" type="button" data-home aria-label="Home">muse<span class="dot" aria-hidden="true"></span></button>
             <span class="proto" id="protoTag">prototype</span>
           </div>
           <div class="langs" id="langs" role="group" aria-label="Language"></div>
@@ -942,6 +944,7 @@ function surprise(){
 document.addEventListener('click',e=>{
   const lb=e.target.closest('[data-lang]');
   if(lb){ state.lang=lb.dataset.lang; try{localStorage.setItem('vibra-lang',state.lang);}catch(err){} renderAll(); return; }
+  if(e.target.closest('[data-home]')){ state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; return; }
   const cb=e.target.closest('[data-cat]');
   if(cb){ state.cat=cb.dataset.cat; state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); const qi=$('q'); if(qi&&qi.focus) qi.focus(); return; }
   const sb=e.target.closest('[data-sel]');
