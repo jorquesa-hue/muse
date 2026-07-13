@@ -758,7 +758,7 @@ function suggCards(items){ return '<div class="sugg">'+items.map(it=>
 function renderEmpty(){
   const fan=['movies','music','books','travel'].map(k=>'<i style="background:'+CATS[k].acc+'"></i>').join('');
   const grid=CAT_ORDER.map(k=>{ const c=CATS[k];
-    return '<button class="ct" data-explore="'+k+'" style="--c:'+c.acc+'"><span class="ci">'+(CAT_ICON[k]||'')+'</span><span class="cn">'+esc(tr(c.name))+'</span></button>'; }).join('');
+    return '<button class="ct" data-cat="'+k+'" style="--c:'+c.acc+'"><span class="ci">'+(CAT_ICON[k]||'')+'</span><span class="cn">'+esc(tr(c.name))+'</span></button>'; }).join('');
   $('out').innerHTML=
     '<section class="spotlight"><h2><span class="dot"></span>'+esc(tr(T.spotTitle))+'</h2>'+
     '<div class="sp-diagram"><span class="heart">'+HEART_SVG+'</span><span class="arrow">&rarr;</span><span class="fan">'+fan+'</span></div>'+
@@ -873,10 +873,8 @@ function surprise(){
 document.addEventListener('click',e=>{
   const lb=e.target.closest('[data-lang]');
   if(lb){ state.lang=lb.dataset.lang; try{localStorage.setItem('vibra-lang',state.lang);}catch(err){} renderAll(); return; }
-  const xb=e.target.closest('[data-explore]');
-  if(xb){ state.cat=xb.dataset.explore; surprise(); return; }
   const cb=e.target.closest('[data-cat]');
-  if(cb){ if(state.cat!==cb.dataset.cat){ state.cat=cb.dataset.cat; state.sel=null; state.open=null; $('q').value=''; renderAll(); } return; }
+  if(cb){ state.cat=cb.dataset.cat; state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); const qi=$('q'); if(qi&&qi.focus) qi.focus(); return; }
   const sb=e.target.closest('[data-sel]');
   if(sb){ e.stopPropagation(); select(sb.dataset.sel,true); return; }
   const card=e.target.closest('.match');
