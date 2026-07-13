@@ -1,6 +1,6 @@
 /* Muse — service worker (offline-first app shell) */
 /* bump this version string on every deploy so returning users get the update */
-const CACHE = 'muse-v10';
+const CACHE = 'muse-v13';
 const ASSETS = [
   './index.html',
   './manifest.webmanifest',
@@ -9,7 +9,9 @@ const ASSETS = [
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE)
+      .then((c) => c.addAll(ASSETS).then(() => c.add('embeddings.b64.json').catch(() => {})))
+      .then(() => self.skipWaiting())
   );
 });
 
