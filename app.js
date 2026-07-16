@@ -62,9 +62,9 @@ const T = {
   tagline:{en:'Love <em>one thing</em>. Find <em>everything</em> like it.',
            es:'Ama <em>una cosa</em>. Encuentra <em>todo</em> lo que se le parece.',
            pt:'Ame <em>uma coisa</em>. Encontre <em>tudo</em> parecido.'},
-  stats:{en:'<b>{n}</b> works<i>·</i><b>8</b> worlds<i>·</i><b>18</b> algorithms<i>·</i>on-device',
-         es:'<b>{n}</b> obras<i>·</i><b>8</b> mundos<i>·</i><b>18</b> algoritmos<i>·</i>local',
-         pt:'<b>{n}</b> obras<i>·</i><b>8</b> mundos<i>·</i><b>18</b> algoritmos<i>·</i>no aparelho'},
+  stats:{en:'<b>{n}</b> works<i>·</i><b>8</b> worlds<i>·</i><b>{a}</b> algorithms<i>·</i>on-device',
+         es:'<b>{n}</b> obras<i>·</i><b>8</b> mundos<i>·</i><b>{a}</b> algoritmos<i>·</i>local',
+         pt:'<b>{n}</b> obras<i>·</i><b>8</b> mundos<i>·</i><b>{a}</b> algoritmos<i>·</i>no aparelho'},
   ph:{en:'Type {u} you love…',es:'Escribe {u} que te encante…',pt:'Digite {u} que você ama…'},
   surprise:{en:'Surprise me',es:'Sorpréndeme',pt:'Surpreenda-me'},
   tryThese:{en:'Try',es:'Prueba',pt:'Tente'},
@@ -78,7 +78,7 @@ const T = {
         pt:'Busca preditiva à prova de erros — tente “<b>blade runer</b>”, “<b>cien anos</b>” ou aperte o botão.'},
   introHead:{en:'Start with one you love',es:'Empieza con algo que ames',pt:'Comece com algo que você ama'},
   topMatches:{en:'Closest matches',es:'Mejores coincidencias',pt:'Melhores combinações'},
-  topSub:{en:'ranked by 9 weighted algorithms',es:'según 9 algoritmos ponderados',pt:'por 9 algoritmos ponderados'},
+  topSub:{en:'ranked by {a} weighted algorithms',es:'según {a} algoritmos ponderados',pt:'por {a} algoritmos ponderados'},
   beyond:{en:'Beyond — same DNA, different medium',es:'Más allá — mismo ADN, otro medio',pt:'Além — mesmo DNA, outro meio'},
   beyondSub:{en:'the best echo of this work in every other world',es:'el mejor eco de esta obra en cada otro mundo',pt:'o melhor eco desta obra em cada outro mundo'},
   lab:{en:'Algorithm lab — how Muse matches {cat}',es:'Laboratorio — cómo Muse empareja {cat}',pt:'Laboratório — como o Muse combina {cat}'},
@@ -110,9 +110,12 @@ const T = {
   searching:{en:'Searching the web for “{q}” …',es:'Buscando “{q}” en la web …',pt:'Buscando “{q}” na web …'},
   noWebResult:{en:'Couldn’t find “{q}”. Try another title.',es:'No se encontró “{q}”. Prueba otro título.',pt:'Não encontrei “{q}”. Tente outro título.'},
   liveTag:{en:'found live',es:'en vivo',pt:'ao vivo'},
-  foot:{en:'<b>Muse</b> is a working prototype: a hand-curated offline dataset of <b>{n} works</b> and 18 similarity algorithms running fully in your browser — nothing leaves this page. The production version plugs the same engine into live catalogs (TMDB, Open Library, Spotify, IGDB…).',
-        es:'<b>Muse</b> es un prototipo funcional: un dataset curado de <b>{n} obras</b> y 18 algoritmos de similitud corriendo por completo en tu navegador; nada sale de esta página. La versión final conecta el mismo motor a catálogos en vivo (TMDB, Open Library, Spotify, IGDB…).',
-        pt:'<b>Muse</b> é um protótipo funcional: um dataset curado de <b>{n} obras</b> e 18 algoritmos de similaridade rodando inteiramente no seu navegador — nada sai desta página. A versão final liga o mesmo motor a catálogos ao vivo (TMDB, Open Library, Spotify, IGDB…).'},
+  loading:{en:'Loading your taste engine…',es:'Cargando tu motor de gustos…',pt:'Carregando seu motor de gosto…'},
+  loadFail:{en:'Couldn’t load the catalog — check your connection.',es:'No se pudo cargar el catálogo. Revisa tu conexión.',pt:'Não foi possível carregar o catálogo. Verifique sua conexão.'},
+  retry:{en:'Retry',es:'Reintentar',pt:'Tentar de novo'},
+  foot:{en:'<b>Muse</b> is a working prototype: a hand-curated offline dataset of <b>{n} works</b> and {a} similarity algorithms running fully in your browser — nothing leaves this page. The production version plugs the same engine into live catalogs (TMDB, Open Library, Spotify, IGDB…).',
+        es:'<b>Muse</b> es un prototipo funcional: un dataset curado de <b>{n} obras</b> y {a} algoritmos de similitud corriendo por completo en tu navegador; nada sale de esta página. La versión final conecta el mismo motor a catálogos en vivo (TMDB, Open Library, Spotify, IGDB…).',
+        pt:'<b>Muse</b> é um protótipo funcional: um dataset curado de <b>{n} obras</b> e {a} algoritmos de similaridade rodando inteiramente no seu navegador — nada sai desta página. A versão final liga o mesmo motor a catálogos ao vivo (TMDB, Open Library, Spotify, IGDB…).'},
   dataMissing:{en:'Dataset not embedded yet — this is the empty shell build.',es:'Dataset aún no incrustado.',pt:'Dataset ainda não incorporado.'},
 };
 
@@ -330,6 +333,8 @@ const CATALGOS = {   // v2: emb 0.22 added to every row (renormalizer rescales t
   food:  [['emb',.22],['craft',.26],['ing',.12],['tech',.06],['genre',.14],['mood',.14],['theme',.10],['culture',.12],['audience',.06]],
   travel:[['emb',.22],['craft',.24],['vibe',.14],['mood',.16],['theme',.12],['genre',.12],['climate',.08],['culture',.08],['audience',.06]],
 };
+/* rows of CATALGOS[cat] that can actually fire right now — excludes 'emb' until embeddings.b64.json loads */
+const activeAlgoRows=cat=>CATALGOS[cat].filter(([id])=>id!=='emb'||EMB_BUF);
 /* v2 §7.1: skip-and-renormalize over PRESENT signals + coverage gate. Reads ALGO/CATALGOS globals. */
 const MIN_COVERAGE=0.5;
 function score(a,b,cat){
@@ -401,7 +406,7 @@ function qualColor(p){ return p>=85?'#3ab481':p>=70?'#7fae52':p>=55?'#d29a3c':'#
 function ring(pct){ const col=qualColor(pct), r=24, c=2*Math.PI*r;
   return '<div class="ring"><svg viewBox="0 0 56 56" width="100%" height="100%" aria-hidden="true"><circle cx="28" cy="28" r="'+r+'" stroke="var(--line2)" stroke-width="4.5" fill="none"></circle><circle cx="28" cy="28" r="'+r+'" stroke="'+col+'" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-dasharray="'+(c*pct/100).toFixed(1)+' '+c.toFixed(1)+'"></circle></svg><span class="num" style="color:'+col+'">'+pct+'</span></div>'; }
 function bar(label,pct){ return '<div class="bar"><div class="lb"><span>'+esc(label)+'</span><span class="v">'+pct+'%</span></div><div class="track"><div class="fill" data-w="'+pct+'"></div></div></div>'; }
-function meter(label,val){ return '<div class="meter"><div class="lb"><span>'+esc(label)+'</span><b>'+val+'</b></div><div class="track"><div class="fill" data-w="'+val+'"></div></div></div>'; }
+function meter(label,val){ return '<div class="meter"><div class="lb"><span>'+esc(label)+'</span><b>'+esc(val)+'</b></div><div class="track"><div class="fill" data-w="'+esc(val)+'"></div></div></div>'; }
 function radar(dnaA,dnaB){
   const R=72,cx=110,cy=92;
   const pt=(i,v)=>{ const ang=Math.PI*2*i/8-Math.PI/2, rr=R*v/100; return [(cx+rr*Math.cos(ang)),(cy+rr*Math.sin(ang))]; };
@@ -417,7 +422,7 @@ function radar(dnaA,dnaB){
   return s+'</svg>';
 }
 function metaLine(it){
-  const bits=[]; if(it.y) bits.push(String(it.y));
+  const bits=[]; if(it.y) bits.push(esc(String(it.y)));
   if(it.by) bits.push('<b>'+esc(it.by)+'</b>');
   const reg=(it.x&&it.x.reg)||it.c; if(reg&&reg!==it.by) bits.push(esc(reg));
   return bits.join(' · ');
@@ -448,21 +453,22 @@ function animateFills(root){ requestAnimationFrame(()=>{ requestAnimationFrame((
 function renderChrome(){
   $('protoTag').textContent=tr(T.proto);
   $('tagline').innerHTML=tr(T.tagline);
-  $('stats').innerHTML=tr(T.stats,{n:ALL.length});
+  $('stats').innerHTML=tr(T.stats,{n:ALL.length,a:activeAlgoRows(state.cat).length});
   $('dice').innerHTML=DICE_SVG+'<span>'+tr(T.surprise)+'</span>';
   $('q').placeholder=tr(T.ph,{u:tr(CATS[state.cat].unit)});
-  $('foot').innerHTML=tr(T.foot,{n:ALL.length});
+  $('foot').innerHTML=tr(T.foot,{n:ALL.length,a:activeAlgoRows(state.cat).length});
   { const sb=$('suggestBtn'); if(sb) sb.textContent=tr(T.suggestCta); }
   $('labTitle').textContent=tr(T.lab,{cat:tr(CATS[state.cat].name)});
   $('langs').innerHTML=['en','es','pt'].map(l=>'<button data-lang="'+l+'" class="'+(l===state.lang?'on':'')+'">'+l.toUpperCase()+'</button>').join('');
   $('cats').innerHTML=CAT_ORDER.map(k=>{ const c=CATS[k];
     return '<button class="cat '+(k===state.cat?'on':'')+'" data-cat="'+k+'" style="--c:'+c.acc+'"><span class="ico">'+(CAT_ICON[k]||'')+'</span>'+esc(tr(c.name))+'</button>'; }).join('');
-  $('labGrid').innerHTML=CATALGOS[state.cat].map(([id,w])=>{
-    const nm=id==='craft'?tr(CRAFT_NAMES[state.cat]):tr(ALGO_NAMES[id]);
-    return '<div class="alg"><div class="nm"><span>'+esc(nm)+'</span><span class="w">'+Math.round(w*100)+'% '+tr(T.weight)+'</span></div><div class="ds">'+esc(tr(ALGO_DESCS[id]))+'</div></div>'; }).join('');
+  { const rows=activeAlgoRows(state.cat), den=rows.reduce((s,[,w])=>s+w,0);
+    $('labGrid').innerHTML=rows.map(([id,w])=>{
+      const nm=id==='craft'?tr(CRAFT_NAMES[state.cat]):tr(ALGO_NAMES[id]);
+      return '<div class="alg"><div class="nm"><span>'+esc(nm)+'</span><span class="w">'+Math.round(w/den*100)+'% '+tr(T.weight)+'</span></div><div class="ds">'+esc(tr(ALGO_DESCS[id]))+'</div></div>'; }).join(''); }
 }
 function suggCards(items){ return '<div class="sugg">'+items.map(it=>
-  '<button class="sg" data-sel="'+esc(it.id)+'">'+tile(it)+'<span class="t">'+esc(TT(it))+'</span><span class="y">'+(it.y||esc((it.x&&it.x.reg)||it.c||''))+'</span></button>').join('')+'</div>'; }
+  '<button class="sg" data-sel="'+esc(it.id)+'">'+tile(it)+'<span class="t">'+esc(TT(it))+'</span><span class="y">'+esc(it.y||(it.x&&it.x.reg)||it.c||'')+'</span></button>').join('')+'</div>'; }
 function renderEmpty(){
   const fan=['movies','music','books','travel'].map(k=>'<i style="background:'+CATS[k].acc+'"></i>').join('');
   const grid=CAT_ORDER.map(k=>{ const c=CATS[k];
@@ -472,7 +478,7 @@ function renderEmpty(){
     '<div class="sp-diagram"><span class="heart">'+HEART_SVG+'</span><span class="arrow">&rarr;</span><span class="fan">'+fan+'</span></div>'+
     '<p>'+esc(tr(T.spotLine))+'</p></section>'+
     '<div class="browse"><div class="browse-l">'+esc(tr(T.browseLabel))+'</div><div class="cgrid">'+grid+'</div></div>'+
-    '<div class="home-stats">'+tr(T.stats,{n:ALL.length})+'</div>';
+    '<div class="home-stats">'+tr(T.stats,{n:ALL.length,a:activeAlgoRows(state.cat).length})+'</div>';
 }
 /* ===== rate-the-match feedback: the training signal for re-fitting the algorithm weights ===== */
 const RATING_ENDPOINT='https://esviqajfbkdnpoohjpjt.supabase.co/rest/v1/ratings';
@@ -502,7 +508,7 @@ function rateRow(mid){ const r=ratingOf(state.sel,mid);
 function matchCard(src,m,i){
   const open=state.open===m.it.id;
   rateCtx[m.it.id]={pct:m.s.pct,parts:m.s.parts};
-  const algos=CATALGOS[state.cat].map(([id])=>({id, nm:id==='craft'?tr(CRAFT_NAMES[state.cat]):tr(ALGO_NAMES[id]), v:Math.round((m.s.parts[id]||0)*100)}));
+  const algos=CATALGOS[state.cat].filter(([id])=>m.s.parts[id]!=null).map(([id])=>({id, nm:id==='craft'?tr(CRAFT_NAMES[state.cat]):tr(ALGO_NAMES[id]), v:Math.round(m.s.parts[id]*100)}));
   const top2=algos.slice().sort((a,b)=>b.v-a.v).slice(0,2);
   const why='<div class="why">'+esc(whyText(src,m.it,state.cat,m.s.parts))+'</div>';
   const head='<div class="mhead">'+tile(m.it)+'<div class="info"><div class="rank">#'+(i+1)+' · <span class="quality">'+esc(qual(m.s.pct))+'</span></div><div class="nm">'+esc(TT(m.it))+'</div><div class="by">'+metaLine(m.it)+'</div></div>'+ring(m.s.pct)+'</div>';
@@ -548,7 +554,7 @@ function renderResults(){
     '<div class="chips">'+(src.g||[]).map(g=>'<span class="chip">'+esc(g)+'</span>').join('')+(src.th||[]).slice(0,4).map(t=>'<span class="chip th">'+esc(themeLabel(t))+'</span>').join('')+'</div>'+
     '<p class="desc">'+esc((src.d&&(src.d[state.lang]||src.d.en))||'')+'</p>'+
     '<div class="meters">'+meter(tr(T.pop),src.pop)+meter(tr(T.acc),src.acc)+meter(tr(T.main),src.main)+'</div><span class="fixlink" data-fix="'+esc(src.id)+'">'+esc(tr(T.fixName))+'</span></section>';
-  const list='<div class="sechead"><h3>'+tr(T.topMatches)+'</h3><span class="sub">'+tr(T.topSub)+'</span></div><div class="grid">'+matches.map((m,i)=>matchCard(src,m,i)).join('')+'</div>';
+  const list='<div class="sechead"><h3>'+tr(T.topMatches)+'</h3><span class="sub">'+tr(T.topSub,{a:activeAlgoRows(cat).length})+'</span></div><div class="grid">'+matches.map((m,i)=>matchCard(src,m,i)).join('')+'</div>';
   const bey='<div class="sechead"><h3>'+esc(tr(T.beyond))+'</h3><span class="sub">'+tr(T.beyondSub)+'</span></div><div class="beyond">'+beyond.map(b=>{
     const c=CATS[b.cat];
     return '<div class="bx" data-sel="'+esc(b.it.id)+'" style="--acc:'+c.acc+'"><div class="cathead" style="color:'+c.acc+'">'+(CAT_ICON[b.cat]||'')+esc(tr(c.name))+'</div><div class="row">'+tile(b.it)+'<div><div class="nm">'+esc(TT(b.it))+'</div><div class="subby">'+esc(b.it.by||'')+'</div></div><span class="pc" style="color:'+c.acc+'">'+b.pct+'</span></div><div class="why">'+esc(whyCross(src,b.it))+'</div></div>'; }).join('')+'</div>';
@@ -577,7 +583,7 @@ function whyCross(a,b){
 function renderAll(){ setAccent(); renderChrome(); const pit=$('pitch'),lab=$('lab'),foot=$('foot'),cats=$('cats');
   if(!dataOK){ if(pit) pit.hidden=false; $('out').innerHTML='<p class="hint">'+tr(T.dataMissing)+'</p>'; return; }
   renderResults(); const home=!state.sel;
-  if(pit) pit.hidden=true;
+  if(pit) pit.hidden=!home;
   if(cats) cats.style.display=home?'none':'';
   if(lab) lab.style.display=home?'none':'';
   if(foot) foot.style.display='none';
@@ -616,7 +622,7 @@ function renderAC(){
 }
 function acOpt(it,i){
   const c=CATS[it._cat]; const h=(it.hue==null?222:it.hue)%360;
-  return '<div class="opt'+(i===acIdx?' sel':'')+'" data-i="'+i+'"><span class="mini" style="--h:'+h+'">'+monogram(it)+'</span><span class="nm">'+esc(TT(it))+(it.y?' <span class="yr">'+it.y+'</span>':'')+'</span><span class="ct">'+(CAT_ICON[it._cat]||'')+esc(tr(c.name))+'</span></div>';
+  return '<div class="opt'+(i===acIdx?' sel':'')+'" data-i="'+i+'"><span class="mini" style="--h:'+h+'">'+monogram(it)+'</span><span class="nm">'+esc(TT(it))+(it.y?' <span class="yr">'+esc(it.y)+'</span>':'')+'</span><span class="ct">'+(CAT_ICON[it._cat]||'')+esc(tr(c.name))+'</span></div>';
 }
 function hideAC(){ $('ac').hidden=true; acItems=[]; acIdx=-1; }
 function pick(i){ if(i<0||i>=acItems.length) return; select(acItems[i].it.id,true); }
@@ -703,6 +709,7 @@ document.addEventListener('click',e=>{
   if(lb){ state.lang=lb.dataset.lang; try{localStorage.setItem('vibra-lang',state.lang);}catch(err){} renderAll(); return; }
   if(e.target.closest('[data-home]')){ state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; if(window.scrollTo) window.scrollTo(0,0); return; }
   const fx=e.target.closest('[data-fix]'); if(fx){ openSuggest(fx.getAttribute('data-fix')); return; }
+  if(e.target.closest('[data-retry]')){ boot(); loadData(); return; }
   if(e.target.closest('[data-suggest]')){ openSuggest(null); return; }
   const rb=e.target.closest('[data-rate]');
   if(rb){ const mid=rb.getAttribute('data-mid'); const cur=ratingOf(state.sel,mid); const val=+rb.getAttribute('data-rate'); const nv=(cur===val?0:val);
@@ -749,6 +756,19 @@ function finishInit(){
   indexData(); renderAll();
   loadEmb('embeddings.b64.json').then(()=>{ if(state.sel) renderResults(); }).catch(()=>{});
 }
+// render chrome + a loading state immediately, before data.json has even started resolving,
+// so first-time visitors never see a dead blank screen while the ~3.6MB catalog downloads.
+function boot(){
+  indexData(); renderChrome();
+  const pit=$('pitch'), fo=$('foot'); if(pit) pit.hidden=true; if(fo) fo.style.display='none';
+  $('out').innerHTML='<div class="livewait">'+esc(tr(T.loading))+'</div>';
+}
+function loadData(){
+  fetch('data.json').then(r=>{ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+    .then(j=>{ D=j; finishInit(); })
+    .catch(()=>{ $('out').innerHTML='<div class="livewait">'+esc(tr(T.loadFail))+
+      '<br><button class="suggest" type="button" data-retry>'+esc(tr(T.retry))+'</button></div>'; });
+}
 if(D && typeof D==='object'){ finishInit(); }
-else { fetch('data.json').then(r=>r.json()).then(j=>{ D=j; finishInit(); }).catch(()=>{ finishInit(); }); }
+else { boot(); loadData(); }
 })();
