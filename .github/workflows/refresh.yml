@@ -1,0 +1,42 @@
+name: Refresh catalog
+
+# Weekly automated refresh: pulls trending movies/TV (TMDB) + trending books (Open Library),
+# backfills localized titles, bumps the service worker, and commits — GitHub Pages redeploys.
+on:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-catalog
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh data (TMDB + Open Library)
+        env:
+          TMDB_KEY: ${{ secrets.TMDB_KEY }}
+        run: node scripts/refresh.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "muse-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json sw.js
+          if git diff --staged --quiet; then
+            echo "No catalog changes this run."
+          else
+            git commit -m "chore: weekly catalog refresh [skip ci]"
+            git push
+          fi
