@@ -218,6 +218,7 @@
   .mhead .info{flex:1;min-width:0}
   .rank{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;color:var(--dim);display:flex;align-items:center;gap:6px}
   .quality{color:var(--acc);text-transform:uppercase;letter-spacing:.11em;transition:color .5s}
+  .quality.weak{color:var(--dim)}
   .mhead .nm{font-size:14.5px;font-weight:600;letter-spacing:-.01em;line-height:1.25;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .mhead .by{color:var(--mut);font-size:11.5px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .ring{flex:none;position:relative;width:48px;height:48px}
@@ -250,7 +251,8 @@
   .bx .tile .tcat{display:none}
   .bx .nm{font-size:12.5px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .bx .subby{color:var(--dim);font-size:10.5px;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .bx .pc{margin-left:auto;font-family:var(--mono);font-size:12.5px;font-weight:500;font-variant-numeric:tabular-nums}
+  .bx .pc{margin-left:auto;font-family:var(--mono);font-size:12.5px;font-weight:500;font-variant-numeric:tabular-nums;text-align:right}
+  .bx .pc.word{font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;max-width:52px;line-height:1.3}
   .bx .why{font-size:11px;border:none;padding:0;color:var(--dim);line-height:1.45}
 
   /* ---------- algorithm lab ---------- */
@@ -277,6 +279,8 @@
   .fixlink{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;
     text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line2);cursor:pointer;transition:color .2s,border-color .2s}
   .fixlink:hover{color:var(--acc);border-color:var(--acc)}
+  .srcactions{display:flex;gap:18px;flex-wrap:wrap}
+  .srcactions .fixlink{margin-top:0}
   /* ---------- rate-the-match feedback (algorithm training signal) ---------- */
   .rate{display:flex;align-items:center;gap:7px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}
   .rate .rq{font-family:var(--mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim);margin-right:auto}

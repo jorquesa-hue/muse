@@ -100,8 +100,11 @@ const T = {
   q70:{en:'Strong echo',es:'Eco fuerte',pt:'Eco forte'},
   q55:{en:'Same wavelength',es:'Misma sintonía',pt:'Mesma sintonia'},
   q0:{en:'Distant cousin',es:'Pariente lejano',pt:'Parente distante'},
+  whyLoose:{en:'a looser match — closest on {x}',es:'una coincidencia más suelta — más cercana en {x}',pt:'uma combinação mais solta — mais próxima em {x}'},
   suggestCta:{en:'+ Suggest a title or fix a name',es:'+ Sugiere un título o corrige un nombre',pt:'+ Sugira um título ou corrija um nome'},
   fixName:{en:'Wrong name? Suggest a fix',es:'¿Nombre incorrecto? Corrígelo',pt:'Nome errado? Corrija'},
+  share:{en:'Share this match',es:'Compartir esta coincidencia',pt:'Compartilhar esta combinação'},
+  copied:{en:'Link copied',es:'Enlace copiado',pt:'Link copiado'},
   rateQ:{en:'Good match?',es:'¿Buena coincidencia?',pt:'Boa combinação?'},
   rateGood:{en:'Spot on',es:'Acertada',pt:'Certeira'},
   rateBad:{en:'Off',es:'No',pt:'Não'},
@@ -263,7 +266,10 @@ function wCos(A,B,idf){ if(!A||!B||!A.length||!B.length) return null;   // v2: n
   const den=Math.sqrt(sa*sb); return den?num/den:null; }
 /* v2 §2.3: Gaussian + per-axis weights (default all-1 == v1 near/mid curve). cat optional. */
 const DNA_AXIS_W={ _default:[1,1,1,1,1,1,1,1] };
-const DNA_SIGMA=0.25, FEAT_SIGMA=0.28;
+/* v2 §7.5: tightened from 0.25/0.28 — the wider values made mood/craft near-constant across
+   random pairs (median ~0.71), which combined with the old pow(0.8) pct curve to make ~71% of
+   ALL displayed matches read as "Soul twin" regardless of how good the match actually was. */
+const DNA_SIGMA=0.14, FEAT_SIGMA=0.16;
 function dnaSim(a,b,cat){ if(!validVec(a)||!validVec(b)) return null;   // v2: null (was 0.4)
   const w=DNA_AXIS_W[cat]||DNA_AXIS_W._default; let s=0,sw=0;
   for(let i=0;i<8;i++){ const d=(a[i]-b[i])/100; s+=w[i]*d*d; sw+=w[i]; }
@@ -282,7 +288,7 @@ function creatorSim(a,b){
   return 0; }
 function cultureSim(a,b){
   const ca=(a.x&&a.x.reg)||a.c, cb=(b.x&&b.x.reg)||b.c;
-  if(!ca||!cb) return null; if(ca===cb) return 1;   // v2: null only if BOTH lack region/country
+  if(!ca||!cb) return null; if(ca===cb) return 1;   // v2: null if EITHER lacks region/country (can't compare against "unknown")
   return (REGIONS[ca]&&REGIONS[ca]===REGIONS[cb]) ? .55 : 0; }
 function audSim(a,b){ if(!isNum(a.pop)||!isNum(b.pop)||!isNum(a.acc)||!isNum(b.acc)||!isNum(a.main)||!isNum(b.main)) return null;
   return Math.max(0, 1-(Math.abs(a.pop-b.pop)+Math.abs(a.acc-b.acc)+Math.abs(a.main-b.main))/300); }
@@ -321,7 +327,8 @@ const ALGO = {
   vibe:(a,b)=>cosSets((a.x||{}).vibe,(b.x||{}).vibe),
   climate:(a,b)=>{const A=(a.x||{}).climate,B=(b.x||{}).climate; if(!A||!B) return null; if(A===B) return 1;
     const mild=['temperate','mediterranean']; return (mild.includes(A)&&mild.includes(B))?.5:0;},
-  srcdem:(a,b)=>{const xa=a.x||{},xb=b.x||{}; if(xa.src==null&&xa.dem==null) return null; return (xa.src&&xa.src===xb.src?.5:0)+(xa.dem&&xa.dem===xb.dem?.5:0);},
+  srcdem:(a,b)=>{const xa=a.x||{},xb=b.x||{}; if((xa.src==null&&xa.dem==null)||(xb.src==null&&xb.dem==null)) return null;   // symmetric: null if EITHER side lacks both fields (was A-only, so a candidate missing data scored a deceptive 0 instead of "no signal")
+    return (xa.src&&xa.src===xb.src?.5:0)+(xa.dem&&xa.dem===xb.dem?.5:0);},
 };
 const CATALGOS = {   // v2: emb 0.22 added to every row (renormalizer rescales the rest)
   movies:[['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.10],['era',.08],['audience',.08],['culture',.06]],
@@ -335,24 +342,90 @@ const CATALGOS = {   // v2: emb 0.22 added to every row (renormalizer rescales t
 };
 /* rows of CATALGOS[cat] that can actually fire right now — excludes 'emb' until embeddings.b64.json loads */
 const activeAlgoRows=cat=>CATALGOS[cat].filter(([id])=>id!=='emb'||EMB_BUF);
-/* v2 §7.1: skip-and-renormalize over PRESENT signals + coverage gate. Reads ALGO/CATALGOS globals. */
+/* v2 §7.3: per-category, per-algo prior mean, sampled once from real random pairs after the
+   catalog loads. score() imputes a missing term with its prior instead of skipping it, so an
+   item with sparse metadata (no country/year/etc.) is scored as "average" on that signal rather
+   than silently favored by skip-and-renormalize (which let a missing term raise everyone else's
+   share of the blend). Priors are computed live from the current ALGO functions, so retuning
+   dnaSim/featSim sigmas elsewhere automatically keeps the priors consistent. */
+/* cheap "can this field even produce a value" checks, mirroring each ALGO fn's own null
+   condition — used only to pick which items to SAMPLE from when estimating a prior. Several
+   fields are rare (e.g. movies: only ~4% carry a country), so drawing pairs from the whole pool
+   mostly hits null and gives a near-empty, unstable average; sampling within the eligible subset
+   instead gives every draw a real value to average. */
+const ALGO_PRESENT = {
+  theme:it=>!!(it.th&&it.th.length), mood:it=>validVec(it.dna), genre:it=>!!(it.g&&it.g.length),
+  craft:it=>!!(it.x&&Object.keys(it.x).length), creator:()=>true,
+  era:it=>isNum(it.y), audience:it=>isNum(it.pop)&&isNum(it.acc)&&isNum(it.main),
+  culture:it=>!!((it.x&&it.x.reg)||it.c),
+  ing:it=>!!(it.x&&it.x.ing&&it.x.ing.length), tech:it=>(it.x&&it.x.tech)!=null,
+  vibe:it=>!!(it.x&&it.x.vibe&&it.x.vibe.length), climate:it=>!!(it.x&&it.x.climate),
+  srcdem:it=>!!(it.x&&(it.x.src!=null||it.x.dem!=null)),
+};
+/* algos whose WHY claim gets a per-category p80 threshold (measured live, see CAT_P80) instead
+   of the flat .42 below — these are the "loose" signals that pass .42 on most random pairs
+   (audience: ~100%; mood/craft/era: highly category-dependent, up to ~77%), so a flat bar lets
+   them decorate almost any card. theme/genre (own shared-tag logic)/creator/culture are excluded:
+   MEASURED, creator's p80 is exactly 0 in every category (it's ~0 for ~all random pairs, so any
+   p80-based bar would let it ALWAYS pass) and culture's real-data sample is too sparse (2-10 valid
+   pairs/category) to trust an empirical percentile — both stay at the flat, already-selective .42. */
+const WHY_P80_ALGOS = new Set(['mood','craft','audience','era','srcdem','ing','tech','vibe','climate']);
+let CAT_PRIORS = {}, CAT_P80 = {};
+function buildPriors(cat, sampleSize=300){
+  const pool=D[cat]||[]; if(pool.length<2) return {priors:{}, p80:{}};
+  const priors={}, p80={};
+  for(const [id] of CATALGOS[cat]){
+    if(id==='emb') continue;
+    const present=ALGO_PRESENT[id];
+    const eligible=present?pool.filter(present):pool;
+    const m=eligible.length; if(m<2){ priors[id]=null; p80[id]=null; continue; }
+    const vals=[];
+    for(let i=0;i<sampleSize;i++){
+      const a=eligible[(Math.random()*m)|0], b=eligible[(Math.random()*m)|0]; if(a===b) continue;
+      const v=ALGO[id]?ALGO[id](a,b,cat):null; if(v!=null) vals.push(clamp01(v));
+    }
+    if(vals.length){ priors[id]=vals.reduce((s,v)=>s+v,0)/vals.length; vals.sort((x,y)=>x-y); p80[id]=vals[Math.floor(vals.length*0.8)]; }
+    else { priors[id]=null; p80[id]=null; }
+  }
+  return { priors, p80 };
+}
+function buildAllPriors(){ CAT_PRIORS={}; CAT_P80={}; CAT_ORDER.forEach(cat=>{ const r=buildPriors(cat); CAT_PRIORS[cat]=r.priors; CAT_P80[cat]=r.p80; }); }
+/* the WHY threshold for a given algo/category: p80 for the "loose" algos above (falling back to
+   .42 if the sample was too small to measure), .42 flat for everything else. */
+function whyThreshold(id,cat){
+  if(!WHY_P80_ALGOS.has(id)) return .42;
+  const p=CAT_P80[cat]&&CAT_P80[cat][id]; return p!=null?p:.42;
+}
+/* v2 §7.1: PRESENT signals blend as before; a missing (null) signal is imputed from CAT_PRIORS
+   instead of skipped, so score() no longer rewards items for having less metadata. `coverage`
+   still reflects only REAL signals (imputed terms don't count toward it), so the eligibility
+   gate and the lab's confidence display stay meaningful. Reads ALGO/CATALGOS/CAT_PRIORS globals. */
 const MIN_COVERAGE=0.5;
 function score(a,b,cat){
-  const parts={}; let num=0,den=0,wtot=0;
+  const parts={}; let num=0,den=0,wtot=0,presentDen=0;
+  const priors=CAT_PRIORS[cat]||{};
   for(const pair of CATALGOS[cat]){ const id=pair[0], w=pair[1]; wtot+=w;
     const v=ALGO[id]?ALGO[id](a,b,cat):null; parts[id]=v;
-    if(v==null) continue; num+=clamp01(v)*w; den+=w; }
-  const total=den>0?num/den:0, coverage=wtot>0?den/wtot:0;
+    if(v==null){ const p=priors[id]; if(p!=null){ num+=p*w; den+=w; } continue; }
+    num+=clamp01(v)*w; den+=w; presentDen+=w; }
+  const total=den>0?num/den:0, coverage=wtot>0?presentDen/wtot:0;
   return { parts, total, coverage, eligible:coverage>=MIN_COVERAGE, pct:Math.min(99,Math.round(100*Math.pow(total,0.8))) };
 }
 /* v2 §7.2: embedding-dominant, audience removed; skip-and-renormalize; falls back to dna+theme if no embeddings. */
+/* v2 §7.5: returns the RAW [0,1] blend — round only at display. The old version rounded to an
+   int before the argmax picked a winner, so many candidates landed on the exact same integer and
+   the FIRST one in data.json always won (measured: median 2, p90 11, max 56-way ties). Comparing
+   raw floats makes an exact tie statistically negligible. */
 function crossScore(a,b){ let num=0,den=0;
   const e=embSim(a,b);              if(e!=null){ num+=0.55*e; den+=0.55; }
   const dn=dnaSim(a.dna,b.dna,null);if(dn!=null){ num+=0.30*dn; den+=0.30; }
   const th=wCos(a.th,b.th,themeIDF);if(th!=null){ num+=0.15*th; den+=0.15; }
-  const v=den>0?num/den:0;
-  return Math.min(99, Math.round(100*Math.pow(v,0.9)));
+  return den>0?num/den:0;
 }
+const crossPct=v=>Math.min(99,Math.round(100*Math.pow(v,0.9)));
+/* MEASURED: cross-CATEGORY random-pair dnaSim p80 (with the tightened DNA_SIGMA) is ~0.56 —
+   used so whyCross's mood claim doesn't fire on a below-average pair (see whyCross). */
+const CROSS_MOOD_P80=0.56;
 /* v2 §7.4: MMR diversity re-rank. ranked=[{item,total,...}] sorted desc; ≤2 per creator. */
 function mmrRerank(ranked,cat,k=10,lambda=0.75){
   const pool=ranked.slice(0,30), selected=[], creator=Object.create(null);
@@ -365,6 +438,23 @@ function mmrRerank(ranked,cat,k=10,lambda=0.75){
     if(bi<0) break; const chosen=pool.splice(bi,1)[0]; const by=(chosen.item.by||'').toLowerCase();
     if(by) creator[by]=(creator[by]||0)+1; selected.push(chosen); }
   return selected;
+}
+/* v2 §7.5: displayed match % = this pair's percentile rank within the same shortlist mmrRerank
+   draws from (the top-30-by-total candidates for THIS search) rather than a fixed curve over
+   the raw [0,1] blend. A fixed curve can't discriminate well because real same-category totals
+   cluster tightly (median ~0.8, top-30 span often <0.15) — nearly every real match would land in
+   the same "excellent" band. Ranking against this search's own shortlist instead guarantees a
+   real top-10 visibly spans from best to weakest, while staying meaningful ("Soul twin" = truly
+   among the best candidates THIS search could produce, not an absolute similarity claim — matching
+   the app's existing comparative tier language). floor=15: even the weakest of a top-30 shortlist
+   is still a genuine top candidate, not noise. sortedTotals must be ascending.
+   MEASURED (300 real searches): 0/300 lists land entirely in one qual() tier (was ~71% of ALL
+   results in the single "Soul twin" tier before this fix); median list now spans 3 of 4 tiers. */
+function pctWithinPool(total,sortedTotals){
+  const n=sortedTotals.length; if(n<2) return 99;
+  let lo=0,hi=n;
+  while(lo<hi){ const mid=(lo+hi)>>1; if(sortedTotals[mid]<total) lo=mid+1; else hi=mid; }
+  return Math.min(99,Math.max(15,Math.round(100*lo/(n-1))));
 }
 function lev(a,b,max){
   if(Math.abs(a.length-b.length)>max) return max+1;
@@ -381,21 +471,36 @@ const state = { lang:'en', cat:'movies', sel:null, open:null };
 try{ const l=localStorage.getItem('vibra-lang'); if(l&&['en','es','pt'].includes(l)) state.lang=l; }catch(e){}
 const byId={}; const ALL=[];
 let dataOK = false;
+/* data.json is bot-maintained and occasionally ships a scalar where the schema expects an array
+   (MEASURED: every food item's x.fl, plus g on ~1/3 of food items, are a bare string like "savory"
+   instead of ["savory"] — silently wrong in set-overlap scoring since strings are iterable, and a
+   hard crash wherever code calls .filter/.map on it, e.g. whyText's shared-genre check). Coerce
+   once here so every downstream consumer sees a consistent array, without scattering guards. */
+function asArr(v){ return Array.isArray(v)?v:(typeof v==='string'&&v?[v]:[]); }
+function normalizeItemArrays(it){
+  it.g=asArr(it.g); it.th=asArr(it.th); it.alt=asArr(it.alt); it.cast=asArr(it.cast);
+  if(it.x){ for(const k of ['ing','vibe','mech','inst','fl']) if(k in it.x) it.x[k]=asArr(it.x[k]); }
+}
 function indexData(){
   dataOK = D && typeof D==='object';
   if(dataOK){
     CAT_ORDER.forEach(k=>(D[k]||[]).forEach(it=>{
-      it._cat=k; it._keys=[norm(it.t)].concat((it.alt||[]).map(norm)).concat(it.tl?['en','es','pt'].map(l=>norm(it.tl[l]||'')):[]).filter(Boolean);
+      normalizeItemArrays(it);
+      it._cat=k; it._keys=[norm(it.t)].concat(it.alt.map(norm)).concat(it.tl?['en','es','pt'].map(l=>norm(it.tl[l]||'')):[]).filter(Boolean);
       byId[it.id]=it; ALL.push(it);
     }));
     buildIDF(ALL);
+    buildAllPriors();
   }
 }
 const tr=(o,vars)=>{ let s=(o&&(o[state.lang]||o.en))||''; if(vars) Object.keys(vars).forEach(k=>{ s=s.split('{'+k+'}').join(vars[k]); }); return s; };
 // localized title: show the title in the current UI language, falling back to the base title
 const TT=it=>(it&&it.tl&&it.tl[state.lang])||(it&&it.t)||'';
 const themeLabel=t=>{ const m=THEME_I18N[t]; const s=(state.lang!=='en'&&m)?m[state.lang]:t.replace(/-/g,' '); return s; };
-const qual=p=>tr(p>=85?T.q85:p>=70?T.q70:p>=55?T.q55:T.q0);
+/* v2 §7.5: cutoffs nudged 85/70/55 -> 87/72/56 to match the new percentile-based pct (MEASURED
+   over 300 real searches: no tier holds >38% of all displayed matches with these cutoffs, vs 46%+
+   at the old ones — see pctWithinPool). */
+const qual=p=>tr(p>=87?T.q85:p>=72?T.q70:p>=56?T.q55:T.q0);
 
 /* ================= html builders ================= */
 function monogram(it){ const s=String(it.t||'?').trim(); const ch=s.charAt(0)||'?'; return esc(ch.toUpperCase()); }
@@ -431,7 +536,7 @@ function whyText(a,b,cat,parts){
   const ranked=CATALGOS[cat].map(([id,w])=>({id,c:(parts[id]||0)*w,v:parts[id]||0})).sort((x,y)=>y.c-x.c);
   const ph=[];
   for(const r of ranked){
-    if(ph.length>=3) break; if(r.v<.42) continue;
+    if(ph.length>=3) break; if(r.v<whyThreshold(r.id,cat)) continue;   // v2 §7.5: per-algo/category p80, not a flat .42 loose signals passed on ~most random pairs
     if(r.id==='theme'){ const sh=(a.th||[]).filter(t=>(b.th||[]).includes(t)).slice(0,2).map(themeLabel);
       if(sh.length) ph.push(tr(WHY_THEME,{x:sh.join(' + ')})); }
     else if(r.id==='genre'){ const sh=(a.g||[]).filter(t=>(b.g||[]).includes(t));
@@ -439,7 +544,13 @@ function whyText(a,b,cat,parts){
     else if(r.id==='craft') ph.push(tr(WHY_CRAFT[cat]));
     else if(WHY[r.id]) ph.push(tr(WHY[r.id]));
   }
-  if(!ph.length) ph.push(tr(WHY.mood));
+  if(!ph.length){
+    // honest fallback: nothing cleared its threshold — name the best-available signal instead of
+    // asserting a fabricated "near-identical mood" (the old fallback fired exactly when mood was weak).
+    const top=ranked[0];
+    const nm=top.id==='craft'?tr(CRAFT_NAMES[cat]):tr(ALGO_NAMES[top.id]);
+    ph.push(tr(T.whyLoose,{x:nm}));
+  }
   const s=ph.slice(0,3).join(' · ');
   return s.charAt(0).toUpperCase()+s.slice(1);
 }
@@ -511,7 +622,7 @@ function matchCard(src,m,i){
   const algos=CATALGOS[state.cat].filter(([id])=>m.s.parts[id]!=null).map(([id])=>({id, nm:id==='craft'?tr(CRAFT_NAMES[state.cat]):tr(ALGO_NAMES[id]), v:Math.round(m.s.parts[id]*100)}));
   const top2=algos.slice().sort((a,b)=>b.v-a.v).slice(0,2);
   const why='<div class="why">'+esc(whyText(src,m.it,state.cat,m.s.parts))+'</div>';
-  const head='<div class="mhead">'+tile(m.it)+'<div class="info"><div class="rank">#'+(i+1)+' · <span class="quality">'+esc(qual(m.s.pct))+'</span></div><div class="nm">'+esc(TT(m.it))+'</div><div class="by">'+metaLine(m.it)+'</div></div>'+ring(m.s.pct)+'</div>';
+  const head='<div class="mhead">'+tile(m.it)+'<div class="info"><div class="rank">#'+(i+1)+' · <span class="quality'+(m.s.pct<56?' weak':'')+'">'+esc(qual(m.s.pct))+'</span></div><div class="nm">'+esc(TT(m.it))+'</div><div class="by">'+metaLine(m.it)+'</div></div>'+ring(m.s.pct)+'</div>';
   if(!open){
     return '<article class="match" data-mid="'+esc(m.it.id)+'">'+head+why+'<div class="bars">'+top2.map(a=>bar(a.nm,a.v)).join('')+'</div>'+rateRow(m.it.id)+'<div class="more">'+tr(T.expand)+' ↓</div></article>';
   }
@@ -536,28 +647,46 @@ function pairScore(a,b){
   const course=(xa.tech&&xb.tech)?(xa.tech===xb.tech?0:1):0.4;
   return Math.min(99, Math.round(100*(0.45*cuisine+0.35*flavour+0.20*course)));
 }
+/* v2 §7.5: cache the scored pipeline per (sel,cat) so a pure open/close toggle (toggleMatchCard,
+   below) doesn't have to re-score the whole category + cross-media pool. MEASURED: a full
+   renderResults() pass costs ~20ms on this machine (~90-130ms on a mid-range phone) and used to
+   re-run on EVERY card tap. Invalidated implicitly: any renderResults() call for a different
+   (sel,cat) simply recomputes and overwrites it. */
+let _resultsCache=null;
 function renderResults(){
   const src=byId[state.sel]; if(!src){ renderEmpty(); return; }
   const cat=state.cat;
-  let pool0=(D[cat]||[]).filter(x=>x.id!==src.id);
-  if(cat==='food'){ const sb=(src.g||[]).includes('beverage'); pool0=pool0.filter(x=>((x.g||[]).includes('beverage'))===sb); }  // dishes match dishes, drinks match drinks
-  let scored=pool0.map(it=>({it,s:score(src,it,cat)}));
-  let elig=scored.filter(x=>x.s.eligible);            // v2: coverage gate
-  if(elig.length<5) elig=scored;                       // safety: never strand the user on an over-aggressive gate
-  elig.sort((a,b)=>b.s.total-a.s.total);
-  const ranked=elig.map(x=>({item:x.it,total:x.s.total,s:x.s}));
-  const matches=mmrRerank(ranked,cat,10,0.75).sort((a,b)=>b.total-a.total).map(r=>({it:r.item,s:r.s}));   // v2: diversity re-rank, then sort by score so displayed % stays monotonic
-  const beyond=CAT_ORDER.filter(k=>k!==cat).map(k=>{
-    let best=null,bp=-1; (D[k]||[]).forEach(it=>{ const p=crossScore(src,it); if(p>bp){bp=p;best=it;} });
-    return best?{cat:k,it:best,pct:bp}:null; }).filter(Boolean);
+  let matches,beyond;
+  if(_resultsCache&&_resultsCache.sel===state.sel&&_resultsCache.cat===cat){
+    matches=_resultsCache.matches; beyond=_resultsCache.beyond;
+  } else {
+    let pool0=(D[cat]||[]).filter(x=>x.id!==src.id);
+    if(cat==='food'){ const sb=(src.g||[]).includes('beverage'); pool0=pool0.filter(x=>((x.g||[]).includes('beverage'))===sb); }  // dishes match dishes, drinks match drinks
+    let scored=pool0.map(it=>({it,s:score(src,it,cat)}));
+    let elig=scored.filter(x=>x.s.eligible);            // v2: coverage gate
+    if(elig.length<5) elig=scored;                       // safety: never strand the user on an over-aggressive gate
+    elig.sort((a,b)=>b.s.total-a.s.total);
+    const ranked=elig.map(x=>({item:x.it,total:x.s.total,s:x.s}));
+    const shortlistTotals=ranked.slice(0,30).map(x=>x.total).sort((a,b)=>a-b);   // same pool mmrRerank draws from — captured before it mutates its own copy
+    matches=mmrRerank(ranked,cat,10,0.75).sort((a,b)=>b.total-a.total).map(r=>({it:r.item,s:r.s}));   // v2: diversity re-rank, then sort by score so displayed % stays monotonic
+    matches.forEach(m=>{ m.s.pct=pctWithinPool(m.s.total,shortlistTotals); });   // v2 §7.5: percentile within this search's own shortlist, not a fixed curve
+    beyond=CAT_ORDER.filter(k=>k!==cat).map(k=>{
+      let best=null,bv=-1;
+      (D[k]||[]).forEach(it=>{ const v=crossScore(src,it);
+        if(v>bv||(v===bv&&best&&it.acc>best.acc)){ bv=v; best=it; } });   // v2 §7.5: tie-break by acclaim, not file order
+      return best?{cat:k,it:best,pct:crossPct(bv)}:null; }).filter(Boolean);
+    _resultsCache={sel:state.sel,cat,matches,beyond};
+  }
   const srcCard='<section class="source"><div class="shead">'+tile(src)+'<div class="stitle"><div class="kicker">'+tr(T.kicker)+' · '+esc(tr(CATS[cat].name)).toUpperCase()+'</div><h2>'+esc(TT(src))+'</h2><div class="meta">'+metaLine(src)+'</div></div></div>'+
     '<div class="chips">'+(src.g||[]).map(g=>'<span class="chip">'+esc(g)+'</span>').join('')+(src.th||[]).slice(0,4).map(t=>'<span class="chip th">'+esc(themeLabel(t))+'</span>').join('')+'</div>'+
     '<p class="desc">'+esc((src.d&&(src.d[state.lang]||src.d.en))||'')+'</p>'+
-    '<div class="meters">'+meter(tr(T.pop),src.pop)+meter(tr(T.acc),src.acc)+meter(tr(T.main),src.main)+'</div><span class="fixlink" data-fix="'+esc(src.id)+'">'+esc(tr(T.fixName))+'</span></section>';
+    '<div class="meters">'+meter(tr(T.pop),src.pop)+meter(tr(T.acc),src.acc)+meter(tr(T.main),src.main)+'</div>'+
+    '<div class="srcactions"><button class="fixlink" type="button" data-share>'+esc(tr(T.share))+'</button><span class="fixlink" data-fix="'+esc(src.id)+'">'+esc(tr(T.fixName))+'</span></div></section>';
   const list='<div class="sechead"><h3>'+tr(T.topMatches)+'</h3><span class="sub">'+tr(T.topSub,{a:activeAlgoRows(cat).length})+'</span></div><div class="grid">'+matches.map((m,i)=>matchCard(src,m,i)).join('')+'</div>';
   const bey='<div class="sechead"><h3>'+esc(tr(T.beyond))+'</h3><span class="sub">'+tr(T.beyondSub)+'</span></div><div class="beyond">'+beyond.map(b=>{
     const c=CATS[b.cat];
-    return '<div class="bx" data-sel="'+esc(b.it.id)+'" style="--acc:'+c.acc+'"><div class="cathead" style="color:'+c.acc+'">'+(CAT_ICON[b.cat]||'')+esc(tr(c.name))+'</div><div class="row">'+tile(b.it)+'<div><div class="nm">'+esc(TT(b.it))+'</div><div class="subby">'+esc(b.it.by||'')+'</div></div><span class="pc" style="color:'+c.acc+'">'+b.pct+'</span></div><div class="why">'+esc(whyCross(src,b.it))+'</div></div>'; }).join('')+'</div>';
+    const pcDisplay=EMB_BUF?b.pct:esc(qual(b.pct));   // v2 §7.5: word tier while embeddings are dormant — crossScore is only mood+theme then, too coarse for a precise number; reverts to the real % once embeddings load
+    return '<div class="bx" data-sel="'+esc(b.it.id)+'" style="--acc:'+c.acc+'"><div class="cathead" style="color:'+c.acc+'">'+(CAT_ICON[b.cat]||'')+esc(tr(c.name))+'</div><div class="row">'+tile(b.it)+'<div><div class="nm">'+esc(TT(b.it))+'</div><div class="subby">'+esc(b.it.by||'')+'</div></div><span class="pc'+(EMB_BUF?'':' word')+'" style="color:'+c.acc+'">'+pcDisplay+'</span></div><div class="why">'+esc(whyCross(src,b.it))+'</div></div>'; }).join('')+'</div>';
   let pairs='';
   if(cat==='food'){
     const isBev=it=>(it.g||[]).includes('beverage'), srcBev=isBev(src), allf=(D.food||[]).filter(x=>x.id!==src.id);
@@ -572,13 +701,30 @@ function renderResults(){
     if(pl.length) pairs='<div class="sechead"><h3>'+esc(tr({en:'Perfect pairings',es:'Maridajes perfectos',pt:'Harmonizações perfeitas'}))+'</h3><span class="sub">'+esc(tr({en:'drinks & dishes that complete the meal',es:'bebidas y platos que completan la comida',pt:'bebidas e pratos que completam a refeição'}))+'</span></div><div class="beyond">'+
       pl.map(x=>'<div class="bx" data-sel="'+esc(x.it.id)+'" style="--acc:'+CATS.food.acc+'"><div class="cathead" style="color:'+CATS.food.acc+'">'+(CAT_ICON.food||'')+esc(((x.it.x&&x.it.x.reg)||x.it.c||'dish'))+'</div><div class="row">'+tile(x.it)+'<div><div class="nm">'+esc(TT(x.it))+'</div></div><span class="pc" style="color:'+CATS.food.acc+'">'+x.p+'</span></div></div>').join('')+'</div>';
   }
-  $('out').innerHTML=srcCard+pairs+bey+list;
+  $('out').innerHTML=srcCard+pairs+list+bey;   // v2 §7.5: in-category matches (what the user searched for) before the thinner cross-media Beyond signal
   animateFills($('out'));
 }
 function whyCross(a,b){
   const sh=(a.th||[]).filter(t=>(b.th||[]).includes(t)).slice(0,2).map(themeLabel);
   if(sh.length){ const s=tr(WHY_THEME,{x:sh.join(' + ')}); return s.charAt(0).toUpperCase()+s.slice(1); }
-  return tr(WHY.mood).charAt(0).toUpperCase()+tr(WHY.mood).slice(1);
+  // v2 §7.5: same fix as whyText's fallback — only claim "near-identical mood" when mood is
+  // actually above its (measured cross-category) threshold; otherwise say so honestly.
+  const dn=dnaSim(a.dna,b.dna,null);
+  const s=(dn!=null&&dn>=CROSS_MOOD_P80)?tr(WHY.mood):tr(T.whyLoose,{x:tr(ALGO_NAMES.mood)});
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+/* v2 §7.5: expand/collapse re-renders only the ONE tapped card from the cached scoring result,
+   instead of the whole results screen (see _resultsCache in renderResults). Falls back to a full
+   renderResults() if the cache is missing/stale for this (sel,cat) — should not normally happen,
+   since state.sel/state.cat are unchanged by a pure open/close toggle. */
+function toggleMatchCard(cardEl,id){
+  const src=byId[state.sel];
+  if(!src||!_resultsCache||_resultsCache.sel!==state.sel||_resultsCache.cat!==state.cat){ renderResults(); return; }
+  const i=_resultsCache.matches.findIndex(m=>m.it.id===id);
+  if(i<0){ renderResults(); return; }
+  cardEl.outerHTML=matchCard(src,_resultsCache.matches[i],i);
+  const fresh=[...document.querySelectorAll('.match')].find(el=>el.dataset.mid===id);
+  if(fresh) animateFills(fresh);
 }
 function renderAll(){ setAccent(); renderChrome(); const pit=$('pitch'),lab=$('lab'),foot=$('foot'),cats=$('cats');
   if(!dataOK){ if(pit) pit.hidden=false; $('out').innerHTML='<p class="hint">'+tr(T.dataMissing)+'</p>'; return; }
@@ -632,12 +778,45 @@ function select(id,scroll){
   const it=byId[id]; if(!it) return;
   state.cat=it._cat; state.sel=id; state.open=null;
   $('q').value=it.t; hideAC(); renderAll();
+  if(!_applyingHash) location.hash=state.cat+'/'+id;
   if(scroll){ const o=$('out'); if(o&&o.scrollIntoView) o.scrollIntoView({behavior:'smooth',block:'start'}); }
 }
 function surprise(){
   const pool=(D[state.cat]||[]); if(!pool.length) return;
   const hot=pool.filter(p=>p.pop>=55); const src=(hot.length?hot:pool);
   select(src[Math.floor(Math.random()*src.length)].id,true);
+}
+/* v2 §7.6: hash routing — #cat/id (a specific result), #cat (category browse), or empty (home).
+   _applyingHash guards select()/the home+category handlers from re-writing the hash while we're
+   just reacting to one (avoids fighting the browser's own back/forward navigation); a harmless
+   redundant hashchange round-trip from a normal click is possible but cheap thanks to the T11
+   results cache. live-* ids aren't in byId on a fresh load (they're not persisted), so they're
+   re-resolved by re-running the live lookup from the slug. */
+let _applyingHash=false;
+function applyHash(){
+  _applyingHash=true;
+  try{
+    const raw=decodeURIComponent(location.hash.slice(1));
+    if(!raw){ state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); return; }
+    const slash=raw.indexOf('/');
+    const cat=slash<0?raw:raw.slice(0,slash);
+    const id=slash<0?'':raw.slice(slash+1);
+    if(!CAT_ORDER.includes(cat)) return;                 // unknown/garbage hash — leave state as-is
+    if(!id){ state.cat=cat; state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); return; }
+    if(byId[id]){ select(id,false); return; }
+    const livePrefix='live-'+cat+'-';
+    if(id.indexOf(livePrefix)===0){ const q=id.slice(livePrefix.length).replace(/-/g,' '); if(q) selectLive(cat,q); }
+  } finally { _applyingHash=false; }
+}
+function shareResult(){
+  const src=byId[state.sel]; if(!src) return;
+  const url=location.href, btn=document.querySelector('[data-share]');
+  if(navigator.share){ navigator.share({title:'Muse — '+TT(src),url:url}).catch(()=>{}); return; }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>{
+      if(btn){ const orig=btn.textContent; btn.textContent=tr(T.copied); setTimeout(()=>{ if(btn.isConnected) btn.textContent=orig; },1600); }
+    }).catch(()=>{});
+  }
 }
 
 /* ================= events ================= */
@@ -699,7 +878,9 @@ async function selectLive(cat, query){
     const it=await liveLookup(cat,query);
     if(it){ byId[it.id]=it;
       if(SEARCH_ENDPOINT&&RATING_KEY){ try{ fetch(SEARCH_ENDPOINT,{method:'POST',headers:{apikey:RATING_KEY,Authorization:'Bearer '+RATING_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({cat:cat,title:it.t,item:it})}).catch(function(){}); }catch(e){} }
-      state.cat=cat; state.sel=it.id; state.open=null; $('q').value=it.t; renderAll(); const o=$('out'); if(o&&o.scrollIntoView) o.scrollIntoView({behavior:'smooth',block:'start'}); }
+      state.cat=cat; state.sel=it.id; state.open=null; $('q').value=it.t; renderAll();
+      if(!_applyingHash) location.hash=cat+'/'+it.id;
+      const o=$('out'); if(o&&o.scrollIntoView) o.scrollIntoView({behavior:'smooth',block:'start'}); }
     else { const o=$('out'); if(o) o.innerHTML='<div class="livewait">'+esc(tr(T.noWebResult,{q:query}))+'</div>'; }
   }catch(err){ const o=$('out'); if(o) o.innerHTML='<div class="livewait">'+esc(tr(T.noWebResult,{q:query}))+'</div>'; }
   liveBusy=false;
@@ -707,22 +888,23 @@ async function selectLive(cat, query){
 document.addEventListener('click',e=>{
   const lb=e.target.closest('[data-lang]');
   if(lb){ state.lang=lb.dataset.lang; try{localStorage.setItem('vibra-lang',state.lang);}catch(err){} renderAll(); return; }
-  if(e.target.closest('[data-home]')){ state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; if(window.scrollTo) window.scrollTo(0,0); return; }
+  if(e.target.closest('[data-home]')){ state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); if(!_applyingHash) location.hash=''; const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; if(window.scrollTo) window.scrollTo(0,0); return; }
   const fx=e.target.closest('[data-fix]'); if(fx){ openSuggest(fx.getAttribute('data-fix')); return; }
   if(e.target.closest('[data-retry]')){ boot(); loadData(); return; }
+  if(e.target.closest('[data-share]')){ shareResult(); return; }
   if(e.target.closest('[data-suggest]')){ openSuggest(null); return; }
   const rb=e.target.closest('[data-rate]');
   if(rb){ const mid=rb.getAttribute('data-mid'); const cur=ratingOf(state.sel,mid); const val=+rb.getAttribute('data-rate'); const nv=(cur===val?0:val);
     recordRating(mid,nv); const grp=rb.parentNode; grp.querySelectorAll('.rb').forEach(b=>b.classList.toggle('on', nv!==0 && +b.getAttribute('data-rate')===nv)); return; }
   const cb=e.target.closest('[data-cat]');
-  if(cb){ state.cat=cb.dataset.cat; state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); const qi=$('q'); if(qi&&qi.focus) qi.focus(); return; }
+  if(cb){ state.cat=cb.dataset.cat; state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); if(!_applyingHash) location.hash=cb.dataset.cat; const qi=$('q'); if(qi&&qi.focus) qi.focus(); return; }
   const sb=e.target.closest('[data-sel]');
   if(sb){ e.stopPropagation(); select(sb.dataset.sel,true); return; }
   const card=e.target.closest('.match');
   if(card){
     const id=card.dataset.mid;
-    if(state.open!==id){ state.open=id; renderResults(); }
-    else if(e.target.closest('.more')||e.target.closest('.mhead')){ state.open=null; renderResults(); }
+    if(state.open!==id){ state.open=id; toggleMatchCard(card,id); }
+    else if(e.target.closest('.more')||e.target.closest('.mhead')){ state.open=null; toggleMatchCard(card,id); }
     return;
   }
   if(!e.target.closest('.searchbox')) hideAC();
@@ -753,9 +935,10 @@ document.addEventListener('keydown',e=>{
 
 /* boot: use inline data if present, else fetch external data.json (deployed build) */
 function finishInit(){
-  indexData(); renderAll();
-  loadEmb('embeddings.b64.json').then(()=>{ if(state.sel) renderResults(); }).catch(()=>{});
+  indexData(); renderAll(); applyHash();
+  loadEmb('embeddings.b64.json').then(()=>{ _resultsCache=null; if(state.sel) renderResults(); }).catch(()=>{});   // embeddings just went live — the cached pre-embedding scores are stale, force a fresh score
 }
+window.addEventListener('hashchange',applyHash);
 // render chrome + a loading state immediately, before data.json has even started resolving,
 // so first-time visitors never see a dead blank screen while the ~3.6MB catalog downloads.
 function boot(){
