@@ -850,7 +850,8 @@ function renderEmpty(){
     '<div class="home-stats">'+tr(T.stats,{n:ALL.length})+'</div>';
 }
 /* ===== rate-the-match feedback: the training signal for re-fitting the algorithm weights ===== */
-const RATING_ENDPOINT='';   // set to a Supabase REST insert URL to aggregate ratings across all users
+const RATING_ENDPOINT='https://esviqajfbkdnpoohjpjt.supabase.co/rest/v1/ratings';
+const RATING_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdmlxYWpmYmtkbnBvb2hqcGp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NzM1NzgsImV4cCI6MjA5OTQ0OTU3OH0.0C0oBrs0OjrcvxNdDVXeBtBs8KTVmgviGJkWffkFKj4';  // anon key — public by design; RLS is insert-only
 let rateCtx={};             // matchId -> {pct, parts} stashed at render so a rating can log WHY the pick was made
 const CHK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
 const XX_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
@@ -862,7 +863,10 @@ function recordRating(mid,val){
   const key=src+'|'+mid; let arr=loadRatings().filter(x=>x.k!==key);
   if(val!==0){ arr.push({k:key,src:src,match:mid,cat:cat,pct:ctx.pct,parts:ctx.parts||{},r:val,lang:state.lang,sid:getSid(),ts:Date.now()}); }
   try{ localStorage.setItem('muse-ratings',JSON.stringify(arr.slice(-800))); }catch(e){}
-  if(RATING_ENDPOINT && val!==0){ try{ fetch(RATING_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(arr[arr.length-1])}).catch(()=>{}); }catch(e){} }
+  if(RATING_ENDPOINT && RATING_KEY && val!==0){
+    const p={sid:getSid(),src:src,match:mid,cat:cat,pct:ctx.pct,r:val,lang:state.lang,parts:ctx.parts||{}};
+    try{ fetch(RATING_ENDPOINT,{method:'POST',headers:{'apikey':RATING_KEY,'Authorization':'Bearer '+RATING_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(p)}).catch(()=>{}); }catch(e){}
+  }
 }
 function rateRow(mid){ const r=ratingOf(state.sel,mid);
   return '<div class="rate"><span class="rq">'+esc(tr(T.rateQ))+'</span>'+
