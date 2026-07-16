@@ -283,6 +283,25 @@
   .foot{color:var(--dim);font-size:10.5px;line-height:1.65;padding:0 16px 10px;margin:0}
   .foot b{color:var(--mut);font-weight:500}
 
+  /* ---------- community: suggest / fix a title ---------- */
+  .suggest{display:block;width:calc(100% - 32px);margin:0 16px 22px;padding:11px 12px;border:1px dashed var(--line2);
+    border-radius:12px;background:none;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--dim);
+    text-transform:uppercase;text-align:center;transition:color .2s,border-color .2s}
+  .suggest:hover,.suggest:active{color:var(--mut);border-color:color-mix(in srgb,var(--acc) 55%,var(--line2))}
+  .fixlink{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line2);cursor:pointer;transition:color .2s,border-color .2s}
+  .fixlink:hover{color:var(--acc);border-color:var(--acc)}
+  /* ---------- rate-the-match feedback (algorithm training signal) ---------- */
+  .rate{display:flex;align-items:center;gap:7px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}
+  .rate .rq{font-family:var(--mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim);margin-right:auto}
+  .rb{width:31px;height:26px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line2);
+    border-radius:8px;color:var(--dim);background:none;transition:color .18s,border-color .18s,background .18s}
+  .rb svg{width:15px;height:15px}
+  .rb:hover{border-color:var(--mut);color:var(--mut)}
+  .rb.up.on{color:#fff;background:var(--acc);border-color:transparent}
+  .rb.dn.on{color:#fff;background:var(--dim);border-color:transparent}
+  .rate .thx{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc)}
+
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
   /* ============ real phone: drop the frame, fill the screen ============ */
@@ -349,6 +368,7 @@
         <div class="labgrid" id="labGrid"></div>
       </details>
       <p class="foot" id="foot"></p>
+      <button class="suggest" type="button" data-suggest id="suggestBtn"></button>
     </div>
 
     <div class="homebar" aria-hidden="true"><i></i></div>
@@ -459,6 +479,12 @@ const T = {
   q70:{en:'Strong echo',es:'Eco fuerte',pt:'Eco forte'},
   q55:{en:'Same wavelength',es:'Misma sintonía',pt:'Mesma sintonia'},
   q0:{en:'Distant cousin',es:'Pariente lejano',pt:'Parente distante'},
+  suggestCta:{en:'+ Suggest a title or fix a name',es:'+ Sugiere un título o corrige un nombre',pt:'+ Sugira um título ou corrija um nome'},
+  fixName:{en:'Wrong name? Suggest a fix',es:'¿Nombre incorrecto? Corrígelo',pt:'Nome errado? Corrija'},
+  rateQ:{en:'Good match?',es:'¿Buena coincidencia?',pt:'Boa combinação?'},
+  rateGood:{en:'Spot on',es:'Acertada',pt:'Certeira'},
+  rateBad:{en:'Off',es:'No',pt:'Não'},
+  rateThx:{en:'Thanks — noted',es:'Gracias — anotado',pt:'Obrigado — anotado'},
   foot:{en:'<b>Muse</b> is a working prototype: a hand-curated offline dataset of <b>{n} works</b> and 18 similarity algorithms running fully in your browser — nothing leaves this page. The production version plugs the same engine into live catalogs (TMDB, Open Library, Spotify, IGDB…).',
         es:'<b>Muse</b> es un prototipo funcional: un dataset curado de <b>{n} obras</b> y 18 algoritmos de similitud corriendo por completo en tu navegador; nada sale de esta página. La versión final conecta el mismo motor a catálogos en vivo (TMDB, Open Library, Spotify, IGDB…).',
         pt:'<b>Muse</b> é um protótipo funcional: um dataset curado de <b>{n} obras</b> e 18 algoritmos de similaridade rodando inteiramente no seu navegador — nada sai desta página. A versão final liga o mesmo motor a catálogos ao vivo (TMDB, Open Library, Spotify, IGDB…).'},
@@ -729,13 +755,15 @@ function indexData(){
   dataOK = D && typeof D==='object';
   if(dataOK){
     CAT_ORDER.forEach(k=>(D[k]||[]).forEach(it=>{
-      it._cat=k; it._keys=[norm(it.t)].concat((it.alt||[]).map(norm)).filter(Boolean);
+      it._cat=k; it._keys=[norm(it.t)].concat((it.alt||[]).map(norm)).concat(it.tl?['en','es','pt'].map(l=>norm(it.tl[l]||'')):[]).filter(Boolean);
       byId[it.id]=it; ALL.push(it);
     }));
     buildIDF(ALL);
   }
 }
 const tr=(o,vars)=>{ let s=(o&&(o[state.lang]||o.en))||''; if(vars) Object.keys(vars).forEach(k=>{ s=s.split('{'+k+'}').join(vars[k]); }); return s; };
+// localized title: show the title in the current UI language, falling back to the base title
+const TT=it=>(it&&it.tl&&it.tl[state.lang])||(it&&it.t)||'';
 const themeLabel=t=>{ const m=THEME_I18N[t]; const s=(state.lang!=='en'&&m)?m[state.lang]:t.replace(/-/g,' '); return s; };
 const qual=p=>tr(p>=85?T.q85:p>=70?T.q70:p>=55?T.q55:T.q0);
 
@@ -799,6 +827,7 @@ function renderChrome(){
   $('dice').innerHTML=DICE_SVG+'<span>'+tr(T.surprise)+'</span>';
   $('q').placeholder=tr(T.ph,{u:tr(CATS[state.cat].unit)});
   $('foot').innerHTML=tr(T.foot,{n:ALL.length});
+  { const sb=$('suggestBtn'); if(sb) sb.textContent=tr(T.suggestCta); }
   $('labTitle').textContent=tr(T.lab,{cat:tr(CATS[state.cat].name)});
   $('langs').innerHTML=['en','es','pt'].map(l=>'<button data-lang="'+l+'" class="'+(l===state.lang?'on':'')+'">'+l.toUpperCase()+'</button>').join('');
   $('cats').innerHTML=CAT_ORDER.map(k=>{ const c=CATS[k];
@@ -808,7 +837,7 @@ function renderChrome(){
     return '<div class="alg"><div class="nm"><span>'+esc(nm)+'</span><span class="w">'+Math.round(w*100)+'% '+tr(T.weight)+'</span></div><div class="ds">'+esc(tr(ALGO_DESCS[id]))+'</div></div>'; }).join('');
 }
 function suggCards(items){ return '<div class="sugg">'+items.map(it=>
-  '<button class="sg" data-sel="'+esc(it.id)+'">'+tile(it)+'<span class="t">'+esc(it.t)+'</span><span class="y">'+(it.y||esc((it.x&&it.x.reg)||it.c||''))+'</span></button>').join('')+'</div>'; }
+  '<button class="sg" data-sel="'+esc(it.id)+'">'+tile(it)+'<span class="t">'+esc(TT(it))+'</span><span class="y">'+(it.y||esc((it.x&&it.x.reg)||it.c||''))+'</span></button>').join('')+'</div>'; }
 function renderEmpty(){
   const fan=['movies','music','books','travel'].map(k=>'<i style="background:'+CATS[k].acc+'"></i>').join('');
   const grid=CAT_ORDER.map(k=>{ const c=CATS[k];
@@ -820,14 +849,35 @@ function renderEmpty(){
     '<div class="browse"><div class="browse-l">'+esc(tr(T.browseLabel))+'</div><div class="cgrid">'+grid+'</div></div>'+
     '<div class="home-stats">'+tr(T.stats,{n:ALL.length})+'</div>';
 }
+/* ===== rate-the-match feedback: the training signal for re-fitting the algorithm weights ===== */
+const RATING_ENDPOINT='';   // set to a Supabase REST insert URL to aggregate ratings across all users
+let rateCtx={};             // matchId -> {pct, parts} stashed at render so a rating can log WHY the pick was made
+const CHK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+const XX_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+function getSid(){ let s; try{ s=localStorage.getItem('muse-sid'); if(!s){ s='s'+Math.random().toString(36).slice(2,10)+Date.now().toString(36); localStorage.setItem('muse-sid',s); } }catch(e){ s='anon'; } return s; }
+function loadRatings(){ try{ return JSON.parse(localStorage.getItem('muse-ratings')||'[]'); }catch(e){ return []; } }
+function ratingOf(src,match){ const r=loadRatings().find(x=>x.k===src+'|'+match); return r?r.r:0; }
+function recordRating(mid,val){
+  const src=state.sel, cat=state.cat, ctx=rateCtx[mid]||{};
+  const key=src+'|'+mid; let arr=loadRatings().filter(x=>x.k!==key);
+  if(val!==0){ arr.push({k:key,src:src,match:mid,cat:cat,pct:ctx.pct,parts:ctx.parts||{},r:val,lang:state.lang,sid:getSid(),ts:Date.now()}); }
+  try{ localStorage.setItem('muse-ratings',JSON.stringify(arr.slice(-800))); }catch(e){}
+  if(RATING_ENDPOINT && val!==0){ try{ fetch(RATING_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(arr[arr.length-1])}).catch(()=>{}); }catch(e){} }
+}
+function rateRow(mid){ const r=ratingOf(state.sel,mid);
+  return '<div class="rate"><span class="rq">'+esc(tr(T.rateQ))+'</span>'+
+    '<button class="rb up'+(r===1?' on':'')+'" type="button" data-rate="1" data-mid="'+esc(mid)+'" aria-label="'+esc(tr(T.rateGood))+'">'+CHK_SVG+'</button>'+
+    '<button class="rb dn'+(r===-1?' on':'')+'" type="button" data-rate="-1" data-mid="'+esc(mid)+'" aria-label="'+esc(tr(T.rateBad))+'">'+XX_SVG+'</button></div>';
+}
 function matchCard(src,m,i){
   const open=state.open===m.it.id;
+  rateCtx[m.it.id]={pct:m.s.pct,parts:m.s.parts};
   const algos=CATALGOS[state.cat].map(([id])=>({id, nm:id==='craft'?tr(CRAFT_NAMES[state.cat]):tr(ALGO_NAMES[id]), v:Math.round((m.s.parts[id]||0)*100)}));
   const top2=algos.slice().sort((a,b)=>b.v-a.v).slice(0,2);
   const why='<div class="why">'+esc(whyText(src,m.it,state.cat,m.s.parts))+'</div>';
-  const head='<div class="mhead">'+tile(m.it)+'<div class="info"><div class="rank">#'+(i+1)+' · <span class="quality">'+esc(qual(m.s.pct))+'</span></div><div class="nm">'+esc(m.it.t)+'</div><div class="by">'+metaLine(m.it)+'</div></div>'+ring(m.s.pct)+'</div>';
+  const head='<div class="mhead">'+tile(m.it)+'<div class="info"><div class="rank">#'+(i+1)+' · <span class="quality">'+esc(qual(m.s.pct))+'</span></div><div class="nm">'+esc(TT(m.it))+'</div><div class="by">'+metaLine(m.it)+'</div></div>'+ring(m.s.pct)+'</div>';
   if(!open){
-    return '<article class="match" data-mid="'+esc(m.it.id)+'">'+head+why+'<div class="bars">'+top2.map(a=>bar(a.nm,a.v)).join('')+'</div><div class="more">'+tr(T.expand)+' ↓</div></article>';
+    return '<article class="match" data-mid="'+esc(m.it.id)+'">'+head+why+'<div class="bars">'+top2.map(a=>bar(a.nm,a.v)).join('')+'</div>'+rateRow(m.it.id)+'<div class="more">'+tr(T.expand)+' ↓</div></article>';
   }
   const shared=(src.th||[]).filter(t=>(m.it.th||[]).includes(t));
   const chips=shared.length?'<div><div class="rank" style="margin:10px 0 7px">'+tr(T.sharedThemes).toUpperCase()+'</div><div class="chips">'+shared.map(t=>'<span class="chip th">'+esc(themeLabel(t))+'</span>').join('')+'</div></div>':'';
@@ -837,7 +887,7 @@ function matchCard(src,m,i){
     '<button class="more" data-sel="'+esc(m.it.id)+'">'+tr(T.exploreFrom)+'</button></div>'+
     '<div class="radarbox"><span class="cap">'+tr(T.dnaCap)+'</span>'+radar(src.dna||[50,50,50,50,50,50,50,50],m.it.dna||[50,50,50,50,50,50,50,50])+
     '<div class="legend"><span><i style="background:rgba(255,255,255,.45)"></i>'+tr(T.srcLegend)+'</span><span><i style="background:var(--acc)"></i>'+tr(T.matchLegend)+'</span></div></div></div>'+
-    '<div class="more">'+tr(T.collapse)+' ↑</div></article>';
+    rateRow(m.it.id)+'<div class="more">'+tr(T.collapse)+' ↑</div></article>';
 }
 /* food pairing: complementary dish, not a lookalike — same cuisine, contrasting flavour/course */
 function pairScore(a,b){
@@ -864,24 +914,27 @@ function renderResults(){
   const beyond=CAT_ORDER.filter(k=>k!==cat).map(k=>{
     let best=null,bp=-1; (D[k]||[]).forEach(it=>{ const p=crossScore(src,it); if(p>bp){bp=p;best=it;} });
     return best?{cat:k,it:best,pct:bp}:null; }).filter(Boolean);
-  const srcCard='<section class="source"><div class="shead">'+tile(src)+'<div class="stitle"><div class="kicker">'+tr(T.kicker)+' · '+esc(tr(CATS[cat].name)).toUpperCase()+'</div><h2>'+esc(src.t)+'</h2><div class="meta">'+metaLine(src)+'</div></div></div>'+
+  const srcCard='<section class="source"><div class="shead">'+tile(src)+'<div class="stitle"><div class="kicker">'+tr(T.kicker)+' · '+esc(tr(CATS[cat].name)).toUpperCase()+'</div><h2>'+esc(TT(src))+'</h2><div class="meta">'+metaLine(src)+'</div></div></div>'+
     '<div class="chips">'+(src.g||[]).map(g=>'<span class="chip">'+esc(g)+'</span>').join('')+(src.th||[]).slice(0,4).map(t=>'<span class="chip th">'+esc(themeLabel(t))+'</span>').join('')+'</div>'+
     '<p class="desc">'+esc((src.d&&(src.d[state.lang]||src.d.en))||'')+'</p>'+
-    '<div class="meters">'+meter(tr(T.pop),src.pop)+meter(tr(T.acc),src.acc)+meter(tr(T.main),src.main)+'</div></section>';
+    '<div class="meters">'+meter(tr(T.pop),src.pop)+meter(tr(T.acc),src.acc)+meter(tr(T.main),src.main)+'</div><span class="fixlink" data-fix="'+esc(src.id)+'">'+esc(tr(T.fixName))+'</span></section>';
   const list='<div class="sechead"><h3>'+tr(T.topMatches)+'</h3><span class="sub">'+tr(T.topSub)+'</span></div><div class="grid">'+matches.map((m,i)=>matchCard(src,m,i)).join('')+'</div>';
   const bey='<div class="sechead"><h3>'+esc(tr(T.beyond))+'</h3><span class="sub">'+tr(T.beyondSub)+'</span></div><div class="beyond">'+beyond.map(b=>{
     const c=CATS[b.cat];
-    return '<div class="bx" data-sel="'+esc(b.it.id)+'" style="--acc:'+c.acc+'"><div class="cathead" style="color:'+c.acc+'">'+(CAT_ICON[b.cat]||'')+esc(tr(c.name))+'</div><div class="row">'+tile(b.it)+'<div><div class="nm">'+esc(b.it.t)+'</div><div class="subby">'+esc(b.it.by||'')+'</div></div><span class="pc" style="color:'+c.acc+'">'+b.pct+'</span></div><div class="why">'+esc(whyCross(src,b.it))+'</div></div>'; }).join('')+'</div>';
+    return '<div class="bx" data-sel="'+esc(b.it.id)+'" style="--acc:'+c.acc+'"><div class="cathead" style="color:'+c.acc+'">'+(CAT_ICON[b.cat]||'')+esc(tr(c.name))+'</div><div class="row">'+tile(b.it)+'<div><div class="nm">'+esc(TT(b.it))+'</div><div class="subby">'+esc(b.it.by||'')+'</div></div><span class="pc" style="color:'+c.acc+'">'+b.pct+'</span></div><div class="why">'+esc(whyCross(src,b.it))+'</div></div>'; }).join('')+'</div>';
   let pairs='';
   if(cat==='food'){
     const isBev=it=>(it.g||[]).includes('beverage'), srcBev=isBev(src), allf=(D.food||[]).filter(x=>x.id!==src.id);
     let pl;
     if(srcBev){ pl=allf.filter(x=>!isBev(x)).map(it=>({it,p:pairScore(src,it)})).filter(x=>x.p>=25).sort((a,b)=>b.p-a.p).slice(0,6); }
-    else { const bevs=allf.filter(isBev).map(it=>({it,p:pairScore(src,it)})).sort((a,b)=>b.p-a.p).slice(0,3);
-      const dishes=allf.filter(x=>!isBev(x)).map(it=>({it,p:pairScore(src,it)})).filter(x=>x.p>=28).sort((a,b)=>b.p-a.p).slice(0,3);
-      pl=bevs.concat(dishes); }
+    else { const ALC=new Set(['beer','wine','cocktail','spirit']); const isAlc=it=>(it.g||[]).some(g=>ALC.has(g));
+      const bev=allf.filter(isBev).map(it=>({it,p:pairScore(src,it)}));
+      const alc=bev.filter(x=>isAlc(x.it)).sort((a,b)=>b.p-a.p).slice(0,3);        // alcoholic drinks first
+      const soft=bev.filter(x=>!isAlc(x.it)).sort((a,b)=>b.p-a.p).slice(0,2);       // then the others (non-alcoholic)
+      const dishes=allf.filter(x=>!isBev(x)).map(it=>({it,p:pairScore(src,it)})).filter(x=>x.p>=28).sort((a,b)=>b.p-a.p).slice(0,2);
+      pl=alc.concat(soft).concat(dishes); }
     if(pl.length) pairs='<div class="sechead"><h3>'+esc(tr({en:'Perfect pairings',es:'Maridajes perfectos',pt:'Harmonizações perfeitas'}))+'</h3><span class="sub">'+esc(tr({en:'drinks & dishes that complete the meal',es:'bebidas y platos que completan la comida',pt:'bebidas e pratos que completam a refeição'}))+'</span></div><div class="beyond">'+
-      pl.map(x=>'<div class="bx" data-sel="'+esc(x.it.id)+'" style="--acc:'+CATS.food.acc+'"><div class="cathead" style="color:'+CATS.food.acc+'">'+(CAT_ICON.food||'')+esc(((x.it.x&&x.it.x.reg)||x.it.c||'dish'))+'</div><div class="row">'+tile(x.it)+'<div><div class="nm">'+esc(x.it.t)+'</div></div><span class="pc" style="color:'+CATS.food.acc+'">'+x.p+'</span></div></div>').join('')+'</div>';
+      pl.map(x=>'<div class="bx" data-sel="'+esc(x.it.id)+'" style="--acc:'+CATS.food.acc+'"><div class="cathead" style="color:'+CATS.food.acc+'">'+(CAT_ICON.food||'')+esc(((x.it.x&&x.it.x.reg)||x.it.c||'dish'))+'</div><div class="row">'+tile(x.it)+'<div><div class="nm">'+esc(TT(x.it))+'</div></div><span class="pc" style="color:'+CATS.food.acc+'">'+x.p+'</span></div></div>').join('')+'</div>';
   }
   $('out').innerHTML=srcCard+pairs+bey+list;
   animateFills($('out'));
@@ -932,7 +985,7 @@ function renderAC(){
 }
 function acOpt(it,i){
   const c=CATS[it._cat]; const h=(it.hue==null?222:it.hue)%360;
-  return '<div class="opt'+(i===acIdx?' sel':'')+'" data-i="'+i+'"><span class="mini" style="--h:'+h+'">'+monogram(it)+'</span><span class="nm">'+esc(it.t)+(it.y?' <span class="yr">'+it.y+'</span>':'')+'</span><span class="ct">'+(CAT_ICON[it._cat]||'')+esc(tr(c.name))+'</span></div>';
+  return '<div class="opt'+(i===acIdx?' sel':'')+'" data-i="'+i+'"><span class="mini" style="--h:'+h+'">'+monogram(it)+'</span><span class="nm">'+esc(TT(it))+(it.y?' <span class="yr">'+it.y+'</span>':'')+'</span><span class="ct">'+(CAT_ICON[it._cat]||'')+esc(tr(c.name))+'</span></div>';
 }
 function hideAC(){ $('ac').hidden=true; acItems=[]; acIdx=-1; }
 function pick(i){ if(i<0||i>=acItems.length) return; select(acItems[i].it.id,true); }
@@ -951,10 +1004,29 @@ function surprise(){
 }
 
 /* ================= events ================= */
+const REPO='https://github.com/jorquesa-hue/muse';
+// community curation: open a pre-filled GitHub issue (user reviews + submits it themselves)
+function openSuggest(itemId){
+  let title, body;
+  if(itemId && byId[itemId]){ const it=byId[itemId];
+    title='[Fix] '+it.t;
+    body='Item: '+it.t+' (id: '+it.id+', '+it._cat+')\n\nWhat is wrong? (localized title / cover / genre / data)\n\nCorrect titles —\nEN: \nES: \nPT: \n\nNotes:\n';
+  } else {
+    title='[Suggestion] ';
+    body='Type (movie / tv / book / music / game / anime / food / travel):\nTitle:\nWhy it belongs / what to fix:\n\nIf a title shows the wrong name, add the correct names —\nEN: \nES: \nPT: \n';
+  }
+  const url=REPO+'/issues/new?labels=data-suggestion&title='+encodeURIComponent(title)+'&body='+encodeURIComponent(body);
+  window.open(url,'_blank','noopener,noreferrer');
+}
 document.addEventListener('click',e=>{
   const lb=e.target.closest('[data-lang]');
   if(lb){ state.lang=lb.dataset.lang; try{localStorage.setItem('vibra-lang',state.lang);}catch(err){} renderAll(); return; }
   if(e.target.closest('[data-home]')){ state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; if(window.scrollTo) window.scrollTo(0,0); return; }
+  const fx=e.target.closest('[data-fix]'); if(fx){ openSuggest(fx.getAttribute('data-fix')); return; }
+  if(e.target.closest('[data-suggest]')){ openSuggest(null); return; }
+  const rb=e.target.closest('[data-rate]');
+  if(rb){ const mid=rb.getAttribute('data-mid'); const cur=ratingOf(state.sel,mid); const val=+rb.getAttribute('data-rate'); const nv=(cur===val?0:val);
+    recordRating(mid,nv); const grp=rb.parentNode; grp.querySelectorAll('.rb').forEach(b=>b.classList.toggle('on', nv!==0 && +b.getAttribute('data-rate')===nv)); return; }
   const cb=e.target.closest('[data-cat]');
   if(cb){ state.cat=cb.dataset.cat; state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); const qi=$('q'); if(qi&&qi.focus) qi.focus(); return; }
   const sb=e.target.closest('[data-sel]');
