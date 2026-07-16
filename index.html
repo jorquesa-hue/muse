@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f6f4">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0c0e"><link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -56,7 +56,7 @@
     --frame:linear-gradient(150deg,#e6e6e3,#b9b9b4 60%,#d2d2ce);
   }
 
-  html,body{margin:0;padding:0}
+  html,body{margin:0;padding:0;overscroll-behavior-y:none}
   body{background:var(--stage);color:var(--ink);font-family:var(--sans);
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
     min-height:100vh;display:flex;align-items:center;justify-content:center;padding:26px 16px}
@@ -301,6 +301,12 @@
   .rb.up.on{color:#fff;background:var(--acc);border-color:transparent}
   .rb.dn.on{color:#fff;background:var(--dim);border-color:transparent}
   .rate .thx{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc)}
+  /* live "find anything" fallback */
+  .ac .opt.liveopt{border-top:1px solid var(--line);color:var(--acc)}
+  .ac .opt.liveopt .mini{background:color-mix(in srgb,var(--acc) 16%,transparent);color:var(--acc)}
+  .ac .opt.liveopt .nm{font-weight:500}
+  .livewait{padding:40px 20px;text-align:center;color:var(--mut);font-family:var(--mono);font-size:11px;letter-spacing:.04em;line-height:1.7}
+  .livetag{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 45%,var(--line2));border-radius:5px;padding:2px 5px;margin-left:7px;vertical-align:middle}
 
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
@@ -308,12 +314,12 @@
   @media (max-width:560px){
     body{padding:0;display:block;background:var(--bg)}
     .device{width:100%;max-width:100%;padding:0;border-radius:0;box-shadow:none;background:var(--bg)}
-    /* Android fix: scroll the DOCUMENT, not a nested overflow region.
-       A clipped (overflow:hidden) fixed-height .screen wrapping an inner scroll
-       area + a position:sticky header tears on repaint when the soft keyboard
-       opens/closes during search. Letting the page itself scroll (sticky topbar
-       pinned to the real viewport) is the robust mobile pattern. */
-    .screen{display:block;height:auto;min-height:100dvh;overflow:visible;border-radius:0}
+    /* Android fix: scroll the DOCUMENT, not a nested overflow region, and keep the
+       height STABLE. A clipped fixed-height .screen + inner scroll + sticky header
+       tears on keyboard-open; a dynamic (dvh) height + overscroll then makes the
+       home screen "tilt". So: document scroll + 100svh (stable, address-bar-proof)
+       + overscroll-behavior:none (see html,body) + no interactive-widget reflow. */
+    .screen{display:block;height:auto;min-height:100vh;min-height:100svh;overflow:visible;border-radius:0}
     .appscroll{flex:none;overflow:visible;-webkit-overflow-scrolling:auto;
       padding-bottom:calc(env(safe-area-inset-bottom) + 10px)}
     .topbar{padding-top:calc(12px + env(safe-area-inset-top))}
@@ -485,6 +491,10 @@ const T = {
   rateGood:{en:'Spot on',es:'Acertada',pt:'Certeira'},
   rateBad:{en:'Off',es:'No',pt:'Não'},
   rateThx:{en:'Thanks — noted',es:'Gracias — anotado',pt:'Obrigado — anotado'},
+  searchWeb:{en:'Search the web for “{q}”',es:'Buscar “{q}” en la web',pt:'Buscar “{q}” na web'},
+  searching:{en:'Searching the web for “{q}” …',es:'Buscando “{q}” en la web …',pt:'Buscando “{q}” na web …'},
+  noWebResult:{en:'Couldn’t find “{q}”. Try another title.',es:'No se encontró “{q}”. Prueba otro título.',pt:'Não encontrei “{q}”. Tente outro título.'},
+  liveTag:{en:'found live',es:'en vivo',pt:'ao vivo'},
   foot:{en:'<b>Muse</b> is a working prototype: a hand-curated offline dataset of <b>{n} works</b> and 18 similarity algorithms running fully in your browser — nothing leaves this page. The production version plugs the same engine into live catalogs (TMDB, Open Library, Spotify, IGDB…).',
         es:'<b>Muse</b> es un prototipo funcional: un dataset curado de <b>{n} obras</b> y 18 algoritmos de similitud corriendo por completo en tu navegador; nada sale de esta página. La versión final conecta el mismo motor a catálogos en vivo (TMDB, Open Library, Spotify, IGDB…).',
         pt:'<b>Muse</b> é um protótipo funcional: um dataset curado de <b>{n} obras</b> e 18 algoritmos de similaridade rodando inteiramente no seu navegador — nada sai desta página. A versão final liga o mesmo motor a catálogos ao vivo (TMDB, Open Library, Spotify, IGDB…).'},
@@ -851,6 +861,7 @@ function renderEmpty(){
 }
 /* ===== rate-the-match feedback: the training signal for re-fitting the algorithm weights ===== */
 const RATING_ENDPOINT='https://esviqajfbkdnpoohjpjt.supabase.co/rest/v1/ratings';
+const SEARCH_ENDPOINT='https://esviqajfbkdnpoohjpjt.supabase.co/rest/v1/searches';  // live "misses" logged here → a daily job folds them into the catalog
 const RATING_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdmlxYWpmYmtkbnBvb2hqcGp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NzM1NzgsImV4cCI6MjA5OTQ0OTU3OH0.0C0oBrs0OjrcvxNdDVXeBtBs8KTVmgviGJkWffkFKj4';  // anon key — public by design; RLS is insert-only
 let rateCtx={};             // matchId -> {pct, parts} stashed at render so a rating can log WHY the pick was made
 const CHK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -976,15 +987,16 @@ function suggScore(qq,it){
 }
 function suggest(qq){
   qq=norm(qq); if(!qq) return {list:[]};
-  const scored=ALL.map(it=>({it,s:suggScore(qq,it)+(it._cat===state.cat?12:0)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+  const scored=ALL.map(it=>{ const b=suggScore(qq,it); return {it, s: b>0 ? b+(it._cat===state.cat?12:0) : 0}; }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);  // only lift genuine matches; a 0-score item must NOT pass via the same-cat bonus
   return { list:scored.slice(0,9) };   // globally ranked; a strong exact/prefix match wins over a weak same-category one
 }
 function renderAC(){
-  const el=$('ac'); const v=$('q').value;
-  if(!v.trim()){ el.hidden=true; acItems=[]; return; }
+  const el=$('ac'); const v=$('q').value; const q=v.trim();
+  if(!q){ el.hidden=true; acItems=[]; return; }
   const {list}=suggest(v); acItems=list; acIdx=acItems.length?0:-1;
-  if(!acItems.length){ el.innerHTML='<div class="grp" style="padding-bottom:12px">'+tr(T.notFound)+'</div>'; el.hidden=false; return; }
-  el.innerHTML=list.map((x,i)=>acOpt(x.it,i)).join('');
+  const mag='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>';
+  const liveRow='<div class="opt liveopt" data-live="1"><span class="mini">'+mag+'</span><span class="nm">'+esc(tr(T.searchWeb,{q:q}))+'</span></div>';
+  el.innerHTML=list.map((x,i)=>acOpt(x.it,i)).join('')+liveRow;  // always offer a live "find anything" search
   el.hidden=false;
 }
 function acOpt(it,i){
@@ -1022,6 +1034,55 @@ function openSuggest(itemId){
   const url=REPO+'/issues/new?labels=data-suggestion&title='+encodeURIComponent(title)+'&body='+encodeURIComponent(body);
   window.open(url,'_blank','noopener,noreferrer');
 }
+/* ================= live "find anything" fallback (keyless: Wikipedia + Wikidata) ================= */
+const WIKI_API='https://en.wikipedia.org/w/api.php';
+const LIVE_HINT={movies:'film',tv:'television series',books:'novel',music:'music album',games:'video game',anime:'anime',food:'dish',travel:'city'};
+const LIVE_GEN=[[/science fiction|sci-fi|sci fi/,'sci-fi'],[/fantasy/,'fantasy'],[/horror/,'horror'],[/thriller|suspense/,'thriller'],[/sitcom|comed/,'comedy'],[/roman[ct]/,'romance'],[/action/,'action'],[/adventure/,'adventure'],[/drama/,'drama'],[/crime|detective|noir|gangster/,'crime'],[/myster/,'mystery'],[/documentary/,'documentary'],[/animat/,'animation'],[/\bwar\b/,'war'],[/western/,'western'],[/musical/,'musical'],[/histor|period piece/,'historical'],[/role-playing|rpg/,'rpg'],[/shooter|first-person/,'shooter'],[/platform/,'platformer'],[/strategy/,'strategy'],[/puzzle/,'puzzle'],[/fighting/,'fighting'],[/racing/,'racing'],[/simulation|life sim/,'simulation'],[/\brock\b/,'rock'],[/\bpop\b/,'pop'],[/hip hop|hip-hop|\brap\b/,'hip-hop'],[/electronic|techno|house|edm/,'electronic'],[/jazz/,'jazz'],[/metal/,'metal'],[/\bfolk\b/,'folk'],[/soul|r&b|rhythm and blues/,'soul'],[/classical|orchestr|symphon/,'classical'],[/reggae/,'reggae'],[/punk/,'punk'],[/blues/,'blues'],[/\bcountry\b/,'country'],[/sh[oō]nen/,'shonen-action'],[/seinen/,'seinen'],[/slice of life/,'slice-of-life'],[/mecha/,'mecha'],[/psychological/,'psychological'],[/sport/,'sports']];
+const GDNA={'drama':[55,55,60,20,40,45,52,25],'comedy':[20,35,40,90,60,30,78,30],'crime':[70,66,55,20,60,45,25,30],'thriller':[66,82,55,15,80,45,25,35],'sci-fi':[55,55,80,25,58,66,30,66],'fantasy':[40,52,52,35,55,82,52,60],'horror':[85,82,45,10,55,40,15,66],'animation':[24,42,45,66,60,52,78,42],'action':[50,82,35,25,86,60,35,25],'romance':[25,42,35,45,45,32,86,20],'mystery':[55,56,72,25,55,36,30,32],'historical':[56,54,60,22,42,66,46,22],'adventure':[40,62,40,35,76,72,52,30],'war':[80,82,55,10,66,76,25,25],'western':[56,62,45,25,50,56,40,26],'musical':[24,46,36,56,66,52,82,30],'documentary':[45,36,82,25,36,46,46,24],'rpg':[50,55,65,25,45,80,50,40],'shooter':[60,85,35,20,90,55,25,30],'platformer':[30,55,35,45,82,45,62,35],'strategy':[45,50,82,20,35,60,35,30],'puzzle':[30,40,82,35,50,30,50,45],'fighting':[55,80,30,30,92,50,30,35],'racing':[35,72,25,30,95,45,40,25],'simulation':[35,35,60,35,30,45,55,42],'rock':[50,65,40,30,70,55,45,35],'pop':[25,45,30,45,72,40,72,25],'hip-hop':[55,70,55,40,75,50,40,40],'electronic':[45,60,55,25,78,55,35,58],'jazz':[45,40,75,35,45,45,62,45],'metal':[85,90,45,15,82,65,15,50],'folk':[42,35,55,35,35,40,72,30],'soul':[40,50,42,40,55,40,78,30],'classical':[45,45,82,20,40,78,55,35],'reggae':[25,42,40,50,55,35,80,35],'punk':[65,85,40,35,90,45,30,45],'blues':[60,50,50,30,45,35,58,30],'country':[40,40,35,42,50,40,72,20],'shonen-action':[45,75,40,45,82,65,45,45],'seinen':[65,60,72,25,50,55,35,50],'slice-of-life':[20,25,45,55,30,25,85,35],'mecha':[60,75,65,20,70,75,30,55],'psychological':[80,70,88,10,45,45,20,60],'sports':[30,65,40,45,80,55,60,25]};
+const GTH={'drama':['identity','loss'],'comedy':['joy','friendship'],'crime':['crime','justice'],'thriller':['mystery','survival'],'sci-fi':['technology','discovery'],'fantasy':['adventure','wonder'],'horror':['survival','isolation'],'animation':['family','wonder'],'action':['survival','power'],'romance':['love','romance'],'mystery':['mystery','crime'],'historical':['heritage','tradition'],'adventure':['adventure','journey'],'war':['war','survival'],'western':['freedom','justice'],'musical':['love','celebration'],'documentary':['discovery','nature'],'rpg':['journey','power'],'shooter':['survival','war'],'platformer':['adventure','joy'],'strategy':['power','ambition'],'puzzle':['discovery'],'fighting':['ambition','power'],'racing':['freedom','ambition'],'simulation':['craftsmanship'],'rock':['rebellion','freedom'],'pop':['love','joy'],'hip-hop':['identity','ambition'],'electronic':['escape','technology'],'jazz':['artistry','melancholy'],'metal':['chaos','rebellion'],'folk':['nostalgia','nature'],'soul':['love','melancholy'],'classical':['artistry','tradition'],'reggae':['freedom','community'],'punk':['rebellion','chaos'],'blues':['melancholy','loss'],'country':['nostalgia','heritage'],'shonen-action':['adventure','friendship'],'seinen':['identity','isolation'],'slice-of-life':['comfort','friendship'],'mecha':['war','technology'],'psychological':['identity','obsession'],'sports':['ambition','friendship']};
+const NOUN_L={tv:'series',books:'book',music:'album',games:'game',anime:'anime',food:'dish',travel:'destination'};
+let liveBusy=false;
+const slugL=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const hueL=s=>{let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return Math.abs(h);};
+const clL=v=>Math.max(0,Math.min(100,Math.round(v)));
+const jitL=(s,a)=>(s%(2*a+1))-a;
+async function jget(url){ try{ const r=await fetch(url); return r.ok?await r.json():null; }catch(e){ return null; } }
+function mapLiveGenres(labels){ const out=[]; const s=labels.join(' | ').toLowerCase(); for(const pair of LIVE_GEN){ if(pair[0].test(s)&&out.indexOf(pair[1])<0) out.push(pair[1]); if(out.length>=3) break; } return out; }
+function liveDna(keys,seed){ const acc=[0,0,0,0,0,0,0,0]; let n=0; for(const k of keys){ const b=GDNA[k]; if(b){ for(let i=0;i<8;i++) acc[i]+=b[i]; n++; } } if(!n){ const base=[45,50,52,40,50,52,55,42]; return base.map((v,i)=>clL(v+jitL(seed+i*7,8))); } return acc.map((v,i)=>clL(v/n+jitL(seed+i*7,6))); }
+function liveTh(keys){ const p=[]; for(const k of keys){ for(const t of (GTH[k]||[])){ if(p.indexOf(t)<0) p.push(t); } } return p.length?p.slice(0,4):['discovery']; }
+async function liveLookup(cat, query){
+  const s=await jget(WIKI_API+'?action=query&list=search&srnamespace=0&srlimit=1&format=json&origin=*&srsearch='+encodeURIComponent(query+' '+(LIVE_HINT[cat]||'')));
+  const hit=s&&s.query&&s.query.search&&s.query.search[0]; if(!hit) return null;
+  const pp=await jget(WIKI_API+'?action=query&prop=pageprops|pageimages&piprop=thumbnail&pithumbsize=440&redirects=1&format=json&origin=*&titles='+encodeURIComponent(hit.title));
+  const pages=pp&&pp.query&&pp.query.pages; const page=pages&&pages[Object.keys(pages)[0]];
+  const qid=page&&page.pageprops&&page.pageprops.wikibase_item;
+  const img=page&&page.thumbnail&&page.thumbnail.source||null;
+  let genres=[],year=null,creator='',country='',links=6,ptTitle='',esTitle='';
+  if(qid){
+    const Q='SELECT ?glabel ?year ?clabel ?colabel ?links ?ptlab ?eslab WHERE { wd:'+qid+' wikibase:sitelinks ?links. OPTIONAL{ wd:'+qid+' wdt:P136 ?g. ?g rdfs:label ?glabel. FILTER(LANG(?glabel)="en") } OPTIONAL{ wd:'+qid+' wdt:P577 ?d. BIND(YEAR(?d) AS ?year) } OPTIONAL{ wd:'+qid+' (wdt:P57|wdt:P50|wdt:P175|wdt:P178|wdt:P86) ?c. ?c rdfs:label ?clabel. FILTER(LANG(?clabel)="en") } OPTIONAL{ wd:'+qid+' (wdt:P495|wdt:P17) ?co. ?co rdfs:label ?colabel. FILTER(LANG(?colabel)="en") } OPTIONAL{ wd:'+qid+' rdfs:label ?ptlab. FILTER(LANG(?ptlab)="pt") } OPTIONAL{ wd:'+qid+' rdfs:label ?eslab. FILTER(LANG(?eslab)="es") } } LIMIT 30';
+    const wd=await jget('https://query.wikidata.org/sparql?format=json&query='+encodeURIComponent(Q));
+    const rows=(wd&&wd.results&&wd.results.bindings)||[];
+    for(const r of rows){ if(r.glabel&&genres.indexOf(r.glabel.value)<0) genres.push(r.glabel.value); if(r.year&&!year) year=parseInt(r.year.value,10); if(r.clabel&&!creator) creator=r.clabel.value; if(r.colabel&&!country) country=r.colabel.value; if(r.links&&r.links.value) links=parseInt(r.links.value,10); if(r.ptlab&&!ptTitle) ptTitle=r.ptlab.value; if(r.eslab&&!esTitle) esTitle=r.eslab.value; }
+  }
+  const t=hit.title.replace(/\s*\([^)]*\)\s*$/,'').trim(); if(!t) return null;
+  const keys=mapLiveGenres(genres); const seed=hueL(t); const gk=keys[0]||'drama';
+  const noun=NOUN_L[cat]||'film'; const dtxt=gk.charAt(0).toUpperCase()+gk.slice(1)+' '+noun+(year?' ('+year+')':'');
+  return { id:'live-'+cat+'-'+slugL(t), t:t, alt:[], y:year, by:creator, cast:[], g:(keys.length?keys:[gk]), th:liveTh(keys), dna:liveDna(keys,seed),
+    pop:clL(28+Math.round(Math.log10(links+1)*22)), acc:clL(60+jitL(seed,10)), main:clL(38+Math.round(Math.log10(links+1)*15)),
+    c:country, d:{en:dtxt,es:dtxt,pt:dtxt}, hue:seed, img:img, tl:{en:t,es:(esTitle||t),pt:(ptTitle||t)}, x:{}, _cat:cat, _live:true };
+}
+async function selectLive(cat, query){
+  query=(query||'').trim(); if(!query||liveBusy) return; liveBusy=true; hideAC();
+  { const o=$('out'); if(o){ o.innerHTML='<div class="livewait">'+esc(tr(T.searching,{q:query}))+'</div>'; if(o.scrollIntoView) o.scrollIntoView({behavior:'smooth',block:'center'}); } }
+  try{
+    const it=await liveLookup(cat,query);
+    if(it){ byId[it.id]=it;
+      if(SEARCH_ENDPOINT&&RATING_KEY){ try{ fetch(SEARCH_ENDPOINT,{method:'POST',headers:{apikey:RATING_KEY,Authorization:'Bearer '+RATING_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({cat:cat,title:it.t,item:it})}).catch(function(){}); }catch(e){} }
+      state.cat=cat; state.sel=it.id; state.open=null; $('q').value=it.t; renderAll(); const o=$('out'); if(o&&o.scrollIntoView) o.scrollIntoView({behavior:'smooth',block:'start'}); }
+    else { const o=$('out'); if(o) o.innerHTML='<div class="livewait">'+esc(tr(T.noWebResult,{q:query}))+'</div>'; }
+  }catch(err){ const o=$('out'); if(o) o.innerHTML='<div class="livewait">'+esc(tr(T.noWebResult,{q:query}))+'</div>'; }
+  liveBusy=false;
+}
 document.addEventListener('click',e=>{
   const lb=e.target.closest('[data-lang]');
   if(lb){ state.lang=lb.dataset.lang; try{localStorage.setItem('vibra-lang',state.lang);}catch(err){} renderAll(); return; }
@@ -1045,7 +1106,9 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('.searchbox')) hideAC();
 });
 $('ac').addEventListener('mousedown',e=>{
-  const o=e.target.closest('.opt'); if(o){ e.preventDefault(); pick(+o.dataset.i); }
+  const o=e.target.closest('.opt'); if(!o) return; e.preventDefault();
+  if(o.hasAttribute('data-live')){ selectLive(state.cat,$('q').value); return; }
+  pick(+o.dataset.i);
 });
 $('q').addEventListener('input',renderAC);
 $('q').addEventListener('focus',renderAC);
@@ -1056,7 +1119,7 @@ $('q').addEventListener('keydown',e=>{
     const el=$('ac'); el.querySelectorAll('.opt').forEach(o=>o.classList.toggle('sel',+o.dataset.i===acIdx));
   } else if(e.key==='Enter'){
     if(acItems.length) pick(Math.max(0,acIdx));
-    else { const {list}=suggest($('q').value); const first=list[0]; if(first) select(first.it.id,true); }
+    else selectLive(state.cat,$('q').value);   // nothing local → find it live
   } else if(e.key==='Escape'){ hideAC(); }
 });
 $('dice').addEventListener('click',surprise);
