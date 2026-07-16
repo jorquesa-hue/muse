@@ -120,6 +120,12 @@ const T = {
         es:'<b>Muse</b> es un prototipo funcional: un dataset curado de <b>{n} obras</b> y {a} algoritmos de similitud corriendo por completo en tu navegador; nada sale de esta página. La versión final conecta el mismo motor a catálogos en vivo (TMDB, Open Library, Spotify, IGDB…).',
         pt:'<b>Muse</b> é um protótipo funcional: um dataset curado de <b>{n} obras</b> e {a} algoritmos de similaridade rodando inteiramente no seu navegador — nada sai desta página. A versão final liga o mesmo motor a catálogos ao vivo (TMDB, Open Library, Spotify, IGDB…).'},
   dataMissing:{en:'Dataset not embedded yet — this is the empty shell build.',es:'Dataset aún no incrustado.',pt:'Dataset ainda não incorporado.'},
+  docTitle:{en:'Muse — taste engine',es:'Muse — motor de gustos',pt:'Muse — motor de gosto'},
+  ariaHome:{en:'Home',es:'Inicio',pt:'Início'},
+  ariaLang:{en:'Language',es:'Idioma',pt:'Idioma'},
+  ariaSearch:{en:'Search',es:'Buscar',pt:'Pesquisar'},
+  ariaSurprise:{en:'Surprise me',es:'Sorpréndeme',pt:'Surpreenda-me'},
+  ariaCategories:{en:'Categories',es:'Categorías',pt:'Categorias'},
 };
 
 const ALGO_NAMES = {
@@ -241,7 +247,12 @@ const REGIONS = {
 };
 
 /* ================= math & similarity ================= */
-const norm = s => String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+/* v2 §7.6: keep ALL Unicode letters/digits, not just a-z0-9 — the old ASCII-only keep-set mapped
+   every CJK/Cyrillic/Arabic/Hangul title (and alt) to '', so native-script searches always missed
+   local matches and fell through to the live "find anything" fallback, minting a duplicate of an
+   item already in the catalog. NFD+combining-mark-strip above still normalizes Latin diacritics
+   (café -> cafe) before this runs, so accented Latin behaves exactly as before. */
+const norm = s => String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\p{L}\p{N} ]+/gu,' ').replace(/\s+/g,' ').trim();
 const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 function cosSets(A,B){ if(!A||!B||!A.length||!B.length) return null;   // v2: null on missing (was 0)
   const sb=new Set(B); let inter=0; for(const x of A) if(sb.has(x)) inter++;
@@ -251,13 +262,28 @@ const isNum=v=>typeof v==='number'&&!Number.isNaN(v);
 const validVec=v=>Array.isArray(v)&&v.length===8&&v.every(isNum);
 /* skip-and-renormalize weighted blend of [value,weight] pairs; null sub-terms dropped */
 function blend(pairs){ let num=0,den=0; for(const p of pairs){ const v=p[0]; if(v!=null){ num+=v*p[1]; den+=p[1]; } } return den>0?num/den:null; }
-/* IDF weighting: sharing a rare tag ("cyberpunk") counts far more than a generic one ("drama") */
-const themeIDF={}, genreIDF={};
-function buildIDF(list){ const N=Math.max(1,list.length), FL=Math.max(5,Math.round(0.01*N)), td={}, gd={};  // v2: DF floor (~1% of N)
-  list.forEach(it=>{ Array.from(new Set(it.th||[])).forEach(t=>td[t]=(td[t]||0)+1);
-    Array.from(new Set(it.g||[])).forEach(g=>gd[g]=(gd[g]||0)+1); });
-  for(const t in td) themeIDF[t]=Math.log(N/Math.max(td[t],FL))+1;
-  for(const g in gd) genreIDF[g]=Math.log(N/Math.max(gd[g],FL))+1; }
+/* IDF weighting: sharing a rare tag ("cyberpunk") counts far more than a generic one ("drama").
+   Themes share one 48-term vocabulary across every category, so themeIDF stays a single global
+   table (floor ~10 — themes are few enough that only genuinely rare ones need clamping). Genres
+   are CATEGORY-LOCAL vocabularies (a movie's "noir" and a travel destination's tags share no
+   meaning) — genreIDF is keyed by category, each with a floor relative to THAT category's own
+   size, not the pooled 6258-item catalog. MEASURED: the old pooled floor (63, ~1% of N) capped
+   128/165 genres — anything with pooled df<63 — to the identical weight regardless of true
+   rarity (e.g. music-only "grunge", df=1, weighed the same as a tag 60x more common), defeating
+   the feature's whole purpose, worst in the smaller categories with the least other signal. */
+const themeIDF={}; let genreIDF={};
+function buildIDF(all){
+  const N=Math.max(1,all.length), themeFL=10, td={};
+  all.forEach(it=>Array.from(new Set(it.th||[])).forEach(t=>td[t]=(td[t]||0)+1));
+  for(const t in td) themeIDF[t]=Math.log(N/Math.max(td[t],themeFL))+1;
+  genreIDF={};
+  CAT_ORDER.forEach(cat=>{
+    const list=D[cat]||[], n=Math.max(1,list.length), fl=Math.max(3,Math.round(0.01*n)), gd={};
+    list.forEach(it=>Array.from(new Set(it.g||[])).forEach(g=>gd[g]=(gd[g]||0)+1));
+    const idf={}; for(const g in gd) idf[g]=Math.log(n/Math.max(gd[g],fl))+1;
+    genreIDF[cat]=idf;
+  });
+}
 function wCos(A,B,idf){ if(!A||!B||!A.length||!B.length) return null;   // v2: null on missing
   const w=t=>{ const v=idf[t]; return v?v*v:1; };
   let num=0,sa=0,sb=0; const setB=new Set(B);
@@ -316,7 +342,7 @@ const ALGO = {
   emb:(a,b)=>embSim(a,b),
   theme:(a,b)=>wCos(a.th,b.th,themeIDF),
   mood:(a,b,cat)=>dnaSim(a.dna,b.dna,cat),
-  genre:(a,b)=>wCos(a.g,b.g,genreIDF),
+  genre:(a,b,cat)=>wCos(a.g,b.g,genreIDF[cat]),
   craft:(a,b,cat)=>CRAFT_FN[cat]?CRAFT_FN[cat](a,b):null,
   creator:(a,b)=>creatorSim(a,b),
   era:(a,b,cat)=>eraSim(a.y,b.y,(CATS[cat]&&CATS[cat].sigma)||10),
@@ -429,10 +455,15 @@ const CROSS_MOOD_P80=0.56;
 /* v2 §7.4: MMR diversity re-rank. ranked=[{item,total,...}] sorted desc; ≤2 per creator. */
 function mmrRerank(ranked,cat,k=10,lambda=0.75){
   const pool=ranked.slice(0,30), selected=[], creator=Object.create(null);
+  // v2 §7.6: the diversity cap only makes sense where 'by' actually means creator/author/studio.
+  // In food/travel 'by' holds a cuisine or country (e.g. "italian cuisine", "spain") and creator
+  // isn't even a scored signal there — capping on it just starves the pool (MEASURED: "Loco moco"
+  // returned only 9 results because >2 "hawaiian cuisine" candidates got excluded).
+  const capOn=CATALGOS[cat].some(([id])=>id==='creator');
   const redundancy=(c,s)=>{ const e=embSim(c.item,s.item); return e==null?(dnaSim(c.item.dna,s.item.dna,cat)||0):e; };
   while(selected.length<k&&pool.length){ let best=-Infinity,bi=-1;
     for(let i=0;i<pool.length;i++){ const c=pool[i]; const by=(c.item.by||'').toLowerCase();
-      if(by&&(creator[by]||0)>=2) continue; let maxSim=0;
+      if(capOn&&by&&(creator[by]||0)>=2) continue; let maxSim=0;
       for(const s of selected){ const r=redundancy(c,s); if(r>maxSim) maxSim=r; }
       const mmr=lambda*c.total-(1-lambda)*maxSim; if(mmr>best){ best=mmr; bi=i; } }
     if(bi<0) break; const chosen=pool.splice(bi,1)[0]; const by=(chosen.item.by||'').toLowerCase();
@@ -517,14 +548,16 @@ function radar(dnaA,dnaB){
   const pt=(i,v)=>{ const ang=Math.PI*2*i/8-Math.PI/2, rr=R*v/100; return [(cx+rr*Math.cos(ang)),(cy+rr*Math.sin(ang))]; };
   const poly=d=>d.map((v,i)=>pt(i,v).map(n=>n.toFixed(1)).join(',')).join(' ');
   let s='<svg width="220" height="188" viewBox="0 0 220 188" aria-hidden="true">';
-  [25,50,75,100].forEach(v=>{ s+='<polygon points="'+poly([v,v,v,v,v,v,v,v])+'" fill="none" stroke="rgba(255,255,255,.06)"></polygon>'; });
-  for(let i=0;i<8;i++){ const p=pt(i,100); s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="rgba(255,255,255,.05)"></line>'; }
-  s+='<polygon points="'+poly(dnaA)+'" style="fill:rgba(255,255,255,.09);stroke:rgba(255,255,255,.45);stroke-width:1.3"></polygon>';
+  [25,50,75,100].forEach(v=>{ s+='<polygon points="'+poly([v,v,v,v,v,v,v,v])+'" fill="none" stroke="var(--line2)"></polygon>'; });
+  for(let i=0;i<8;i++){ const p=pt(i,100); s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="var(--line2)"></line>'; }
+  s+='<polygon points="'+poly(dnaA)+'" style="fill:color-mix(in srgb,var(--ink) 45%,transparent);stroke:color-mix(in srgb,var(--ink) 45%,transparent);stroke-width:1.3"></polygon>';
   s+='<polygon points="'+poly(dnaB)+'" style="fill:color-mix(in srgb,var(--acc) 20%,transparent);stroke:var(--acc);stroke-width:1.6"></polygon>';
   for(let i=0;i<8;i++){ const ang=Math.PI*2*i/8-Math.PI/2, lx=cx+R*1.24*Math.cos(ang), ly=cy+R*1.24*Math.sin(ang);
     const anchor=Math.cos(ang)>.35?'start':Math.cos(ang)<-.35?'end':'middle';
-    s+='<text x="'+lx.toFixed(1)+'" y="'+(ly+3.5).toFixed(1)+'" text-anchor="'+anchor+'" font-size="9.5" letter-spacing=".08em" fill="rgba(255,255,255,.4)">'+esc(tr(DNA_AX[i]).toUpperCase())+'</text>'; }
-  return s+'</svg>';
+    s+='<text x="'+lx.toFixed(1)+'" y="'+(ly+3.5).toFixed(1)+'" text-anchor="'+anchor+'" font-size="9.5" letter-spacing=".08em" fill="var(--mut)">'+esc(tr(DNA_AX[i]).toUpperCase())+'</text>'; }
+  s+='</svg>';
+  const vh='<p class="vh">'+esc(tr(T.dnaCap))+': '+DNA_AX.map((ax,i)=>esc(tr(ax))+' — '+tr(T.srcLegend)+' '+Math.round(dnaA[i])+', '+tr(T.matchLegend)+' '+Math.round(dnaB[i])).join('; ')+'.</p>';
+  return s+vh;
 }
 function metaLine(it){
   const bits=[]; if(it.y) bits.push(esc(String(it.y)));
@@ -562,6 +595,13 @@ function setAccent(){ document.documentElement.style.setProperty('--acc',CATS[st
 function animateFills(root){ requestAnimationFrame(()=>{ requestAnimationFrame(()=>{
   root.querySelectorAll('.fill[data-w]').forEach(f=>{ f.style.width=f.dataset.w+'%'; }); }); }); }
 function renderChrome(){
+  document.documentElement.lang=state.lang==='pt'?'pt-BR':state.lang;
+  document.title=tr(T.docTitle);
+  { const home=document.querySelector('[data-home]'); if(home) home.setAttribute('aria-label',tr(T.ariaHome)); }
+  { const langs=$('langs'); if(langs) langs.setAttribute('aria-label',tr(T.ariaLang)); }
+  $('q').setAttribute('aria-label',tr(T.ariaSearch));
+  $('dice').setAttribute('aria-label',tr(T.ariaSurprise));
+  { const cats=$('cats'); if(cats) cats.setAttribute('aria-label',tr(T.ariaCategories)); }
   $('protoTag').textContent=tr(T.proto);
   $('tagline').innerHTML=tr(T.tagline);
   $('stats').innerHTML=tr(T.stats,{n:ALL.length,a:activeAlgoRows(state.cat).length});
@@ -622,9 +662,10 @@ function matchCard(src,m,i){
   const algos=CATALGOS[state.cat].filter(([id])=>m.s.parts[id]!=null).map(([id])=>({id, nm:id==='craft'?tr(CRAFT_NAMES[state.cat]):tr(ALGO_NAMES[id]), v:Math.round(m.s.parts[id]*100)}));
   const top2=algos.slice().sort((a,b)=>b.v-a.v).slice(0,2);
   const why='<div class="why">'+esc(whyText(src,m.it,state.cat,m.s.parts))+'</div>';
-  const head='<div class="mhead">'+tile(m.it)+'<div class="info"><div class="rank">#'+(i+1)+' · <span class="quality'+(m.s.pct<56?' weak':'')+'">'+esc(qual(m.s.pct))+'</span></div><div class="nm">'+esc(TT(m.it))+'</div><div class="by">'+metaLine(m.it)+'</div></div>'+ring(m.s.pct)+'</div>';
+  const toggleLabel=esc((open?tr(T.collapse):tr(T.expand))+' — '+TT(m.it));
+  const head='<div class="mhead" tabindex="0" role="button" aria-expanded="'+open+'" aria-label="'+toggleLabel+'">'+tile(m.it)+'<div class="info"><div class="rank">#'+(i+1)+' · <span class="quality'+(m.s.pct<56?' weak':'')+'">'+esc(qual(m.s.pct))+'</span></div><div class="nm">'+esc(TT(m.it))+'</div><div class="by">'+metaLine(m.it)+'</div></div>'+ring(m.s.pct)+'</div>';
   if(!open){
-    return '<article class="match" data-mid="'+esc(m.it.id)+'">'+head+why+'<div class="bars">'+top2.map(a=>bar(a.nm,a.v)).join('')+'</div>'+rateRow(m.it.id)+'<div class="more">'+tr(T.expand)+' ↓</div></article>';
+    return '<article class="match" data-mid="'+esc(m.it.id)+'">'+head+why+'<div class="bars">'+top2.map(a=>bar(a.nm,a.v)).join('')+'</div>'+rateRow(m.it.id)+'<div class="more" aria-hidden="true">'+tr(T.expand)+' ↓</div></article>';
   }
   const shared=(src.th||[]).filter(t=>(m.it.th||[]).includes(t));
   const chips=shared.length?'<div><div class="rank" style="margin:10px 0 7px">'+tr(T.sharedThemes).toUpperCase()+'</div><div class="chips">'+shared.map(t=>'<span class="chip th">'+esc(themeLabel(t))+'</span>').join('')+'</div></div>':'';
@@ -633,8 +674,8 @@ function matchCard(src,m,i){
     '<p class="desc">'+esc((m.it.d&&(m.it.d[state.lang]||m.it.d.en))||'')+'</p>'+
     '<button class="more" data-sel="'+esc(m.it.id)+'">'+tr(T.exploreFrom)+'</button></div>'+
     '<div class="radarbox"><span class="cap">'+tr(T.dnaCap)+'</span>'+radar(src.dna||[50,50,50,50,50,50,50,50],m.it.dna||[50,50,50,50,50,50,50,50])+
-    '<div class="legend"><span><i style="background:rgba(255,255,255,.45)"></i>'+tr(T.srcLegend)+'</span><span><i style="background:var(--acc)"></i>'+tr(T.matchLegend)+'</span></div></div></div>'+
-    rateRow(m.it.id)+'<div class="more">'+tr(T.collapse)+' ↑</div></article>';
+    '<div class="legend"><span><i style="background:var(--mut)"></i>'+tr(T.srcLegend)+'</span><span><i style="background:var(--acc)"></i>'+tr(T.matchLegend)+'</span></div></div></div>'+
+    rateRow(m.it.id)+'<div class="more" aria-hidden="true">'+tr(T.collapse)+' ↑</div></article>';
 }
 /* food pairing: complementary dish, not a lookalike — same cuisine, contrasting flavour/course */
 function pairScore(a,b){
@@ -681,12 +722,12 @@ function renderResults(){
     '<div class="chips">'+(src.g||[]).map(g=>'<span class="chip">'+esc(g)+'</span>').join('')+(src.th||[]).slice(0,4).map(t=>'<span class="chip th">'+esc(themeLabel(t))+'</span>').join('')+'</div>'+
     '<p class="desc">'+esc((src.d&&(src.d[state.lang]||src.d.en))||'')+'</p>'+
     '<div class="meters">'+meter(tr(T.pop),src.pop)+meter(tr(T.acc),src.acc)+meter(tr(T.main),src.main)+'</div>'+
-    '<div class="srcactions"><button class="fixlink" type="button" data-share>'+esc(tr(T.share))+'</button><span class="fixlink" data-fix="'+esc(src.id)+'">'+esc(tr(T.fixName))+'</span></div></section>';
+    '<div class="srcactions"><button class="fixlink" type="button" data-share>'+esc(tr(T.share))+'</button><button class="fixlink" type="button" data-fix="'+esc(src.id)+'">'+esc(tr(T.fixName))+'</button></div></section>';
   const list='<div class="sechead"><h3>'+tr(T.topMatches)+'</h3><span class="sub">'+tr(T.topSub,{a:activeAlgoRows(cat).length})+'</span></div><div class="grid">'+matches.map((m,i)=>matchCard(src,m,i)).join('')+'</div>';
   const bey='<div class="sechead"><h3>'+esc(tr(T.beyond))+'</h3><span class="sub">'+tr(T.beyondSub)+'</span></div><div class="beyond">'+beyond.map(b=>{
     const c=CATS[b.cat];
     const pcDisplay=EMB_BUF?b.pct:esc(qual(b.pct));   // v2 §7.5: word tier while embeddings are dormant — crossScore is only mood+theme then, too coarse for a precise number; reverts to the real % once embeddings load
-    return '<div class="bx" data-sel="'+esc(b.it.id)+'" style="--acc:'+c.acc+'"><div class="cathead" style="color:'+c.acc+'">'+(CAT_ICON[b.cat]||'')+esc(tr(c.name))+'</div><div class="row">'+tile(b.it)+'<div><div class="nm">'+esc(TT(b.it))+'</div><div class="subby">'+esc(b.it.by||'')+'</div></div><span class="pc'+(EMB_BUF?'':' word')+'" style="color:'+c.acc+'">'+pcDisplay+'</span></div><div class="why">'+esc(whyCross(src,b.it))+'</div></div>'; }).join('')+'</div>';
+    return '<div class="bx" data-sel="'+esc(b.it.id)+'" tabindex="0" role="button" aria-label="'+esc(tr(T.exploreFrom))+' — '+esc(TT(b.it))+'" style="--acc:'+c.acc+'"><div class="cathead" style="color:'+c.acc+'">'+(CAT_ICON[b.cat]||'')+esc(tr(c.name))+'</div><div class="row">'+tile(b.it)+'<div><div class="nm">'+esc(TT(b.it))+'</div><div class="subby">'+esc(b.it.by||'')+'</div></div><span class="pc'+(EMB_BUF?'':' word')+'" style="color:'+c.acc+'">'+pcDisplay+'</span></div><div class="why">'+esc(whyCross(src,b.it))+'</div></div>'; }).join('')+'</div>';
   let pairs='';
   if(cat==='food'){
     const isBev=it=>(it.g||[]).includes('beverage'), srcBev=isBev(src), allf=(D.food||[]).filter(x=>x.id!==src.id);
@@ -699,7 +740,7 @@ function renderResults(){
       const dishes=allf.filter(x=>!isBev(x)).map(it=>({it,p:pairScore(src,it)})).filter(x=>x.p>=28).sort((a,b)=>b.p-a.p).slice(0,2);
       pl=alc.concat(soft).concat(dishes); }
     if(pl.length) pairs='<div class="sechead"><h3>'+esc(tr({en:'Perfect pairings',es:'Maridajes perfectos',pt:'Harmonizações perfeitas'}))+'</h3><span class="sub">'+esc(tr({en:'drinks & dishes that complete the meal',es:'bebidas y platos que completan la comida',pt:'bebidas e pratos que completam a refeição'}))+'</span></div><div class="beyond">'+
-      pl.map(x=>'<div class="bx" data-sel="'+esc(x.it.id)+'" style="--acc:'+CATS.food.acc+'"><div class="cathead" style="color:'+CATS.food.acc+'">'+(CAT_ICON.food||'')+esc(((x.it.x&&x.it.x.reg)||x.it.c||'dish'))+'</div><div class="row">'+tile(x.it)+'<div><div class="nm">'+esc(TT(x.it))+'</div></div><span class="pc" style="color:'+CATS.food.acc+'">'+x.p+'</span></div></div>').join('')+'</div>';
+      pl.map(x=>'<div class="bx" data-sel="'+esc(x.it.id)+'" tabindex="0" role="button" aria-label="'+esc(tr(T.exploreFrom))+' — '+esc(TT(x.it))+'" style="--acc:'+CATS.food.acc+'"><div class="cathead" style="color:'+CATS.food.acc+'">'+(CAT_ICON.food||'')+esc(((x.it.x&&x.it.x.reg)||x.it.c||'dish'))+'</div><div class="row">'+tile(x.it)+'<div><div class="nm">'+esc(TT(x.it))+'</div></div><span class="pc" style="color:'+CATS.food.acc+'">'+x.p+'</span></div></div>').join('')+'</div>';
   }
   $('out').innerHTML=srcCard+pairs+list+bey;   // v2 §7.5: in-category matches (what the user searched for) before the thinner cross-media Beyond signal
   animateFills($('out'));
@@ -719,12 +760,22 @@ function whyCross(a,b){
    since state.sel/state.cat are unchanged by a pure open/close toggle. */
 function toggleMatchCard(cardEl,id){
   const src=byId[state.sel];
-  if(!src||!_resultsCache||_resultsCache.sel!==state.sel||_resultsCache.cat!==state.cat){ renderResults(); return; }
+  if(!src||!_resultsCache||_resultsCache.sel!==state.sel||_resultsCache.cat!==state.cat){ renderResults(); return null; }
   const i=_resultsCache.matches.findIndex(m=>m.it.id===id);
-  if(i<0){ renderResults(); return; }
+  if(i<0){ renderResults(); return null; }
   cardEl.outerHTML=matchCard(src,_resultsCache.matches[i],i);
   const fresh=[...document.querySelectorAll('.match')].find(el=>el.dataset.mid===id);
   if(fresh) animateFills(fresh);
+  return fresh;
+}
+/* shared by click delegation and keyboard activation: expands/collapses the card containing `target` */
+function matchToggleFor(target){
+  const card=target.closest('.match');
+  if(!card) return null;
+  const id=card.dataset.mid;
+  if(state.open!==id){ state.open=id; return toggleMatchCard(card,id); }
+  if(target.closest('.more')||target.closest('.mhead')){ state.open=null; return toggleMatchCard(card,id); }
+  return null;
 }
 function renderAll(){ setAccent(); renderChrome(); const pit=$('pitch'),lab=$('lab'),foot=$('foot'),cats=$('cats');
   if(!dataOK){ if(pit) pit.hidden=false; $('out').innerHTML='<p class="hint">'+tr(T.dataMissing)+'</p>'; return; }
@@ -758,28 +809,38 @@ function suggest(qq){
   return { list:scored.slice(0,9) };   // globally ranked; a strong exact/prefix match wins over a weak same-category one
 }
 function renderAC(){
-  const el=$('ac'); const v=$('q').value; const q=v.trim();
-  if(!q){ el.hidden=true; acItems=[]; return; }
-  const {list}=suggest(v); acItems=list; acIdx=acItems.length?0:-1;
+  const el=$('ac'), qEl=$('q'); const v=qEl.value; const q=v.trim();
+  if(!q){ el.hidden=true; acItems=[]; acIdx=-1; qEl.setAttribute('aria-expanded','false'); qEl.removeAttribute('aria-activedescendant'); return; }
+  const {list}=suggest(v); acItems=list; acIdx=0;   // index 0..acItems.length-1 = local matches, acItems.length = the always-present live row
   const mag='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>';
-  const liveRow='<div class="opt liveopt" data-live="1"><span class="mini">'+mag+'</span><span class="nm">'+esc(tr(T.searchWeb,{q:q}))+'</span></div>';
-  el.innerHTML=list.map((x,i)=>acOpt(x.it,i)).join('')+liveRow;  // always offer a live "find anything" search
+  const liveI=acItems.length;
+  const liveRow='<div class="opt liveopt'+(liveI===acIdx?' sel':'')+'" data-i="'+liveI+'" data-live="1" id="ac-opt-'+liveI+'" role="option" aria-selected="'+(liveI===acIdx)+'"><span class="mini">'+mag+'</span><span class="nm">'+esc(tr(T.searchWeb,{q:q}))+'</span></div>';
+  el.innerHTML=list.map((x,i)=>acOpt(x.it,i)).join('')+liveRow;  // always offer a live "find anything" search, reachable at index acItems.length
   el.hidden=false;
+  qEl.setAttribute('aria-expanded','true');
+  updateActiveDescendant();
 }
 function acOpt(it,i){
   const c=CATS[it._cat]; const h=(it.hue==null?222:it.hue)%360;
-  return '<div class="opt'+(i===acIdx?' sel':'')+'" data-i="'+i+'"><span class="mini" style="--h:'+h+'">'+monogram(it)+'</span><span class="nm">'+esc(TT(it))+(it.y?' <span class="yr">'+esc(it.y)+'</span>':'')+'</span><span class="ct">'+(CAT_ICON[it._cat]||'')+esc(tr(c.name))+'</span></div>';
+  return '<div class="opt'+(i===acIdx?' sel':'')+'" data-i="'+i+'" id="ac-opt-'+i+'" role="option" aria-selected="'+(i===acIdx)+'"><span class="mini" style="--h:'+h+'">'+monogram(it)+'</span><span class="nm">'+esc(TT(it))+(it.y?' <span class="yr">'+esc(it.y)+'</span>':'')+'</span><span class="ct">'+(CAT_ICON[it._cat]||'')+esc(tr(c.name))+'</span></div>';
 }
-function hideAC(){ $('ac').hidden=true; acItems=[]; acIdx=-1; }
+function updateActiveDescendant(){
+  const qEl=$('q');
+  if(acIdx<0){ qEl.removeAttribute('aria-activedescendant'); return; }
+  qEl.setAttribute('aria-activedescendant','ac-opt-'+acIdx);
+}
+function hideAC(){ $('ac').hidden=true; acItems=[]; acIdx=-1; const qEl=$('q'); qEl.setAttribute('aria-expanded','false'); qEl.removeAttribute('aria-activedescendant'); }
 function pick(i){ if(i<0||i>=acItems.length) return; select(acItems[i].it.id,true); }
 
 /* ================= actions ================= */
 function select(id,scroll){
   const it=byId[id]; if(!it) return;
   state.cat=it._cat; state.sel=id; state.open=null;
-  $('q').value=it.t; hideAC(); renderAll();
+  $('q').value=TT(it); hideAC(); renderAll();   // v2 §7.6: localized title, matching what's shown everywhere else (was the base/EN title)
   if(!_applyingHash) location.hash=state.cat+'/'+id;
-  if(scroll){ const o=$('out'); if(o&&o.scrollIntoView) o.scrollIntoView({behavior:'smooth',block:'start'}); }
+  if(scroll){ const q=$('q'); if(q&&q.blur) q.blur();   // v2 §7.6: dismiss the mobile keyboard before scrolling, so it doesn't cover the results
+    const behavior=(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)?'auto':'smooth';
+    const o=$('out'); if(o&&o.scrollIntoView) o.scrollIntoView({behavior,block:'start'}); }
 }
 function surprise(){
   const pool=(D[state.cat]||[]); if(!pool.length) return;
@@ -846,7 +907,44 @@ const slugL=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const hueL=s=>{let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return Math.abs(h);};
 const clL=v=>Math.max(0,Math.min(100,Math.round(v)));
 const jitL=(s,a)=>(s%(2*a+1))-a;
-async function jget(url){ try{ const r=await fetch(url); return r.ok?await r.json():null; }catch(e){ return null; } }
+/* v2 §7.6: one retry with a short backoff — WDQS (Wikidata Query Service) routinely throttles/
+   times out unauthenticated browser requests. (Can't also send a custom User-Agent as the runbook
+   suggested: it's a forbidden header per the Fetch spec and browsers silently ignore any attempt
+   to set it — that's only settable from server-side Node scripts like refresh.mjs.) */
+async function jget(url,retries=1){
+  for(let attempt=0;attempt<=retries;attempt++){
+    try{ const r=await fetch(url); if(r.ok) return await r.json(); }catch(e){}
+    if(attempt<retries) await new Promise(res=>setTimeout(res,400));
+  }
+  return null;
+}
+/* find an already-curated local item by (normalized) title, across every category — used to
+   avoid minting a live duplicate of something we already have, both before spending a network
+   round-trip and again after Wikipedia/Wikidata resolve the canonical title. */
+function findLocalByTitle(title){
+  const nt=norm(title); if(!nt) return null;
+  return ALL.find(it=>it._keys.includes(nt))||null;
+}
+/* v2 §7.6: classify the resolved Wikidata entity via P31 (instance-of) instead of blindly
+   trusting whichever tab happened to be active when the user searched — otherwise a book typed
+   while the Movies tab is open gets minted (and ingested) as a movie. Anime checked before
+   tv/movies since "anime television series"/"anime film" would otherwise match those first. */
+const P31_CAT=[
+  [/anime|original video animation/,'anime'],
+  [/television series|tv series|television program|web series/,'tv'],
+  [/\bfilm\b|\bmovie\b/,'movies'],
+  [/video game/,'games'],
+  [/\balbum\b|extended play|\bsingle\b.*music|compilation album/,'music'],
+  [/\bnovel\b|literary work|short story|\bbook\b/,'books'],
+  [/\bdish\b|type of food|beverage|\bcocktail\b|\bcuisine\b/,'food'],
+  [/\bcity\b|\btown\b|\bcountry\b|sovereign state|\bisland\b|tourist attraction|national park|\bmountain\b|human settlement|capital city/,'travel'],
+];
+function inferCatFromP31(labels){
+  if(!labels||!labels.length) return null;
+  const s=labels.join(' | ').toLowerCase();
+  for(const [re,cat] of P31_CAT) if(re.test(s)) return cat;
+  return null;
+}
 function mapLiveGenres(labels){ const out=[]; const s=labels.join(' | ').toLowerCase(); for(const pair of LIVE_GEN){ if(pair[0].test(s)&&out.indexOf(pair[1])<0) out.push(pair[1]); if(out.length>=3) break; } return out; }
 function liveDna(keys,seed){ const acc=[0,0,0,0,0,0,0,0]; let n=0; for(const k of keys){ const b=GDNA[k]; if(b){ for(let i=0;i<8;i++) acc[i]+=b[i]; n++; } } if(!n){ const base=[45,50,52,40,50,52,55,42]; return base.map((v,i)=>clL(v+jitL(seed+i*7,8))); } return acc.map((v,i)=>clL(v/n+jitL(seed+i*7,6))); }
 function liveTh(keys){ const p=[]; for(const k of keys){ for(const t of (GTH[k]||[])){ if(p.indexOf(t)<0) p.push(t); } } return p.length?p.slice(0,4):['discovery']; }
@@ -857,30 +955,53 @@ async function liveLookup(cat, query){
   const pages=pp&&pp.query&&pp.query.pages; const page=pages&&pages[Object.keys(pages)[0]];
   const qid=page&&page.pageprops&&page.pageprops.wikibase_item;
   const img=page&&page.thumbnail&&page.thumbnail.source||null;
-  let genres=[],year=null,creator='',country='',links=6,ptTitle='',esTitle='';
+  let genres=[],instances=[],year=null,creator='',country='',links=6,ptTitle='',esTitle='';
   if(qid){
-    const Q='SELECT ?glabel ?year ?clabel ?colabel ?links ?ptlab ?eslab WHERE { wd:'+qid+' wikibase:sitelinks ?links. OPTIONAL{ wd:'+qid+' wdt:P136 ?g. ?g rdfs:label ?glabel. FILTER(LANG(?glabel)="en") } OPTIONAL{ wd:'+qid+' wdt:P577 ?d. BIND(YEAR(?d) AS ?year) } OPTIONAL{ wd:'+qid+' (wdt:P57|wdt:P50|wdt:P175|wdt:P178|wdt:P86) ?c. ?c rdfs:label ?clabel. FILTER(LANG(?clabel)="en") } OPTIONAL{ wd:'+qid+' (wdt:P495|wdt:P17) ?co. ?co rdfs:label ?colabel. FILTER(LANG(?colabel)="en") } OPTIONAL{ wd:'+qid+' rdfs:label ?ptlab. FILTER(LANG(?ptlab)="pt") } OPTIONAL{ wd:'+qid+' rdfs:label ?eslab. FILTER(LANG(?eslab)="es") } } LIMIT 30';
+    const Q='SELECT ?glabel ?year ?clabel ?colabel ?links ?ptlab ?eslab ?instlab WHERE { wd:'+qid+' wikibase:sitelinks ?links. OPTIONAL{ wd:'+qid+' wdt:P136 ?g. ?g rdfs:label ?glabel. FILTER(LANG(?glabel)="en") } OPTIONAL{ wd:'+qid+' wdt:P577 ?d. BIND(YEAR(?d) AS ?year) } OPTIONAL{ wd:'+qid+' (wdt:P57|wdt:P50|wdt:P175|wdt:P178|wdt:P86) ?c. ?c rdfs:label ?clabel. FILTER(LANG(?clabel)="en") } OPTIONAL{ wd:'+qid+' (wdt:P495|wdt:P17) ?co. ?co rdfs:label ?colabel. FILTER(LANG(?colabel)="en") } OPTIONAL{ wd:'+qid+' rdfs:label ?ptlab. FILTER(LANG(?ptlab)="pt") } OPTIONAL{ wd:'+qid+' rdfs:label ?eslab. FILTER(LANG(?eslab)="es") } OPTIONAL{ wd:'+qid+' wdt:P31 ?inst. ?inst rdfs:label ?instlab. FILTER(LANG(?instlab)="en") } } LIMIT 30';
     const wd=await jget('https://query.wikidata.org/sparql?format=json&query='+encodeURIComponent(Q));
     const rows=(wd&&wd.results&&wd.results.bindings)||[];
-    for(const r of rows){ if(r.glabel&&genres.indexOf(r.glabel.value)<0) genres.push(r.glabel.value); if(r.year&&!year) year=parseInt(r.year.value,10); if(r.clabel&&!creator) creator=r.clabel.value; if(r.colabel&&!country) country=r.colabel.value; if(r.links&&r.links.value) links=parseInt(r.links.value,10); if(r.ptlab&&!ptTitle) ptTitle=r.ptlab.value; if(r.eslab&&!esTitle) esTitle=r.eslab.value; }
+    for(const r of rows){ if(r.glabel&&genres.indexOf(r.glabel.value)<0) genres.push(r.glabel.value); if(r.year&&!year) year=parseInt(r.year.value,10); if(r.clabel&&!creator) creator=r.clabel.value; if(r.colabel&&!country) country=r.colabel.value; if(r.links&&r.links.value) links=parseInt(r.links.value,10); if(r.ptlab&&!ptTitle) ptTitle=r.ptlab.value; if(r.eslab&&!esTitle) esTitle=r.eslab.value; if(r.instlab&&instances.indexOf(r.instlab.value)<0) instances.push(r.instlab.value); }
   }
+  // v2 §7.6: no real genre signal (either the page has no Wikidata item, or WDQS enrichment
+  // failed even after a retry) — reject rather than mint a generic "drama"-fallback stub with
+  // fabricated DNA that would otherwise get shown as a real match and permanently ingested.
+  if(!genres.length) return null;
   const t=hit.title.replace(/\s*\([^)]*\)\s*$/,'').trim(); if(!t) return null;
   const keys=mapLiveGenres(genres); const seed=hueL(t); const gk=keys[0]||'drama';
   const noun=NOUN_L[cat]||'film'; const dtxt=gk.charAt(0).toUpperCase()+gk.slice(1)+' '+noun+(year?' ('+year+')':'');
   return { id:'live-'+cat+'-'+slugL(t), t:t, alt:[], y:year, by:creator, cast:[], g:(keys.length?keys:[gk]), th:liveTh(keys), dna:liveDna(keys,seed),
     pop:clL(28+Math.round(Math.log10(links+1)*22)), acc:clL(60+jitL(seed,10)), main:clL(38+Math.round(Math.log10(links+1)*15)),
-    c:country, d:{en:dtxt,es:dtxt,pt:dtxt}, hue:seed, img:img, tl:{en:t,es:(esTitle||t),pt:(ptTitle||t)}, x:{}, _cat:cat, _live:true };
+    c:country, d:{en:dtxt,es:dtxt,pt:dtxt}, hue:seed, img:img, tl:{en:t,es:(esTitle||t),pt:(ptTitle||t)}, x:{}, _cat:cat, _live:true,
+    _inferredCat:inferCatFromP31(instances) };
 }
 async function selectLive(cat, query){
   query=(query||'').trim(); if(!query||liveBusy) return; liveBusy=true; hideAC();
+  // v2 §7.6: dedupe BEFORE spending a network round-trip — a typo past the local fuzzy-match
+  // tolerance (or, previously, a non-Latin title) shouldn't mint a live duplicate of something
+  // already in the catalog.
+  const preMatch=findLocalByTitle(query);
+  if(preMatch){ liveBusy=false; select(preMatch.id,true); return; }
   { const o=$('out'); if(o){ o.innerHTML='<div class="livewait">'+esc(tr(T.searching,{q:query}))+'</div>'; if(o.scrollIntoView) o.scrollIntoView({behavior:'smooth',block:'center'}); } }
   try{
-    const it=await liveLookup(cat,query);
-    if(it){ byId[it.id]=it;
-      if(SEARCH_ENDPOINT&&RATING_KEY){ try{ fetch(SEARCH_ENDPOINT,{method:'POST',headers:{apikey:RATING_KEY,Authorization:'Bearer '+RATING_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({cat:cat,title:it.t,item:it})}).catch(function(){}); }catch(e){} }
-      state.cat=cat; state.sel=it.id; state.open=null; $('q').value=it.t; renderAll();
-      if(!_applyingHash) location.hash=cat+'/'+it.id;
-      const o=$('out'); if(o&&o.scrollIntoView) o.scrollIntoView({behavior:'smooth',block:'start'}); }
+    let it=await liveLookup(cat,query);
+    // v2 §7.6: the resolved entity's real type (via Wikidata P31) disagrees with whichever tab
+    // was active — re-resolve under the correct category instead of minting e.g. a book as a movie.
+    if(it&&it._inferredCat&&it._inferredCat!==cat&&CAT_ORDER.includes(it._inferredCat)){
+      const corrected=await liveLookup(it._inferredCat,query);
+      if(corrected) it=corrected;
+    }
+    if(it){
+      // dedupe again against the CANONICAL (Wikipedia-disambiguated) title — catches typos that
+      // Wikipedia's own fuzzier search corrected to something we already have locally.
+      const postMatch=findLocalByTitle(it.t);
+      if(postMatch){ liveBusy=false; select(postMatch.id,true); return; }
+      byId[it.id]=it;
+      if(SEARCH_ENDPOINT&&RATING_KEY){ try{ fetch(SEARCH_ENDPOINT,{method:'POST',headers:{apikey:RATING_KEY,Authorization:'Bearer '+RATING_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({cat:it._cat,title:it.t,item:it})}).catch(function(){}); }catch(e){} }
+      state.cat=it._cat; state.sel=it.id; state.open=null; $('q').value=TT(it); renderAll();   // v2 §7.6: localized title
+      if(!_applyingHash) location.hash=it._cat+'/'+it.id;
+      const q=$('q'); if(q&&q.blur) q.blur();   // v2 §7.6: dismiss the mobile keyboard before scrolling
+      const behavior=(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)?'auto':'smooth';
+      const o=$('out'); if(o&&o.scrollIntoView) o.scrollIntoView({behavior,block:'start'}); }
     else { const o=$('out'); if(o) o.innerHTML='<div class="livewait">'+esc(tr(T.noWebResult,{q:query}))+'</div>'; }
   }catch(err){ const o=$('out'); if(o) o.innerHTML='<div class="livewait">'+esc(tr(T.noWebResult,{q:query}))+'</div>'; }
   liveBusy=false;
@@ -900,13 +1021,7 @@ document.addEventListener('click',e=>{
   if(cb){ state.cat=cb.dataset.cat; state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); if(!_applyingHash) location.hash=cb.dataset.cat; const qi=$('q'); if(qi&&qi.focus) qi.focus(); return; }
   const sb=e.target.closest('[data-sel]');
   if(sb){ e.stopPropagation(); select(sb.dataset.sel,true); return; }
-  const card=e.target.closest('.match');
-  if(card){
-    const id=card.dataset.mid;
-    if(state.open!==id){ state.open=id; toggleMatchCard(card,id); }
-    else if(e.target.closest('.more')||e.target.closest('.mhead')){ state.open=null; toggleMatchCard(card,id); }
-    return;
-  }
+  if(e.target.closest('.match')){ matchToggleFor(e.target); return; }
   if(!e.target.closest('.searchbox')) hideAC();
 });
 $('ac').addEventListener('mousedown',e=>{
@@ -917,12 +1032,17 @@ $('ac').addEventListener('mousedown',e=>{
 $('q').addEventListener('input',renderAC);
 $('q').addEventListener('focus',renderAC);
 $('q').addEventListener('keydown',e=>{
+  const el=$('ac');
   if(e.key==='ArrowDown'||e.key==='ArrowUp'){
-    if(!acItems.length) return; e.preventDefault();
-    acIdx=(acIdx+(e.key==='ArrowDown'?1:-1)+acItems.length)%acItems.length;
-    const el=$('ac'); el.querySelectorAll('.opt').forEach(o=>o.classList.toggle('sel',+o.dataset.i===acIdx));
+    if(el.hidden) return; e.preventDefault();
+    const total=acItems.length+1;   // + the always-present live "search the web" row
+    acIdx=(acIdx+(e.key==='ArrowDown'?1:-1)+total)%total;
+    el.querySelectorAll('.opt').forEach(o=>{ const sel=+o.dataset.i===acIdx; o.classList.toggle('sel',sel); o.setAttribute('aria-selected',sel); });
+    updateActiveDescendant();
+    const selEl=el.querySelector('.opt.sel'); if(selEl&&selEl.scrollIntoView) selEl.scrollIntoView({block:'nearest'});
   } else if(e.key==='Enter'){
-    if(acItems.length) pick(Math.max(0,acIdx));
+    if(!el.hidden&&acIdx===acItems.length){ selectLive(state.cat,$('q').value); }
+    else if(acItems.length){ pick(Math.max(0,acIdx)); }
     else selectLive(state.cat,$('q').value);   // nothing local → find it live
   } else if(e.key==='Escape'){ hideAC(); }
 });
@@ -930,7 +1050,11 @@ $('dice').addEventListener('click',surprise);
 /* broken/blocked cover image -> drop it so the monogram shows through */
 document.addEventListener('error',function(e){ const t=e.target; if(t&&t.classList&&t.classList.contains('cov')) t.remove(); },true);
 document.addEventListener('keydown',e=>{
-  if(e.key==='/'&&document.activeElement!==$('q')){ e.preventDefault(); $('q').focus(); }
+  if(e.key==='/'&&document.activeElement!==$('q')){ e.preventDefault(); $('q').focus(); return; }
+  if(e.key!=='Enter'&&e.key!==' ') return;
+  const t=e.target; if(!t.matches) return;
+  if(t.matches('.mhead[role="button"]')){ e.preventDefault(); const fresh=matchToggleFor(t); const mh=fresh&&fresh.querySelector('.mhead'); if(mh&&mh.focus) mh.focus(); return; }
+  if(t.matches('[data-sel][role="button"]')){ e.preventDefault(); select(t.getAttribute('data-sel'),true); return; }
 });
 
 /* boot: use inline data if present, else fetch external data.json (deployed build) */

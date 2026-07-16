@@ -39,10 +39,10 @@
         <div class="searchbox">
           <div class="searchrow">
             <svg class="mag" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>
-            <input id="q" type="text" autocomplete="off" spellcheck="false" aria-label="Search" />
+            <input id="q" type="text" autocomplete="off" spellcheck="false" aria-label="Search" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls="ac" aria-expanded="false" />
             <button class="dice" id="dice" type="button" aria-label="Surprise me"></button>
           </div>
-          <div class="ac" id="ac" hidden></div>
+          <div class="ac" id="ac" role="listbox" hidden></div>
         </div>
       </div>
 
