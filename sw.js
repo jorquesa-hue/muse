@@ -1,8 +1,10 @@
 /* Muse — service worker (offline-first app shell) */
 /* bump this version string on every deploy so returning users get the update */
-const CACHE = 'muse-v24';
+const CACHE = 'muse-v25';
 const ASSETS = [
   './index.html',
+  './style.css',
+  './app.js',
   './data.json',
   './manifest.webmanifest',
   './apple-touch-icon.png'
