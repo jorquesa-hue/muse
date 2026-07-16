@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; object-src 'none'; base-uri 'none'; style-src 'self' 'unsafe-inline'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Muse — privacy notice</title>
+<style>
+  body{max-width:640px;margin:0 auto;padding:32px 20px 64px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;color:#18181b;background:#f6f6f4}
+  @media (prefers-color-scheme:dark){ body{color:#ededf0;background:#0c0c0e} a{color:#e08a86} }
+  h1{font-size:22px;margin-bottom:4px}
+  h2{font-size:15px;margin-top:32px;text-transform:uppercase;letter-spacing:.04em;opacity:.7}
+  p,li{font-size:14.5px}
+  .updated{opacity:.6;font-size:12.5px;margin-top:0}
+  a{color:#c2413c}
+  code{font-size:13px;opacity:.85}
+  .back{display:inline-block;margin-top:36px;font-size:13px;opacity:.75}
+</style>
+</head>
+<body>
+  <h1>Privacy notice</h1>
+  <p class="updated">Last updated: 2026-07-16</p>
+
+  <p>Muse is a working prototype. Almost everything it does runs entirely in your browser, offline,
+  against a dataset shipped with the app — nothing about a normal search leaves your device. This
+  page covers the two things that do: the anonymous device id, and the two features that log data
+  to make the app better for everyone.</p>
+
+  <h2>What's collected</h2>
+  <ul>
+    <li><strong>An anonymous device id (<code>muse-sid</code>).</strong> Generated randomly on your
+    first visit and stored in your browser's local storage. It isn't tied to your name, email, or
+    any account — there is no account. It exists only to group your own ratings together so the
+    "good match / off" feedback stays consistent per device.</li>
+    <li><strong>"Find anything" live searches.</strong> When you search for a title that isn't
+    already in the offline catalog and the app finds it live, the resolved title, its category, and
+    the derived matching data (genre, mood profile, themes, popularity — no personal data) are
+    logged so a daily job can fold it into tomorrow's catalog for everyone.</li>
+    <li><strong>Match ratings.</strong> If you tap "Spot on" / "Off" on a match, that rating, the
+    device id, and the match context (which two works, which category, the score) are logged. This
+    is the only feedback signal used to improve the matching algorithm over time.</li>
+  </ul>
+
+  <h2>What's NOT collected</h2>
+  <p>No name, email, account, location, or advertising identifiers. No cross-site tracking. The
+  live "find anything" feature does talk directly to Wikipedia and Wikidata from your browser to
+  resolve a title — those requests go straight from your device to them, not through us, and their
+  own privacy policies apply to that traffic.</p>
+
+  <h2>Where it's stored</h2>
+  <p>In a Supabase-hosted database. Write access uses a public, insert-only key by design — that key
+  cannot read other people's data back out.</p>
+
+  <h2>Retention</h2>
+  <p>Logged searches and ratings are kept for up to 180 days, then deleted on a rolling basis.</p>
+
+  <h2>Deletion</h2>
+  <p>Since there's no account, we can't look up "your" data by name — but if you want your device's
+  history erased sooner, clear <code>muse-sid</code> from your browser's local storage (this
+  disconnects future ratings from past ones immediately) and email
+  <a href="mailto:jorquesa@gmail.com">jorquesa@gmail.com</a> with the approximate date/time and
+  what you searched, and it will be removed on request.</p>
+
+  <h2>Changes</h2>
+  <p>This is a prototype and this notice may change as the app does. Meaningful changes will update
+  the date above.</p>
+
+  <a class="back" href="index.html">← Back to Muse</a>
+</body>
+</html>

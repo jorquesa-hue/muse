@@ -2,9 +2,15 @@
  * When someone searches a title that isn't local, the app finds it live (Wikipedia/Wikidata),
  * derives its features, and logs the finished item to Supabase `searches`. This job folds those
  * into data.json permanently, so tomorrow they're instant + offline. Dedups by normalized title.
- * Node 18+ (global fetch). No secrets — the Supabase anon key is public (RLS: searches is insert+select for anon).
+ * Node 18+ (global fetch).
  * `searches.item` is anonymous, attacker-reachable input (RLS: anon INSERT with no shape check) —
  * clean() below whitelists/coerces every field before it can enter the catalog served to all users.
+ *
+ * Read auth: prefers SB_SERVICE_KEY (a service_role key, set as a GitHub Actions secret) so the
+ * `searches` table can be locked down to deny anon SELECT (see supabase/migrations/ — anon can
+ * currently read every user's search history through the public anon key, an active privacy
+ * leak). Falls back to the historical public anon key when the secret isn't set yet, so this
+ * script keeps working unchanged until the migration is actually applied.
  */
 import { readFile, writeFile } from 'node:fs/promises';
 
@@ -12,7 +18,9 @@ const ROOT = new URL('..', import.meta.url).pathname;
 const DATA = ROOT + 'data.json';
 const SW   = ROOT + 'sw.js';
 const SB   = 'https://esviqajfbkdnpoohjpjt.supabase.co';
-const KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdmlxYWpmYmtkbnBvb2hqcGp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NzM1NzgsImV4cCI6MjA5OTQ0OTU3OH0.0C0oBrs0OjrcvxNdDVXeBtBs8KTVmgviGJkWffkFKj4';
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdmlxYWpmYmtkbnBvb2hqcGp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NzM1NzgsImV4cCI6MjA5OTQ0OTU3OH0.0C0oBrs0OjrcvxNdDVXeBtBs8KTVmgviGJkWffkFKj4';
+const KEY = process.env.SB_SERVICE_KEY || ANON_KEY;
+if (!process.env.SB_SERVICE_KEY) console.warn('SB_SERVICE_KEY not set — reading via the public anon key (fine until the searches-table RLS migration is applied; see supabase/migrations/).');
 
 const normT = (s) => (s || '').toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
 const VALID = new Set(['movies','tv','books','music','games','anime','food','travel']);

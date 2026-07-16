@@ -104,6 +104,7 @@ const T = {
   suggestCta:{en:'+ Suggest a title or fix a name',es:'+ Sugiere un título o corrige un nombre',pt:'+ Sugira um título ou corrija um nome'},
   fixName:{en:'Wrong name? Suggest a fix',es:'¿Nombre incorrecto? Corrígelo',pt:'Nome errado? Corrija'},
   share:{en:'Share this match',es:'Compartir esta coincidencia',pt:'Compartilhar esta combinação'},
+  privacy:{en:'Privacy',es:'Privacidad',pt:'Privacidade'},
   copied:{en:'Link copied',es:'Enlace copiado',pt:'Link copiado'},
   rateQ:{en:'Good match?',es:'¿Buena coincidencia?',pt:'Boa combinação?'},
   rateGood:{en:'Spot on',es:'Acertada',pt:'Certeira'},
@@ -722,7 +723,7 @@ function renderResults(){
     '<div class="chips">'+(src.g||[]).map(g=>'<span class="chip">'+esc(g)+'</span>').join('')+(src.th||[]).slice(0,4).map(t=>'<span class="chip th">'+esc(themeLabel(t))+'</span>').join('')+'</div>'+
     '<p class="desc">'+esc((src.d&&(src.d[state.lang]||src.d.en))||'')+'</p>'+
     '<div class="meters">'+meter(tr(T.pop),src.pop)+meter(tr(T.acc),src.acc)+meter(tr(T.main),src.main)+'</div>'+
-    '<div class="srcactions"><button class="fixlink" type="button" data-share>'+esc(tr(T.share))+'</button><button class="fixlink" type="button" data-fix="'+esc(src.id)+'">'+esc(tr(T.fixName))+'</button></div></section>';
+    '<div class="srcactions"><button class="fixlink" type="button" data-share>'+esc(tr(T.share))+'</button><button class="fixlink" type="button" data-fix="'+esc(src.id)+'">'+esc(tr(T.fixName))+'</button><a class="fixlink" href="privacy.html" target="_blank" rel="noopener">'+esc(tr(T.privacy))+'</a></div></section>';
   const list='<div class="sechead"><h3>'+tr(T.topMatches)+'</h3><span class="sub">'+tr(T.topSub,{a:activeAlgoRows(cat).length})+'</span></div><div class="grid">'+matches.map((m,i)=>matchCard(src,m,i)).join('')+'</div>';
   const bey='<div class="sechead"><h3>'+esc(tr(T.beyond))+'</h3><span class="sub">'+tr(T.beyondSub)+'</span></div><div class="beyond">'+beyond.map(b=>{
     const c=CATS[b.cat];
