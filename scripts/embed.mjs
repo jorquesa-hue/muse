@@ -21,8 +21,10 @@ const DIM = 384;
 
 function itemText(it) {
   const by = it.by ? 'by ' + it.by : '';
-  const g = (it.g || []).join(', ');
-  const th = (it.th || []).join(', ');
+  // a handful of stale live-ingested (`-x`) records predate ingest.mjs's own Array.isArray guard
+  // and still carry a bare string for `g`/`th` — match that same guard here rather than assume shape.
+  const g = (Array.isArray(it.g) ? it.g : []).join(', ');
+  const th = (Array.isArray(it.th) ? it.th : []).join(', ');
   const en = (it.d && it.d.en) || '';
   return [it.t, by, g, th, en].filter(Boolean).join(' — ');
 }
