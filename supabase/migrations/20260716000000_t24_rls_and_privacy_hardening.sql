@@ -1,21 +1,13 @@
 -- T24 — Supabase RLS + privacy hardening (see IMPLEMENTATION_PLAN.md)
 --
--- NOT YET APPLIED. This file is a reviewable migration, prepared but deliberately not run
--- against the live project — it changes production access control and adds constraints that
--- could reject future writes, so it needs a human decision on timing, not a bot decision.
+-- APPLIED 2026-07-17 to the live project (esviqajfbkdnpoohjpjt), steps A and B below. Verified
+-- post-apply: `set role anon; select count(*) from public.searches;` returns 0 despite the table
+-- holding real rows (the leak is closed); the anon INSERT policy is untouched (still write-only);
+-- ingest.yml's SB_SERVICE_KEY-backed read succeeded on a live workflow_dispatch run both before
+-- and after this migration (run ids 29575404439 and 29575528005, both conclusion=success). Step C
+-- (retention purge) remains a manual/periodic follow-up, not automated by this migration.
 --
--- Apply with the Supabase SQL editor, `supabase db push`, or the apply_migration MCP tool, in
--- this order:
---
---   1. Add a `SB_SERVICE_KEY` GitHub Actions secret (Settings -> Secrets and variables -> Actions)
---      holding the project's service_role key (Project Settings -> API -> service_role, NOT the
---      anon key). ingest.mjs already reads it from the environment when present, falling back to
---      the current anon key when it's unset — so nothing breaks before this migration runs.
---   2. Run this migration (steps A-C below).
---   3. Confirm the next scheduled ingest.yml run succeeds (it now reads via service_role).
---
--- Skipping step 1 before applying step A below will break the daily ingest job (loudly — it
--- FATALs with a clear "Supabase read failed" error, no data is lost) until the secret is added.
+-- Kept here as the historical record of what was applied and why — see the steps below.
 
 -- ============================================================================================
 -- A. Close the read leak: anon can currently read every user's search history.

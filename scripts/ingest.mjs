@@ -6,11 +6,11 @@
  * `searches.item` is anonymous, attacker-reachable input (RLS: anon INSERT with no shape check) —
  * clean() below whitelists/coerces every field before it can enter the catalog served to all users.
  *
- * Read auth: prefers SB_SERVICE_KEY (a service_role key, set as a GitHub Actions secret) so the
- * `searches` table can be locked down to deny anon SELECT (see supabase/migrations/ — anon can
- * currently read every user's search history through the public anon key, an active privacy
- * leak). Falls back to the historical public anon key when the secret isn't set yet, so this
- * script keeps working unchanged until the migration is actually applied.
+ * Read auth: SB_SERVICE_KEY (a service_role key, set as a GitHub Actions secret) — required since
+ * supabase/migrations/..._t24_rls_and_privacy_hardening.sql was applied: anon SELECT on `searches`
+ * is now denied (it used to let anyone read every user's search history through the public anon
+ * key). ANON_KEY is kept only as a defensive fallback if the secret is ever unset again; under the
+ * current RLS it would just read zero rows rather than erroring, not a real recovery path.
  */
 import { readFile, writeFile } from 'node:fs/promises';
 
