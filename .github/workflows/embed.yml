@@ -1,0 +1,55 @@
+name: Build embeddings
+
+# Weekly: embeds every catalog item's text (title+creator+genres+themes+description) with a
+# local sentence-transformer model and writes embeddings.b64.json — turns on the (otherwise
+# dormant) semantic-match signal in score()/crossScore()/mmrRerank. Scheduled an hour after
+# refresh.yml so it normally embeds the week's freshest catalog; the shared concurrency group
+# below makes this safe even if refresh overruns (this run just queues behind it).
+on:
+  schedule:
+    - cron: '17 7 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: catalog-writes
+  cancel-in-progress: false
+
+jobs:
+  embed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install embedding model deps
+        run: npm install @xenova/transformers
+
+      - name: Build embeddings.b64.json
+        run: node scripts/embed.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "muse-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add embeddings.b64.json sw.js
+          if git diff --staged --quiet; then
+            echo "No embedding changes this run."
+            exit 0
+          fi
+          git commit -m "chore: rebuild embeddings"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push; then
+              exit 0
+            fi
+            echo "push attempt $i failed, retrying after backoff..."
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 5))
+          done
+          echo "FATAL: could not push after 3 attempts — the computed embeddings are NOT lost, they're still committed locally in this run's checkout, but the run is failing so it isn't silently dropped." >&2
+          exit 1

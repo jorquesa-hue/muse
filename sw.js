@@ -5,6 +5,8 @@ const ASSETS = [
   './index.html',
   './style.css',
   './app.js',
+  './boot-data.js',
+  './register-sw.js',
   './data.json',
   './manifest.webmanifest',
   './apple-touch-icon.png'
