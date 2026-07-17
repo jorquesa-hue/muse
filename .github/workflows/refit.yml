@@ -1,0 +1,54 @@
+name: Refit weights
+
+# Weekly: fits CATALGOS weights from logged ratings (Supabase `ratings`, read via service_role —
+# see T24), per category, gated on volume (>=150 ratings) and held-out AUC beating whatever's
+# currently live. Scheduled 2 hours after embed.yml so any ratings collected under a live
+# embedding get fit with it present. Shares the catalog-writes concurrency group so it queues
+# safely behind a same-day refresh/embed run instead of racing it.
+on:
+  schedule:
+    - cron: '17 9 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: catalog-writes
+  cancel-in-progress: false
+
+jobs:
+  refit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refit CATALGOS weights from ratings
+        env:
+          SB_SERVICE_KEY: ${{ secrets.SB_SERVICE_KEY }}
+        run: node scripts/refit.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "muse-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add weights.json sw.js
+          if git diff --staged --quiet; then
+            echo "No category cleared the refit gate this run."
+            exit 0
+          fi
+          git commit -m "chore: refit CATALGOS weights from ratings"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push; then
+              exit 0
+            fi
+            echo "push attempt $i failed, retrying after backoff..."
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 5))
+          done
+          echo "FATAL: could not push after 3 attempts — the refit weights are NOT lost, they're still committed locally in this run's checkout, but the run is failing so it isn't silently dropped." >&2
+          exit 1

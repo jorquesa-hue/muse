@@ -105,6 +105,21 @@ const T = {
   fixName:{en:'Wrong name? Suggest a fix',es:'¿Nombre incorrecto? Corrígelo',pt:'Nome errado? Corrija'},
   share:{en:'Share this match',es:'Compartir esta coincidencia',pt:'Compartilhar esta combinação'},
   privacy:{en:'Privacy',es:'Privacidad',pt:'Privacidade'},
+  recentLabel:{en:'Recently viewed',es:'Vistos recientemente',pt:'Vistos recentemente'},
+  lovedLabel:{en:'Loved',es:'Favoritos',pt:'Favoritos'},
+  loveIt:{en:'Love this',es:'Amar esto',pt:'Amar isto'},
+  unloveIt:{en:'Remove from loved',es:'Quitar de favoritos',pt:'Remover dos favoritos'},
+  dailyLabel:{en:"Today's Muse",es:'El Muse de hoy',pt:'O Muse de hoje'},
+  blendAdd:{en:'+ Add another love',es:'+ Añade otro amor',pt:'+ Adicione outro amor'},
+  blendTitle:{en:'Your blend',es:'Tu combinación',pt:'Sua combinação'},
+  blendRemove:{en:'Remove',es:'Quitar',pt:'Remover'},
+  blendMatches:{en:'Matches for both',es:'Coincidencias para ambos',pt:'Combinações para ambos'},
+  blendSub:{en:'ranked by how well each resonates with BOTH picks',es:'según cuánto resuena con AMBAS elecciones',pt:'segundo o quanto ressoa com AMBAS as escolhas'},
+  blendCloserTo:{en:'Closer to {x}',es:'Más cercano a {x}',pt:'Mais próximo de {x}'},
+  blendPickPlaceholder:{en:'Pick something else you love…',es:'Elige otra cosa que ames…',pt:'Escolha outra coisa que você ama…'},
+  blendNoMatches:{en:'No matches in this category',es:'Sin coincidencias en esta categoría',pt:'Sem correspondências nesta categoria'},
+  blendEmpty:{en:'Nothing matches both well enough yet — try a different pair.',es:'Nada coincide bien con ambos todavía — prueba otro par.',pt:'Nada combina bem com os dois ainda — tente outro par.'},
+  newWorksPill:{en:'+{n} new works since your last visit',es:'+{n} obras nuevas desde tu última visita',pt:'+{n} obras novas desde sua última visita'},
   copied:{en:'Link copied',es:'Enlace copiado',pt:'Link copiado'},
   rateQ:{en:'Good match?',es:'¿Buena coincidencia?',pt:'Boa combinação?'},
   rateGood:{en:'Spot on',es:'Acertada',pt:'Certeira'},
@@ -369,6 +384,25 @@ const CATALGOS = {   // v2: emb 0.22 added to every row (renormalizer rescales t
 };
 /* rows of CATALGOS[cat] that can actually fire right now — excludes 'emb' until embeddings.b64.json loads */
 const activeAlgoRows=cat=>CATALGOS[cat].filter(([id])=>id!=='emb'||EMB_BUF);
+/* v2 §B6: weekly ratings->CATALGOS refit (scripts/refit.mjs). Loads a build-time file the same
+   non-fatal way as loadEmb() — 404/malformed just means "keep the defaults", never a hard error.
+   Only overrides a category when the fetched weights cover EXACTLY the same algo ids as the
+   current row (refit.mjs only ever re-weights, never adds/removes signals) — a mismatched or
+   corrupted file leaves that category's scoring untouched rather than risking a broken lookup. */
+async function loadWeights(url='weights.json'){
+  const j=await (await fetch(url)).json();
+  if(!j||typeof j!=='object') return;
+  for(const cat of Object.keys(j)){
+    if(!CATALGOS[cat]) continue;
+    const arr=j[cat];
+    if(!Array.isArray(arr)||!arr.length) continue;
+    const cleaned=arr.filter(p=>Array.isArray(p)&&typeof p[0]==='string'&&isNum(+p[1])).map(p=>[p[0],+p[1]]);
+    if(cleaned.length!==CATALGOS[cat].length) continue;
+    const curIds=new Set(CATALGOS[cat].map(([id])=>id)), newIds=new Set(cleaned.map(([id])=>id));
+    if([...curIds].some(id=>!newIds.has(id))) continue;
+    CATALGOS[cat]=cleaned;
+  }
+}
 /* v2 §7.3: per-category, per-algo prior mean, sampled once from real random pairs after the
    catalog loads. score() imputes a missing term with its prior instead of skipping it, so an
    item with sparse metadata (no country/year/etc.) is scored as "average" on that signal rather
@@ -488,6 +522,10 @@ function pctWithinPool(total,sortedTotals){
   while(lo<hi){ const mid=(lo+hi)>>1; if(sortedTotals[mid]<total) lo=mid+1; else hi=mid; }
   return Math.min(99,Math.max(15,Math.round(100*lo/(n-1))));
 }
+/* v2 §B-blend: harmonic (not arithmetic) mean — a candidate that matches only ONE of the two
+   anchors well and the other poorly should NOT rank near the top; harmonic mean collapses toward
+   the smaller of the two values, so both scores have to be genuinely decent to blend well. */
+function harmonicMean(x,y){ return (x>0&&y>0) ? 2*x*y/(x+y) : 0; }
 function lev(a,b,max){
   if(Math.abs(a.length-b.length)>max) return max+1;
   const n=b.length; if(!a.length) return n; if(!n) return a.length;
@@ -499,7 +537,7 @@ function lev(a,b,max){
 }
 
 /* ================= state & index ================= */
-const state = { lang:'en', cat:'movies', sel:null, open:null };
+const state = { lang:'en', cat:'movies', sel:null, sel2:null, open:null };
 try{ const l=localStorage.getItem('vibra-lang'); if(l&&['en','es','pt'].includes(l)) state.lang=l; }catch(e){}
 const byId={}; const ALL=[];
 let dataOK = false;
@@ -607,7 +645,7 @@ function renderChrome(){
   $('tagline').innerHTML=tr(T.tagline);
   $('stats').innerHTML=tr(T.stats,{n:ALL.length,a:activeAlgoRows(state.cat).length});
   $('dice').innerHTML=DICE_SVG+'<span>'+tr(T.surprise)+'</span>';
-  $('q').placeholder=tr(T.ph,{u:tr(CATS[state.cat].unit)});
+  $('q').placeholder=pickingSecond?tr(T.blendPickPlaceholder):tr(T.ph,{u:tr(CATS[state.cat].unit)});
   $('foot').innerHTML=tr(T.foot,{n:ALL.length,a:activeAlgoRows(state.cat).length});
   { const sb=$('suggestBtn'); if(sb) sb.textContent=tr(T.suggestCta); }
   $('labTitle').textContent=tr(T.lab,{cat:tr(CATS[state.cat].name)});
@@ -625,10 +663,27 @@ function renderEmpty(){
   const fan=['movies','music','books','travel'].map(k=>'<i style="background:'+CATS[k].acc+'"></i>').join('');
   const grid=CAT_ORDER.map(k=>{ const c=CATS[k];
     return '<button class="ct" data-cat="'+k+'" style="--c:'+c.acc+'"><span class="ci">'+(CAT_ICON[k]||'')+'</span><span class="cn">'+esc(tr(c.name))+'</span></button>'; }).join('');
+  // v2 §B3: "your shelf" — the only surviving state across visits used to be lang+sid+ratings,
+  // so renderEmpty() looked identical on visit 1 and visit 50. recentItems/lovedItems come purely
+  // from localStorage (muse-recent / muse-ratings+muse-loved) — fully offline, no backend.
+  const recentItems=loadRecent().map(x=>byId[x.id]).filter(Boolean).slice(0,10);
+  const lovedIds=[...new Set([...loadLoved(), ...loadRatings().filter(r=>r.r===1).map(r=>r.match)])];
+  const lovedItems=lovedIds.map(id=>byId[id]).filter(Boolean).slice(0,10);
+  const recentShelf=recentItems.length?'<div class="shelf"><div class="shelf-l">'+esc(tr(T.recentLabel))+'</div>'+suggCards(recentItems)+'</div>':'';
+  const lovedShelf=lovedItems.length?'<div class="shelf"><div class="shelf-l">'+esc(tr(T.lovedLabel))+'</div>'+suggCards(lovedItems)+'</div>':'';
+  // v2 §B5: Daily Muse (deterministic per-calendar-day pick, same for everyone) + a "+N new
+  // works" pill comparing today's catalog size against the count stored on the last visit.
+  const daily=todaysMuse();
+  const dailyCard=daily?'<div class="daily"><div class="shelf-l">'+esc(tr(T.dailyLabel))+'</div>'+
+    '<button class="daily-card" data-sel="'+esc(daily.id)+'">'+tile(daily)+
+    '<div class="daily-info"><div class="daily-t">'+esc(TT(daily))+'</div><div class="daily-y">'+esc(tr(CATS[daily._cat].name))+(daily.y?' · '+esc(daily.y):'')+'</div></div></button></div>':'';
+  const newCount=newSinceLastVisit();
+  const newPill=newCount>0?'<div class="new-pill">'+esc(tr(T.newWorksPill,{n:newCount}))+'</div>':'';
   $('out').innerHTML=
     '<section class="spotlight"><h2><span class="dot"></span>'+esc(tr(T.spotTitle))+'</h2>'+
     '<div class="sp-diagram"><span class="heart">'+HEART_SVG+'</span><span class="arrow">&rarr;</span><span class="fan">'+fan+'</span></div>'+
     '<p>'+esc(tr(T.spotLine))+'</p></section>'+
+    newPill+dailyCard+recentShelf+lovedShelf+
     '<div class="browse"><div class="browse-l">'+esc(tr(T.browseLabel))+'</div><div class="cgrid">'+grid+'</div></div>'+
     '<div class="home-stats">'+tr(T.stats,{n:ALL.length,a:activeAlgoRows(state.cat).length})+'</div>';
 }
@@ -656,6 +711,15 @@ function rateRow(mid){ const r=ratingOf(state.sel,mid);
   return '<div class="rate"><span class="rq">'+esc(tr(T.rateQ))+'</span>'+
     '<button class="rb up'+(r===1?' on':'')+'" type="button" data-rate="1" data-mid="'+esc(mid)+'" aria-label="'+esc(tr(T.rateGood))+'">'+CHK_SVG+'</button>'+
     '<button class="rb dn'+(r===-1?' on':'')+'" type="button" data-rate="-1" data-mid="'+esc(mid)+'" aria-label="'+esc(tr(T.rateBad))+'">'+XX_SVG+'</button></div>';
+}
+/* v2 §B4: a transient "Thanks — noted" confirmation so rating reads as a real action, not a
+   silent color toggle. Reuses one element per .rate row so rapid re-clicks don't stack timers/nodes. */
+function showRateThanks(grp){
+  let el=grp.querySelector('.rate-thanks');
+  if(!el){ el=document.createElement('span'); el.className='rate-thanks'; grp.appendChild(el); }
+  el.textContent=tr(T.rateThx);
+  clearTimeout(grp._rateThxTimer);
+  grp._rateThxTimer=setTimeout(()=>{ if(el&&el.parentNode) el.remove(); },2000);
 }
 function matchCard(src,m,i){
   const open=state.open===m.it.id;
@@ -707,6 +771,10 @@ function renderResults(){
     let scored=pool0.map(it=>({it,s:score(src,it,cat)}));
     let elig=scored.filter(x=>x.s.eligible);            // v2: coverage gate
     if(elig.length<5) elig=scored;                       // safety: never strand the user on an over-aggressive gate
+    // v2 §B4: a match the user explicitly downvoted for THIS source never reappears in the same
+    // slot — the 30-item shortlist comfortably absorbs losing a few candidates, so no safety floor.
+    const downvoted=new Set(loadRatings().filter(x=>x.src===src.id&&x.r===-1).map(x=>x.match));
+    if(downvoted.size) elig=elig.filter(x=>!downvoted.has(x.it.id));
     elig.sort((a,b)=>b.s.total-a.s.total);
     const ranked=elig.map(x=>({item:x.it,total:x.s.total,s:x.s}));
     const shortlistTotals=ranked.slice(0,30).map(x=>x.total).sort((a,b)=>a-b);   // same pool mmrRerank draws from — captured before it mutates its own copy
@@ -719,11 +787,13 @@ function renderResults(){
       return best?{cat:k,it:best,pct:crossPct(bv)}:null; }).filter(Boolean);
     _resultsCache={sel:state.sel,cat,matches,beyond};
   }
-  const srcCard='<section class="source"><div class="shead">'+tile(src)+'<div class="stitle"><div class="kicker">'+tr(T.kicker)+' · '+esc(tr(CATS[cat].name)).toUpperCase()+'</div><h2>'+esc(TT(src))+'</h2><div class="meta">'+metaLine(src)+'</div></div></div>'+
+  const loved=isLoved(src.id);
+  const srcCard='<section class="source"><div class="shead">'+tile(src)+'<div class="stitle"><div class="kicker">'+tr(T.kicker)+' · '+esc(tr(CATS[cat].name)).toUpperCase()+'</div><h2>'+esc(TT(src))+'</h2><div class="meta">'+metaLine(src)+'</div></div>'+
+    '<button class="heart-toggle'+(loved?' on':'')+'" type="button" data-loved="'+esc(src.id)+'" aria-pressed="'+loved+'" aria-label="'+esc(tr(loved?T.unloveIt:T.loveIt))+'">'+HEART_SVG+'</button></div>'+
     '<div class="chips">'+(src.g||[]).map(g=>'<span class="chip">'+esc(g)+'</span>').join('')+(src.th||[]).slice(0,4).map(t=>'<span class="chip th">'+esc(themeLabel(t))+'</span>').join('')+'</div>'+
     '<p class="desc">'+esc((src.d&&(src.d[state.lang]||src.d.en))||'')+'</p>'+
     '<div class="meters">'+meter(tr(T.pop),src.pop)+meter(tr(T.acc),src.acc)+meter(tr(T.main),src.main)+'</div>'+
-    '<div class="srcactions"><button class="fixlink" type="button" data-share>'+esc(tr(T.share))+'</button><button class="fixlink" type="button" data-fix="'+esc(src.id)+'">'+esc(tr(T.fixName))+'</button><a class="fixlink" href="privacy.html" target="_blank" rel="noopener">'+esc(tr(T.privacy))+'</a></div></section>';
+    '<div class="srcactions"><button class="fixlink" type="button" data-share>'+esc(tr(T.share))+'</button><button class="fixlink" type="button" data-blend-start>'+esc(tr(T.blendAdd))+'</button><button class="fixlink" type="button" data-fix="'+esc(src.id)+'">'+esc(tr(T.fixName))+'</button><a class="fixlink" href="privacy.html" target="_blank" rel="noopener">'+esc(tr(T.privacy))+'</a></div></section>';
   const list='<div class="sechead"><h3>'+tr(T.topMatches)+'</h3><span class="sub">'+tr(T.topSub,{a:activeAlgoRows(cat).length})+'</span></div><div class="grid">'+matches.map((m,i)=>matchCard(src,m,i)).join('')+'</div>';
   const bey='<div class="sechead"><h3>'+esc(tr(T.beyond))+'</h3><span class="sub">'+tr(T.beyondSub)+'</span></div><div class="beyond">'+beyond.map(b=>{
     const c=CATS[b.cat];
@@ -744,6 +814,41 @@ function renderResults(){
       pl.map(x=>'<div class="bx" data-sel="'+esc(x.it.id)+'" tabindex="0" role="button" aria-label="'+esc(tr(T.exploreFrom))+' — '+esc(TT(x.it))+'" style="--acc:'+CATS.food.acc+'"><div class="cathead" style="color:'+CATS.food.acc+'">'+(CAT_ICON.food||'')+esc(((x.it.x&&x.it.x.reg)||x.it.c||'dish'))+'</div><div class="row">'+tile(x.it)+'<div><div class="nm">'+esc(TT(x.it))+'</div></div><span class="pc" style="color:'+CATS.food.acc+'">'+x.p+'</span></div></div>').join('')+'</div>';
   }
   $('out').innerHTML=srcCard+pairs+list+bey;   // v2 §7.5: in-category matches (what the user searched for) before the thinner cross-media Beyond signal
+  animateFills($('out'));
+}
+/* v2 §B-blend: "A + B →" — a candidate card in the two-anchor blend view. Deliberately NOT
+   matchCard() reused: matchCard's why/radar/rate machinery is built around a single implicit
+   state.sel source, and force-fitting two anchors through it would be messier than this small
+   dedicated renderer. */
+function blendCard(a,b,m,i){
+  const closerToA=m.sA>=m.sB;
+  const why=tr(T.blendCloserTo,{x:esc(TT(closerToA?a:b))});
+  return '<article class="match blend-match" data-sel="'+esc(m.it.id)+'" tabindex="0" role="button" aria-label="'+esc(tr(T.exploreFrom))+' — '+esc(TT(m.it))+'">'+
+    '<div class="mhead">'+tile(m.it)+'<div class="info"><div class="rank">#'+(i+1)+' · <span class="quality'+(m.pct<56?' weak':'')+'">'+esc(qual(m.pct))+'</span></div>'+
+    '<div class="nm">'+esc(TT(m.it))+'</div><div class="by">'+metaLine(m.it)+'</div></div>'+ring(m.pct)+'</div>'+
+    '<div class="why">'+why+'</div></article>';
+}
+function renderBlend(){
+  const a=byId[state.sel], b=byId[state.sel2];
+  if(!a||!b){ state.sel2=null; renderResults(); return; }
+  const cat=state.cat;
+  const downA=new Set(loadRatings().filter(x=>x.src===a.id&&x.r===-1).map(x=>x.match));
+  const downB=new Set(loadRatings().filter(x=>x.src===b.id&&x.r===-1).map(x=>x.match));
+  const pool=(D[cat]||[]).filter(x=>x.id!==a.id&&x.id!==b.id&&!downA.has(x.id)&&!downB.has(x.id));
+  const scored=pool.map(it=>{ const sA=score(a,it,cat).total, sB=score(b,it,cat).total; return {it,sA,sB,blend:harmonicMean(sA,sB)}; })
+    .sort((x,y)=>y.blend-x.blend);
+  const top=scored.slice(0,10);
+  const shortlistTotals=scored.slice(0,30).map(x=>x.blend).sort((x,y)=>x-y);
+  top.forEach(m=>{ m.pct=pctWithinPool(m.blend,shortlistTotals); });
+
+  const anchorCard=it=>'<div class="blend-anchor">'+tile(it)+'<div class="ban-t">'+esc(TT(it))+'</div>'+
+    '<button class="blend-x" type="button" data-blend-remove="'+esc(it.id)+'" aria-label="'+esc(tr(T.blendRemove))+' '+esc(TT(it))+'">×</button></div>';
+  const header='<section class="blend-head"><h2>'+esc(tr(T.blendTitle))+'</h2>'+
+    '<div class="blend-anchors">'+anchorCard(a)+'<span class="blend-plus" aria-hidden="true">+</span>'+anchorCard(b)+'</div></section>';
+  const list=top.length
+    ? '<div class="sechead"><h3>'+esc(tr(T.blendMatches))+'</h3><span class="sub">'+esc(tr(T.blendSub))+'</span></div><div class="grid">'+top.map((m,i)=>blendCard(a,b,m,i)).join('')+'</div>'
+    : '<p class="hint">'+esc(tr(T.blendEmpty))+'</p>';
+  $('out').innerHTML=header+list;
   animateFills($('out'));
 }
 function whyCross(a,b){
@@ -780,7 +885,8 @@ function matchToggleFor(target){
 }
 function renderAll(){ setAccent(); renderChrome(); const pit=$('pitch'),lab=$('lab'),foot=$('foot'),cats=$('cats');
   if(!dataOK){ if(pit) pit.hidden=false; $('out').innerHTML='<p class="hint">'+tr(T.dataMissing)+'</p>'; return; }
-  renderResults(); const home=!state.sel;
+  if(state.sel2) renderBlend(); else renderResults();   // v2 §B-blend
+  const home=!state.sel;
   if(pit) pit.hidden=!home;
   if(cats) cats.style.display=home?'none':'';
   if(lab) lab.style.display=home?'none':'';
@@ -789,6 +895,7 @@ function renderAll(){ setAccent(); renderChrome(); const pit=$('pitch'),lab=$('l
 
 /* ================= autocomplete ================= */
 let acItems=[], acIdx=-1;
+let pickingSecond=false;   // v2 §B-blend: true while the search box is being used to pick the SECOND anchor
 function suggScore(qq,it){
   let best=0;
   for(const k of it._keys){
@@ -804,18 +911,23 @@ function suggScore(qq,it){
     if(s>best) best=s; }
   return best? best+(it.pop||0)*.08 : 0;
 }
-function suggest(qq){
+function suggest(qq,restrictCat){
   qq=norm(qq); if(!qq) return {list:[]};
-  const scored=ALL.map(it=>{ const b=suggScore(qq,it); return {it, s: b>0 ? b+(it._cat===state.cat?12:0) : 0}; }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);  // only lift genuine matches; a 0-score item must NOT pass via the same-cat bonus
+  let pool=ALL;
+  if(restrictCat) pool=pool.filter(it=>it._cat===restrictCat&&it.id!==state.sel);   // v2 §B-blend: anchor B must share A's category and can't BE A
+  const scored=pool.map(it=>{ const b=suggScore(qq,it); return {it, s: b>0 ? b+(it._cat===state.cat?12:0) : 0}; }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);  // only lift genuine matches; a 0-score item must NOT pass via the same-cat bonus
   return { list:scored.slice(0,9) };   // globally ranked; a strong exact/prefix match wins over a weak same-category one
 }
 function renderAC(){
   const el=$('ac'), qEl=$('q'); const v=qEl.value; const q=v.trim();
   if(!q){ el.hidden=true; acItems=[]; acIdx=-1; qEl.setAttribute('aria-expanded','false'); qEl.removeAttribute('aria-activedescendant'); return; }
-  const {list}=suggest(v); acItems=list; acIdx=0;   // index 0..acItems.length-1 = local matches, acItems.length = the always-present live row
+  const {list}=suggest(v,pickingSecond?state.cat:null); acItems=list; acIdx=0;   // index 0..acItems.length-1 = local matches, acItems.length = the always-present live row
   const mag='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>';
+  // v2 §B-blend: no live "search the web" row while picking a second anchor — a live-found item
+  // isn't wired to become a blend anchor, so offering it here would be a dead end.
   const liveI=acItems.length;
-  const liveRow='<div class="opt liveopt'+(liveI===acIdx?' sel':'')+'" data-i="'+liveI+'" data-live="1" id="ac-opt-'+liveI+'" role="option" aria-selected="'+(liveI===acIdx)+'"><span class="mini">'+mag+'</span><span class="nm">'+esc(tr(T.searchWeb,{q:q}))+'</span></div>';
+  const liveRow=pickingSecond?'':'<div class="opt liveopt'+(liveI===acIdx?' sel':'')+'" data-i="'+liveI+'" data-live="1" id="ac-opt-'+liveI+'" role="option" aria-selected="'+(liveI===acIdx)+'"><span class="mini">'+mag+'</span><span class="nm">'+esc(tr(T.searchWeb,{q:q}))+'</span></div>';
+  if(pickingSecond&&!list.length){ acIdx=-1; el.innerHTML='<div class="none">'+esc(tr(T.blendNoMatches))+'</div>'; el.hidden=false; qEl.setAttribute('aria-expanded','true'); updateActiveDescendant(); return; }
   el.innerHTML=list.map((x,i)=>acOpt(x.it,i)).join('')+liveRow;  // always offer a live "find anything" search, reachable at index acItems.length
   el.hidden=false;
   qEl.setAttribute('aria-expanded','true');
@@ -831,13 +943,52 @@ function updateActiveDescendant(){
   qEl.setAttribute('aria-activedescendant','ac-opt-'+acIdx);
 }
 function hideAC(){ $('ac').hidden=true; acItems=[]; acIdx=-1; const qEl=$('q'); qEl.setAttribute('aria-expanded','false'); qEl.removeAttribute('aria-activedescendant'); }
-function pick(i){ if(i<0||i>=acItems.length) return; select(acItems[i].it.id,true); }
+function pick(i){ if(i<0||i>=acItems.length) return;
+  if(pickingSecond){ selectBlend(state.sel,acItems[i].it.id); return; }
+  select(acItems[i].it.id,true); }
+
+/* ================= your shelf: recents + loved (v2 §B3) — all localStorage, fully offline ================= */
+function loadRecent(){ try{ return JSON.parse(localStorage.getItem('muse-recent')||'[]'); }catch(e){ return []; } }
+function pushRecent(id){
+  try{
+    const arr=loadRecent().filter(x=>x.id!==id);
+    arr.unshift({id,ts:Date.now()});
+    localStorage.setItem('muse-recent',JSON.stringify(arr.slice(0,30)));
+  }catch(e){}
+}
+function loadLoved(){ try{ return JSON.parse(localStorage.getItem('muse-loved')||'[]'); }catch(e){ return []; } }
+function isLoved(id){ return loadLoved().includes(id); }
+function toggleLoved(id){
+  const arr=loadLoved(); const i=arr.indexOf(id);
+  if(i>=0) arr.splice(i,1); else arr.unshift(id);
+  try{ localStorage.setItem('muse-loved',JSON.stringify(arr.slice(0,60))); }catch(e){}
+  return arr.includes(id);
+}
+
+/* v2 §B5: Daily Muse — same pick for every visitor on a given calendar day (no backend, no
+   randomness at render time), so it's cacheable offline and consistent across a share. */
+function dailySeed(s){ let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return h; }
+function todaysMuse(){
+  const pool=ALL.filter(it=>isNum(it.pop)&&it.pop>=70);
+  if(!pool.length) return null;
+  const dateStr=new Date().toISOString().slice(0,10);
+  return pool[dailySeed(dateStr)%pool.length];
+}
+/* v2 §B5: "+N new works" — the catalog genuinely grows daily (ingest/refresh) but that growth was
+   invisible. Compares ALL.length against the count stored on the LAST visit; 0 on a first visit
+   (no baseline yet) so we never claim "+6258 new works" out of the gate. */
+function newSinceLastVisit(){
+  let seen=0; try{ seen=+localStorage.getItem('muse-seen-count')||0; }catch(e){}
+  return (seen>0 && ALL.length>seen) ? ALL.length-seen : 0;
+}
+function markSeenCount(){ try{ localStorage.setItem('muse-seen-count',String(ALL.length)); }catch(e){} }
 
 /* ================= actions ================= */
 function select(id,scroll){
   const it=byId[id]; if(!it) return;
-  state.cat=it._cat; state.sel=id; state.open=null;
+  state.cat=it._cat; state.sel=id; state.sel2=null; state.open=null; pickingSecond=false;   // v2 §B-blend: a plain single select always exits blend mode
   $('q').value=TT(it); hideAC(); renderAll();   // v2 §7.6: localized title, matching what's shown everywhere else (was the base/EN title)
+  pushRecent(id);   // v2 §B3
   if(!_applyingHash) location.hash=state.cat+'/'+id;
   if(scroll){ const q=$('q'); if(q&&q.blur) q.blur();   // v2 §7.6: dismiss the mobile keyboard before scrolling, so it doesn't cover the results
     const behavior=(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)?'auto':'smooth';
@@ -847,6 +998,28 @@ function surprise(){
   const pool=(D[state.cat]||[]); if(!pool.length) return;
   const hot=pool.filter(p=>p.pop>=55); const src=(hot.length?hot:pool);
   select(src[Math.floor(Math.random()*src.length)].id,true);
+}
+/* v2 §B-blend: "+ Add another love" — reuses the existing #q/#ac autocomplete to pick a second
+   anchor from the SAME category as the first (score() assumes same-category comparison; a
+   cross-category blend would silently degrade to near-nothing in common). */
+function startBlendPick(){
+  pickingSecond=true;
+  const q=$('q'); q.value=''; renderChrome(); hideAC(); if(q&&q.focus) q.focus();
+}
+function cancelBlendPick(){ if(!pickingSecond) return; pickingSecond=false; renderChrome(); const it=byId[state.sel]; if(it) $('q').value=TT(it); hideAC(); }
+function selectBlend(idA,idB){
+  const a=byId[idA], b=byId[idB]; if(!a||!b||a.id===b.id) return;
+  state.cat=a._cat; state.sel=idA; state.sel2=idB; state.open=null; pickingSecond=false;
+  $('q').value=TT(a)+' + '+TT(b); hideAC(); renderAll();
+  pushRecent(idA); pushRecent(idB);
+  if(!_applyingHash) location.hash=idA+'+'+idB;
+}
+function removeBlendAnchor(id){
+  if(id===state.sel){ state.sel=state.sel2; }   // keep the other anchor as the sole selection
+  state.sel2=null; state.open=null; pickingSecond=false;
+  const it=byId[state.sel]; if(it) $('q').value=TT(it);
+  renderAll();
+  if(!_applyingHash) location.hash=state.sel?(state.cat+'/'+state.sel):'';
 }
 /* v2 §7.6: hash routing — #cat/id (a specific result), #cat (category browse), or empty (home).
    _applyingHash guards select()/the home+category handlers from re-writing the hash while we're
@@ -859,12 +1032,18 @@ function applyHash(){
   _applyingHash=true;
   try{
     const raw=decodeURIComponent(location.hash.slice(1));
-    if(!raw){ state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); return; }
+    if(!raw){ state.sel=null; state.sel2=null; state.open=null; $('q').value=''; hideAC(); renderAll(); return; }
+    // v2 §B-blend: #idA+idB — a shareable two-anchor blend link. ids never contain '+' (slug()
+    // strips anything but [a-z0-9-]), so this can't collide with a plain #cat/id hash.
+    const plus=raw.indexOf('+');
+    if(plus>0){ const idA=raw.slice(0,plus), idB=raw.slice(plus+1);
+      if(byId[idA]&&byId[idB]&&byId[idA]._cat===byId[idB]._cat) selectBlend(idA,idB);
+      return; }
     const slash=raw.indexOf('/');
     const cat=slash<0?raw:raw.slice(0,slash);
     const id=slash<0?'':raw.slice(slash+1);
     if(!CAT_ORDER.includes(cat)) return;                 // unknown/garbage hash — leave state as-is
-    if(!id){ state.cat=cat; state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); return; }
+    if(!id){ state.cat=cat; state.sel=null; state.sel2=null; state.open=null; $('q').value=''; hideAC(); renderAll(); return; }
     if(byId[id]){ select(id,false); return; }
     const livePrefix='live-'+cat+'-';
     if(id.indexOf(livePrefix)===0){ const q=id.slice(livePrefix.length).replace(/-/g,' '); if(q) selectLive(cat,q); }
@@ -998,6 +1177,7 @@ async function selectLive(cat, query){
       if(postMatch){ liveBusy=false; select(postMatch.id,true); return; }
       byId[it.id]=it;
       if(SEARCH_ENDPOINT&&RATING_KEY){ try{ fetch(SEARCH_ENDPOINT,{method:'POST',headers:{apikey:RATING_KEY,Authorization:'Bearer '+RATING_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({cat:it._cat,title:it.t,item:it})}).catch(function(){}); }catch(e){} }
+      pushRecent(it.id);   // v2 §B3
       state.cat=it._cat; state.sel=it.id; state.open=null; $('q').value=TT(it); renderAll();   // v2 §7.6: localized title
       if(!_applyingHash) location.hash=it._cat+'/'+it.id;
       const q=$('q'); if(q&&q.blur) q.blur();   // v2 §7.6: dismiss the mobile keyboard before scrolling
@@ -1010,14 +1190,28 @@ async function selectLive(cat, query){
 document.addEventListener('click',e=>{
   const lb=e.target.closest('[data-lang]');
   if(lb){ state.lang=lb.dataset.lang; try{localStorage.setItem('vibra-lang',state.lang);}catch(err){} renderAll(); return; }
-  if(e.target.closest('[data-home]')){ state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); if(!_applyingHash) location.hash=''; const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; if(window.scrollTo) window.scrollTo(0,0); return; }
+  if(e.target.closest('[data-home]')){ state.sel=null; state.sel2=null; state.open=null; pickingSecond=false; $('q').value=''; hideAC(); renderAll(); if(!_applyingHash) location.hash=''; const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; if(window.scrollTo) window.scrollTo(0,0); return; }
   const fx=e.target.closest('[data-fix]'); if(fx){ openSuggest(fx.getAttribute('data-fix')); return; }
   if(e.target.closest('[data-retry]')){ boot(); loadData(); return; }
   if(e.target.closest('[data-share]')){ shareResult(); return; }
   if(e.target.closest('[data-suggest]')){ openSuggest(null); return; }
+  if(e.target.closest('[data-blend-start]')){ startBlendPick(); return; }
+  const br=e.target.closest('[data-blend-remove]'); if(br){ removeBlendAnchor(br.getAttribute('data-blend-remove')); return; }
+  const lv=e.target.closest('[data-loved]');
+  if(lv){ const id=lv.getAttribute('data-loved'); const nowLoved=toggleLoved(id);
+    lv.classList.toggle('on',nowLoved); lv.setAttribute('aria-pressed',nowLoved); lv.setAttribute('aria-label',tr(nowLoved?T.unloveIt:T.loveIt)); return; }
   const rb=e.target.closest('[data-rate]');
   if(rb){ const mid=rb.getAttribute('data-mid'); const cur=ratingOf(state.sel,mid); const val=+rb.getAttribute('data-rate'); const nv=(cur===val?0:val);
-    recordRating(mid,nv); const grp=rb.parentNode; grp.querySelectorAll('.rb').forEach(b=>b.classList.toggle('on', nv!==0 && +b.getAttribute('data-rate')===nv)); return; }
+    recordRating(mid,nv);
+    const grp=rb.parentNode;
+    grp.querySelectorAll('.rb').forEach(b=>b.classList.toggle('on', nv!==0 && +b.getAttribute('data-rate')===nv));
+    if(nv!==0) showRateThanks(grp);
+    // v2 §B4: a downvote (or clearing one) changes which items are even eligible to show, not
+    // just how this one card looks — re-render so the next-best candidate slides into the slot,
+    // instead of a downvoted match silently reappearing in the same place next time.
+    const poolChanged=(cur===-1)!==(nv===-1);
+    if(poolChanged){ setTimeout(()=>{ _resultsCache=null; renderResults(); }, nv!==0?650:0); }
+    return; }
   const cb=e.target.closest('[data-cat]');
   if(cb){ state.cat=cb.dataset.cat; state.sel=null; state.open=null; $('q').value=''; hideAC(); renderAll(); if(!_applyingHash) location.hash=cb.dataset.cat; const qi=$('q'); if(qi&&qi.focus) qi.focus(); return; }
   const sb=e.target.closest('[data-sel]');
@@ -1035,17 +1229,18 @@ $('q').addEventListener('focus',renderAC);
 $('q').addEventListener('keydown',e=>{
   const el=$('ac');
   if(e.key==='ArrowDown'||e.key==='ArrowUp'){
-    if(el.hidden) return; e.preventDefault();
-    const total=acItems.length+1;   // + the always-present live "search the web" row
+    if(el.hidden||!acItems.length) return; e.preventDefault();   // v2 §B-blend: no live row to cycle onto while picking a second anchor
+    const total=pickingSecond?acItems.length:acItems.length+1;   // + the always-present live "search the web" row (suppressed during blend-pick)
     acIdx=(acIdx+(e.key==='ArrowDown'?1:-1)+total)%total;
     el.querySelectorAll('.opt').forEach(o=>{ const sel=+o.dataset.i===acIdx; o.classList.toggle('sel',sel); o.setAttribute('aria-selected',sel); });
     updateActiveDescendant();
     const selEl=el.querySelector('.opt.sel'); if(selEl&&selEl.scrollIntoView) selEl.scrollIntoView({block:'nearest'});
   } else if(e.key==='Enter'){
+    if(pickingSecond){ if(acItems.length) pick(Math.max(0,acIdx)); return; }   // v2 §B-blend: never falls through to a live web search
     if(!el.hidden&&acIdx===acItems.length){ selectLive(state.cat,$('q').value); }
     else if(acItems.length){ pick(Math.max(0,acIdx)); }
     else selectLive(state.cat,$('q').value);   // nothing local → find it live
-  } else if(e.key==='Escape'){ hideAC(); }
+  } else if(e.key==='Escape'){ if(pickingSecond) cancelBlendPick(); else hideAC(); }
 });
 $('dice').addEventListener('click',surprise);
 /* broken/blocked cover image -> drop it so the monogram shows through */
@@ -1061,7 +1256,9 @@ document.addEventListener('keydown',e=>{
 /* boot: use inline data if present, else fetch external data.json (deployed build) */
 function finishInit(){
   indexData(); renderAll(); applyHash();
+  markSeenCount();   // v2 §B5: once per load, AFTER the boot renders that compare against the last-visit baseline (renderAll+applyHash's own internal renderAll can each call renderEmpty) — updating it any earlier would erase the "+N new works" pill before the user ever saw it
   loadEmb('embeddings.b64.json').then(()=>{ _resultsCache=null; if(state.sel) renderResults(); }).catch(()=>{});   // embeddings just went live — the cached pre-embedding scores are stale, force a fresh score
+  loadWeights('weights.json').then(()=>{ _resultsCache=null; if(state.sel) renderResults(); }).catch(()=>{});   // v2 §B6: refit weights just landed — the cached pre-refit scores are stale, force a fresh score
 }
 window.addEventListener('hashchange',applyHash);
 // render chrome + a loading state immediately, before data.json has even started resolving,
