@@ -6,7 +6,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: ingest-searches
+  group: catalog-writes
   cancel-in-progress: false
 jobs:
   ingest:
@@ -17,6 +17,8 @@ jobs:
         with:
           node-version: '20'
       - name: Ingest live searches
+        env:
+          SB_SERVICE_KEY: ${{ secrets.SB_SERVICE_KEY }}
         run: node scripts/ingest.mjs
       - name: Commit & push if changed
         run: |
@@ -25,7 +27,16 @@ jobs:
           git add data.json sw.js
           if git diff --staged --quiet; then
             echo "No new searched titles today."
-          else
-            git commit -m "chore: daily ingest of searched titles [skip ci]"
-            git push
+            exit 0
           fi
+          git commit -m "chore: daily ingest of searched titles"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push; then
+              exit 0
+            fi
+            echo "push attempt $i failed, retrying after backoff..."
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 5))
+          done
+          echo "FATAL: could not push after 3 attempts — today's ingested titles are NOT lost, they're still committed locally in this run's checkout, but the run is failing so it isn't silently dropped." >&2
+          exit 1

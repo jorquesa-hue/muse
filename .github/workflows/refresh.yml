@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: refresh-catalog
+  group: catalog-writes
   cancel-in-progress: false
 
 jobs:
@@ -36,7 +36,16 @@ jobs:
           git add data.json sw.js
           if git diff --staged --quiet; then
             echo "No catalog changes this run."
-          else
-            git commit -m "chore: weekly catalog refresh [skip ci]"
-            git push
+            exit 0
           fi
+          git commit -m "chore: weekly catalog refresh"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push; then
+              exit 0
+            fi
+            echo "push attempt $i failed, retrying after backoff..."
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 5))
+          done
+          echo "FATAL: could not push after 3 attempts — the computed refresh is NOT lost, it's still committed locally in this run's checkout, but the run is failing so it isn't silently dropped." >&2
+          exit 1

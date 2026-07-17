@@ -1,10 +1,12 @@
 /* Muse — service worker (offline-first app shell) */
 /* bump this version string on every deploy so returning users get the update */
-const CACHE = 'muse-v25';
+const CACHE = 'muse-v30';
 const ASSETS = [
   './index.html',
   './style.css',
   './app.js',
+  './boot-data.js',
+  './register-sw.js',
   './data.json',
   './manifest.webmanifest',
   './apple-touch-icon.png'
@@ -13,7 +15,10 @@ const ASSETS = [
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE)
-      .then((c) => c.addAll(ASSETS).then(() => c.add('embeddings.b64.json').catch(() => {})))
+      .then((c) => c.addAll(ASSETS).then(() => Promise.all([
+        c.add('embeddings.b64.json').catch(() => {}),
+        c.add('weights.json').catch(() => {}),
+      ])))
       .then(() => self.skipWaiting())
   );
 });

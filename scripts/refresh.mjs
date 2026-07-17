@@ -26,6 +26,11 @@ const BACKFILL_ITEMS_MAX = 4000; // max EXISTING items to attempt tl-backfill pe
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const normT = (s) => (s || '').toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+// dedup key: title alone collapses remakes with the same name (e.g. "Dune" 1984 vs 2021) onto
+// whichever was seen first — fold in the release year so distinct works with the same title coexist.
+const dedupKey = (t, y) => normT(t) + '|' + (y || '');
+const RETRY_AFTER_MS = 1000 * 60 * 60 * 24 * 7 * 8; // 8 weeks — how long before a stalled tl backfill is retried
+const isStale = (ts) => !ts || (Date.now() - new Date(ts).getTime()) > RETRY_AFTER_MS;
 const clampI = (v) => Math.max(0, Math.min(100, Math.round(v)));
 const hueOf = (s) => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) % 360; return Math.abs(h); };
 const jit = (seed, amp) => (seed % (2 * amp + 1)) - amp;
@@ -70,11 +75,23 @@ function mapGenres(ids, table) {
   for (const id of (ids || [])) { const g = table[id]; if (g && !out.includes(g)) out.push(g); if (out.length >= 3) break; }
   return out;
 }
+// v2 §7.7: deriveDna used to be genre-centroid + jit(hueOf(title), 6) — same-genre items with
+// similar titles landed within ~12 points/axis of each other (dnaSim ≈ 0.89, near-indistinguishable
+// "Soul twin" matches), and refresh adds ~480 movie + ~480 tv + 120 book candidates weekly with no
+// prune, so this homogenization compounded every run. dnaSeed hashes title+year+popularity+vote+id
+// together (not title alone) so two same-genre items differ meaningfully even with near-identical
+// titles or the same title in different years; amplitude widened 6 -> 18.
+function dnaSeed(t, y, pop, vote, id) {
+  const s = String(t) + '|' + (y||0) + '|' + Math.round(pop||0) + '|' + Math.round((vote||0)*10) + '|' + (id||0);
+  let h = 0; for (let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+const DNA_JIT_AMP = 18;
 function deriveDna(gs, seed) {
   const acc = [0,0,0,0,0,0,0,0]; let n = 0;
   for (const g of gs) { const b = MDNA[g]; if (b) { for (let i=0;i<8;i++) acc[i]+=b[i]; n++; } }
   if (!n) return null;
-  return acc.map((v,i) => clampI(v/n + jit(seed + i*7, 6)));
+  return acc.map((v,i) => clampI(v/n + jit(seed + i*97, DNA_JIT_AMP)));
 }
 function deriveTh(gs, seed) {
   const p = []; for (const g of gs) for (const t of (MTH[g]||[])) if (!p.includes(t)) p.push(t);
@@ -104,7 +121,11 @@ async function fetchTmdbSet(paths, pages, kind) {
           let e = byId.get(it.id);
           if (!e) { e = { id: it.id }; byId.set(it.id, e); }
           e[key] = title.trim();
-          if (key === 'en') {
+          // metadata (genre/year/popularity/poster) is language-independent — capture it from
+          // whichever pass sees this id FIRST, instead of only ever trusting the 'en' pass. That
+          // used to mean an id absent from English trending/popular/top_rated (but present in the
+          // ES/PT lists) got no metadata at all and was filtered out entirely below.
+          if (e.poster === undefined) {
             e.poster = it.poster_path ? IMG + it.poster_path : null;
             e.genre_ids = it.genre_ids || [];
             const d = kind === 'tv' ? it.first_air_date : it.release_date;
@@ -116,20 +137,24 @@ async function fetchTmdbSet(paths, pages, kind) {
       }
     }
   }
-  return [...byId.values()].filter((e) => e.en);
+  // union across all three language passes — an ES- or PT-only trending title is still a title.
+  return [...byId.values()].filter((e) => e.en || e.es || e.pt);
 }
 
 function buildItem(e, kind, existingIds) {
-  const t = e.en.replace(/\s*\([^)]*\)\s*$/, '').trim();
+  // en→es→pt priority: most items have an English title, but a union'd ES/PT-only trending item
+  // (see fetchTmdbSet) won't — fall back so it still gets built instead of silently dropped.
+  const primary = e.en || e.es || e.pt;
+  const t = primary.replace(/\s*\([^)]*\)\s*$/, '').trim();
   if (!t || t.length > 65) return null;
   const table = kind === 'tv' ? TG : MG;
   let gs = mapGenres(e.genre_ids, table);
   if (!gs.length) gs = ['drama'];
   const seed = hueOf(t);
-  const dna = deriveDna(gs, seed);
+  const dna = deriveDna(gs, dnaSeed(t, e.year, e.pop, e.vote, e.id));
   if (!dna) return null;
   const g0 = gs[0];
-  const tl = { en: t, es: e.es || t, pt: e.pt || t };   // en uses the stripped display title, matching id/monogram
+  const tl = { en: e.en || t, es: e.es || t, pt: e.pt || t };   // t (the id/monogram base) uses whichever language was actually available
   const x = kind === 'tv'
     ? { ser: clampI((gs.includes('comedy')||gs.includes('animation')?28:62) + jit(seed,14)), ep: Math.round((gs.includes('comedy')?24:46) + (seed%12)), sea: 3 + (seed%6), binge: clampI(60 + jit(seed,12)) }
     : { vis: clampI((/action|sci-fi|adventure|fantasy|war/.test(gs.join(' '))?70:45) + jit(seed,10)), dlg: clampI((/drama|documentary/.test(gs.join(' '))?70:45) + jit(seed,10)), twist: clampI((/thriller|mystery/.test(gs.join(' '))?65:30) + jit(seed,12)), run: 112 + (seed%40) };
@@ -146,6 +171,13 @@ function buildItem(e, kind, existingIds) {
 }
 
 // ---------- backfill tl for existing items (region-aware, verified-match, no partial-fill poisoning) ----------
+// tlTried is a structured {es,pt,ts} record (a legacy plain `true` from before this fix reads as
+// "no timestamp, no per-language state" and safely falls through to being retried, self-healing).
+// PREVIOUSLY: a single boolean tlTried either (a) never got set for a half-localized item — since
+// the skip check required BOTH es and pt to already be missing — so it was re-searched (2 TMDB
+// calls) EVERY run forever, or (b) got set permanently on one transient title mismatch, so a
+// legitimately-localizable item was never retried again. Now: skip only while every still-missing
+// language was tried within the last RETRY_AFTER_MS; past that window, retry.
 async function backfillTl(items, kind, budget) {
   let checked = 0, filled = 0;
   for (const it of items) {
@@ -153,23 +185,28 @@ async function backfillTl(items, kind, budget) {
     const esReal = it.tl && it.tl.es && it.tl.es !== it.t;
     const ptReal = it.tl && it.tl.pt && it.tl.pt !== it.t;
     if (esReal && ptReal) continue;              // already fully localized
-    if (it.tlTried && !esReal && !ptReal) continue; // tried before, TMDB had nothing — don't waste calls
+    // one search+translations round-trip always attempts BOTH remaining languages together, so
+    // there's no such thing as "es was tried but pt wasn't" — a recent attempt (of either outcome)
+    // means nothing more to gain until the retry window passes. tlTried.es/.pt still record which
+    // language(s) that attempt actually filled, purely for introspection.
+    const tried = (it.tlTried && typeof it.tlTried === 'object') ? it.tlTried : null;
+    if (tried && !isStale(tried.ts)) continue;   // tried recently — don't waste another call yet
     checked++;
     const s = await tmdb(kind === 'tv' ? '/search/tv' : '/search/movie', { query: it.t, ...(it.y ? { [kind==='tv'?'first_air_date_year':'year']: it.y } : {}) });
     await sleep(70);
     const top = s && s.results && s.results[0];
     const topTitle = top ? (top.title || top.name || '') : '';
-    if (!top || normT(topTitle) !== normT(it.t)) { it.tlTried = true; continue; }   // verify it's really the same title
+    if (!top || normT(topTitle) !== normT(it.t)) { it.tlTried = { es: esReal, pt: ptReal, ts: new Date().toISOString() }; continue; }   // verify it's really the same title — retried after RETRY_AFTER_MS, not never
     const tr = await tmdb(`/${kind === 'tv' ? 'tv' : 'movie'}/${top.id}/translations`);
     await sleep(70);
-    it.tlTried = true;
-    if (!tr || !tr.translations) continue;
+    if (!tr || !tr.translations) { it.tlTried = { es: esReal, pt: ptReal, ts: new Date().toISOString() }; continue; }
     const pick = (lang, reg) => {
       const m = tr.translations.find((x) => x.iso_639_1===lang && x.iso_3166_1===reg && x.data && (x.data.title||x.data.name))
              || tr.translations.find((x) => x.iso_639_1===lang && x.data && (x.data.title||x.data.name));
       return m ? (m.data.title || m.data.name).trim() : '';
     };
     const es = pick('es','ES'), pt = pick('pt','BR');       // match the app's es-ES / pt-BR
+    it.tlTried = { es: !!(es || esReal), pt: !!(pt || ptReal), ts: new Date().toISOString() };
     if (es || pt) {
       const cur = it.tl || { en: it.t, es: '', pt: '' };
       it.tl = { en: it.t, es: es || cur.es || '', pt: pt || cur.pt || '' };   // never poison a slot with the EN title
@@ -193,25 +230,73 @@ async function refreshBooks(data, existingTitles) {
   for (const w of j.works) {
     const t = (w.title || '').trim();
     if (!t || t.length > 68 || !w.cover_i) continue;
-    const nt = normT(t);
-    if (existingTitles.has(nt)) continue;
-    existingTitles.add(nt);
+    const dk = dedupKey(t, w.first_publish_year);   // title+year — a same-titled reissue/new edition must NOT collapse onto an unrelated older book
+    if (!normT(t) || existingTitles.has(dk)) continue;
+    existingTitles.add(dk);
     const by = (w.author_name && w.author_name[0]) ? w.author_name[0].trim() : '';
     const seed = hueOf(t + by);
     const g = bookGenre(w.subject);
-    const dnaB = (BDNA[g] || BDNA.literary).map((v, i2) => clampI(v + jit(seed + i2*7, 8)));
+    // same widened entropy as deriveDna above — title+author+year+cover id, amplitude ~18 instead
+    // of a title-only hash at 8, so same-genre trending books don't cluster into near-duplicates.
+    const dnaB = (BDNA[g] || BDNA.literary).map((v, i2) => clampI(v + jit(dnaSeed(t + '|' + by, w.first_publish_year, 0, 0, w.cover_i) + i2*97, DNA_JIT_AMP)));
     const base = slug(t) || ('id' + (w.cover_i || seed));
     let id = `bk-${base}-tmdb`, b = id, i = 2; while (ids.has(id)) { id = `${b}${i}`; i++; } ids.add(id);
     data.books.push({
       id, t, alt: [], y: w.first_publish_year || null, by, g: [g], th: (BTH[g] || BTH.literary),
       dna: dnaB, pop: clampI(45 + jit(seed,15)), acc: clampI(58 + jit(seed,12)), main: clampI(50 + jit(seed,12)),
       c: '', d: { en: `Trending ${g} book by ${by}`, es: `Libro popular de ${by}`, pt: `Livro popular de ${by}` },
-      hue: seed, img: `https://covers.openlibrary.org/b/id/${w.cover_i}-M.jpg`, tl: { en: t, es: t, pt: t },
+      // es/pt left unlocalized (not duplicated from `t`) — Open Library's trending feed has no
+      // localized titles, and copying the English title into those slots would look identical to a
+      // real translation to any future backfill pass keying off `tl.es !== t` (see backfillTl), so
+      // it would never get picked up for real localization later. TT() already falls back to `t`
+      // when tl[lang] is empty, so display is unaffected until then.
+      hue: seed, img: `https://covers.openlibrary.org/b/id/${w.cover_i}-M.jpg`, tl: { en: t, es: '', pt: '' },
       x: { lit: clampI((['literary','philosophical','poetry','historical'].includes(g)?70:40) + jit(seed,15)), plot: clampI((['thriller','mystery','crime','adventure'].includes(g)?78:50) + jit(seed,12)), exp: clampI(25 + jit(seed,15)), pg: 280 + (seed % 260) },
     });
     added++;
   }
   return added;
+}
+
+// ---------- prune: keep the catalog curated, not merely append-only ----------
+// Refresh adds ~480 movie + ~480 tv + 120 book candidates EVERY WEEK with nothing ever removed —
+// unbounded growth that, combined with the old low-entropy DNA, steadily diluted match quality.
+// Scope is deliberately narrow: this NEVER touches a hand-curated item, no matter how it scores —
+// only items this script (or ingest.mjs) itself added are eligible, identified by their own id
+// convention (`-tmdb` suffix / `sr-` prefix). Two prune criteria, applied only within that subset:
+// (1) very low popularity AND still unlocalized (never became worth showing to ES/PT users either),
+// (2) near-duplicate DNA of another kept item in the same primary genre — keeps whichever of the
+// pair is more popular/acclaimed, drops the other. Original relative order is preserved.
+const isBotAdded = (it) => /-tmdb\d*$/.test(it.id) || /^sr-/.test(it.id);
+const dnaDist = (a, b) => { if (!a || !b || a.length !== 8 || b.length !== 8) return Infinity;
+  let s = 0; for (let i = 0; i < 8; i++) s += Math.abs(a[i] - b[i]); return s / 8; };
+const PRUNE_LOW_POP = 20;
+const PRUNE_DNA_DIST = 6; // mean per-axis distance below this counts as "near duplicate"
+function pruneCategory(list) {
+  const keepMap = new Map(), order = [], dropped = [], byGenre = new Map();
+  for (const it of list) {
+    order.push(it.id);
+    if (!isBotAdded(it)) { keepMap.set(it.id, it); continue; }
+    const localized = it.tl && (it.tl.es || it.tl.pt);
+    if ((it.pop || 0) < PRUNE_LOW_POP && !localized) { dropped.push(it); continue; }
+    const g0 = (it.g && it.g[0]) || '';
+    const bucket = byGenre.get(g0) || [];
+    let dupId = null;
+    for (const id of bucket) { const other = keepMap.get(id); if (other && dnaDist(it.dna, other.dna) < PRUNE_DNA_DIST) { dupId = id; break; } }
+    if (dupId) {
+      const dup = keepMap.get(dupId);
+      if ((it.pop || 0) + (it.acc || 0) > (dup.pop || 0) + (dup.acc || 0)) {
+        keepMap.delete(dupId); dropped.push(dup); keepMap.set(it.id, it);
+        byGenre.set(g0, bucket.filter((id) => id !== dupId).concat(it.id));
+      } else {
+        dropped.push(it);
+      }
+    } else {
+      keepMap.set(it.id, it);
+      byGenre.set(g0, bucket.concat(it.id));
+    }
+  }
+  return { keep: order.filter((id) => keepMap.has(id)).map((id) => keepMap.get(id)), dropped: dropped.length };
 }
 
 // ---------- main ----------
@@ -231,15 +316,16 @@ async function main() {
       console.error('FATAL: TMDB returned 0 movies — treating as an API/auth failure rather than committing an empty refresh.');
       process.exit(1);
     }
-    const titles = new Set(data[cat].map((x) => normT(x.t)));
+    const seen = new Set(data[cat].map((x) => dedupKey(x.t, x.y)));   // title+year — a same-titled remake must NOT collapse onto the original
     const ids = new Set(data[cat].map((x) => x.id));
     let added = 0;
     for (const e of set) {
-      const nt = normT((e.en || '').replace(/\s*\([^)]*\)\s*$/, ''));
-      if (!nt || titles.has(nt)) continue;
+      const primary = (e.en || e.es || e.pt || '').replace(/\s*\([^)]*\)\s*$/, '');
+      const dk = dedupKey(primary, e.year);
+      if (!normT(primary) || seen.has(dk)) continue;
       const item = buildItem(e, kind, ids);
       if (!item) continue;
-      titles.add(nt); data[cat].push(item); added++;
+      seen.add(dk); data[cat].push(item); added++;
     }
     if (added) changed = true;
     console.log(`${cat}: +${added} new (fetched ${set.length}; ${calls} TMDB calls so far)`);
@@ -253,10 +339,18 @@ async function main() {
   console.log(`tl backfill — movies ${bm.filled}/${bm.checked}, tv ${bt.filled}/${bt.checked}`);
 
   // BOOKS trending (keyless)
-  const bookTitles = new Set(data.books.map((b) => normT(b.t)));
+  const bookTitles = new Set(data.books.map((b) => dedupKey(b.t, b.y)));
   const bAdded = await refreshBooks(data, bookTitles);
   if (bAdded) changed = true;
   console.log(`books: +${bAdded} trending`);
+
+  // PRUNE bot-added low-value / near-duplicate items (never touches hand-curated entries)
+  let totalDropped = 0;
+  for (const cat of ['movies', 'tv', 'books']) {
+    const { keep, dropped } = pruneCategory(data[cat]);
+    if (dropped) { data[cat] = keep; totalDropped += dropped; changed = true; }
+  }
+  if (totalDropped) console.log(`pruned: -${totalDropped} bot-added low-value/near-duplicate items`);
 
   if (!changed) {
     console.log('No catalog changes this run — leaving data.json and sw.js untouched.');
