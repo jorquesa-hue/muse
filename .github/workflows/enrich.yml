@@ -1,0 +1,88 @@
+name: Enrich catalog metadata
+
+# Weekly (E3): a cheap bulk LLM (Haiku) re-rates auto-derived / thin catalog items against a fixed
+# rubric — the 8 DNA axes, 3-6 themes from the app vocab, and the category's subjective craft scalars
+# — and writes the result back into data.json. Selection = bot-added items (`-tmdb`/`sr-` ids) or
+# items with <3 themes, not already enriched under the current rubric version (`enr`). Hand-curated
+# items are never touched. MAX_ITEMS-capped so a backlog is chipped away across weeks.
+#
+# Ordered in the weekly chain refresh -> ingest -> enrich -> embed -> eval -> refit: enrich runs
+# BEFORE embed/vibe so the week's freshly-upgraded DNA/themes/text feed the embeddings and the eval.
+# Shares the catalog-writes concurrency group so it queues safely rather than racing the others.
+on:
+  schedule:
+    - cron: '47 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      max_items:
+        description: 'Cap on items enriched this run (default 300)'
+        required: false
+        default: '300'
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: catalog-writes
+  cancel-in-progress: false
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Enrich data.json
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          BULK_MODEL: ${{ vars.BULK_MODEL }}
+          MAX_ITEMS: ${{ github.event.inputs.max_items }}
+        run: node scripts/enrich.mjs
+
+      # Runs even when the enrich step FAILED (`!cancelled()`): enrich.mjs flushes data.json every 25
+      # items and marks each processed item with `enr`, so a mid-run failure (rate limit, credits,
+      # network) still leaves real, paid-for progress on disk. Committing it means the NEXT run RESUMES
+      # from the un-enriched remainder instead of re-billing everything. The job still reports failure
+      # (this step succeeding doesn't mask the enrich step's non-zero exit) so the tracking issue fires.
+      - name: Commit & push if changed
+        if: ${{ !cancelled() }}
+        run: |
+          git config user.name  "muse-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json sw.js
+          if git diff --staged --quiet; then
+            echo "No enrichment changes this run."
+            exit 0
+          fi
+          git commit -m "chore: enrich catalog metadata"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push; then
+              exit 0
+            fi
+            echo "push attempt $i failed, retrying after backoff..."
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 5))
+          done
+          echo "FATAL: could not push after 3 attempts — the enrichment is NOT lost, it's still committed locally in this run's checkout, but the run is failing so it isn't silently dropped." >&2
+          exit 1
+
+      # scheduled-workflow failures are easy to miss — file/update a tracking issue so a failure is visible.
+      - name: File an issue if this run failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `${context.workflow} failed`;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const { data: issues } = await github.rest.issues.listForRepo({ owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 50 });
+            const existing = issues.find(i => i.title === title && !i.pull_request);
+            if (existing) {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: existing.number, body: `Failed again on \`${context.sha.slice(0,7)}\`: ${runUrl}` });
+            } else {
+              await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body: `The **${context.workflow}** workflow failed on \`${context.sha.slice(0,7)}\`.\n\n${runUrl}` });
+            }
