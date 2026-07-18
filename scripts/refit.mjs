@@ -11,12 +11,15 @@
  * Node 18+ (global fetch). Env: SB_SERVICE_KEY.
  */
 import { readFile, writeFile } from 'node:fs/promises';
+import { loadEngine } from './engine-port.mjs';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const OUT  = ROOT + 'weights.json';
 const SW   = ROOT + 'sw.js';
+const TRIPLETS = ROOT + 'eval/triplets.json';
 const SB   = 'https://esviqajfbkdnpoohjpjt.supabase.co';
 const KEY  = process.env.SB_SERVICE_KEY;
+const SYNTHETIC = process.argv.includes('--synthetic'); // E1: fit from eval triplets, not ratings
 
 // Mirrors app.js's CATALGOS (must stay in sync — same convention as refresh.mjs independently
 // maintaining its own genre-mapping tables rather than importing from app.js in this no-build-step
@@ -35,6 +38,10 @@ const CATALGOS = {
 };
 
 const MIN_RATINGS = 150;
+// E1: synthetic mode needs far fewer rows than the 150-HUMAN-rating gate — the eval only produces
+// ~40 triplets/category by design, and the held-out AUC-beat gate is the real safety net (a fit
+// that doesn't generalize simply won't clear it), so a modest triplet floor is enough.
+const MIN_SYNTHETIC_TRIPLETS = 25;
 const WEIGHT_MIN = 0.02, WEIGHT_MAX = 0.35;
 const LR = 0.3, L2 = 0.01, EPOCHS = 300;
 const HOLDOUT_FRAC = 0.2;
@@ -146,6 +153,12 @@ async function loadExistingWeights() {
   try { return JSON.parse(await readFile(OUT, 'utf8')); } catch { return {}; }
 }
 
+async function bumpSW() {
+  let sw = await readFile(SW, 'utf8');
+  const m = sw.match(/muse-v(\d+)/);
+  if (m) { const next = `muse-v${parseInt(m[1], 10) + 1}`; sw = sw.replace(/muse-v\d+/g, next); await writeFile(SW, sw, 'utf8'); console.log('sw ->', next); }
+}
+
 async function main() {
   const rows = await fetchRatings();
   console.log('ratings fetched:', rows.length);
@@ -154,7 +167,7 @@ async function main() {
   const byCat = {};
   for (const r of rows) { if (!r || !CATALGOS[r.cat] || (r.r !== 1 && r.r !== -1) || !r.parts) continue; (byCat[r.cat] = byCat[r.cat] || []).push(r); }
 
-  const out = {};
+  const out = { ...existing };
   let changed = false;
   for (const cat of Object.keys(CATALGOS)) {
     const ids = CATALGOS[cat].map(([id]) => id);
@@ -164,7 +177,6 @@ async function main() {
     const result = refitCategory(cat, ids, rowsForCat, existingForCat);
     if (result.skipped) {
       console.log(`${cat}: skipped — ${result.reason}`);
-      if (existing[cat]) out[cat] = existing[cat]; // keep whatever was already live
     } else {
       console.log(`${cat}: REFIT accepted — n=${result.n}, heldout AUC ${result.newAuc.toFixed(3)} vs current ${result.baseAuc.toFixed(3)}`);
       out[cat] = result.weights;
@@ -179,9 +191,98 @@ async function main() {
 
   await writeFile(OUT, JSON.stringify(out));
   console.log('wrote', OUT, out);
-
-  let sw = await readFile(SW, 'utf8');
-  const m = sw.match(/muse-v(\d+)/);
-  if (m) { const next = `muse-v${parseInt(m[1], 10) + 1}`; sw = sw.replace(/muse-v\d+/g, next); await writeFile(SW, sw, 'utf8'); console.log('sw ->', next); }
+  await bumpSW();
 }
-main().catch((e) => { console.error(e); process.exit(1); });
+
+/* ================= E1: synthetic mode (fit from eval triplets) ================= */
+// Bridges the cold-start gap before 150 human ratings exist: the eval already produced triplets
+// (A,B,C) with an LLM judge's verdict on which is closer to A. We turn each into a pairwise ranking
+// example and fit the SAME per-category logistic weights, so the engine learns to agree with the
+// judge. Any category that reaches >=150 real human ratings ignores synthetic data (priority rule).
+
+async function loadTriplets() {
+  try { return JSON.parse(await readFile(TRIPLETS, 'utf8')); } catch { return {}; }
+}
+
+// human ratings per category — soft (no key -> treat as zero, so synthetic just runs everywhere).
+async function humanRatingCounts() {
+  if (!KEY) { console.log('no SB_SERVICE_KEY — treating human-rating counts as 0 (synthetic runs for all categories)'); return {}; }
+  try {
+    const r = await fetch(`${SB}/rest/v1/ratings?select=cat,r`, { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } });
+    if (!r.ok) { console.log('ratings count fetch failed', r.status, '— treating as 0'); return {}; }
+    const rows = await r.json();
+    const c = {};
+    for (const row of rows) { if (row && CATALGOS[row.cat] && (row.r === 1 || row.r === -1)) c[row.cat] = (c[row.cat] || 0) + 1; }
+    return c;
+  } catch { return {}; }
+}
+
+// one triplet -> [ +1 (winner-minus-loser), -1 (its mirror) ] feature rows, in `ids` order.
+function syntheticRows(eng, ids, cat, t) {
+  const A = eng.byId[t.a];
+  const winner = eng.byId[t.winner === 'B' ? t.b : t.c];
+  const loser  = eng.byId[t.winner === 'B' ? t.c : t.b];
+  if (!A || !winner || !loser) return null;
+  const pw = eng.parts(A, winner, cat), pl = eng.parts(A, loser, cat);
+  const num = (v) => (typeof v === 'number' ? v : 0); // null signal -> 0, same as the ratings path
+  const diff = ids.map((id) => num(pw[id]) - num(pl[id]));
+  return [{ x: diff, y: 1 }, { x: diff.map((v) => -v), y: -1 }];
+}
+
+// Split by TRIPLET (not by row): a +1 row and its -1 mirror must never straddle the train/holdout
+// boundary, or the holdout would be negated training rows and the AUC gate would pass trivially.
+function refitCategorySynthetic(cat, ids, tripletRows, existingWeights) {
+  const n = tripletRows.length;
+  if (n < MIN_SYNTHETIC_TRIPLETS) return { skipped: true, reason: `only ${n} triplets, need ${MIN_SYNTHETIC_TRIPLETS}` };
+  const order = shuffle([...Array(n).keys()]);
+  const nHold = Math.max(6, Math.round(n * HOLDOUT_FRAC));
+  const holdIdx = order.slice(0, nHold), trainIdx = order.slice(nHold);
+  const flatten = (idxs) => { const X = [], y = []; for (const i of idxs) for (const r of tripletRows[i]) { X.push(r.x); y.push(r.y); } return { X, y }; };
+  const { X: Xtr, y: ytr } = flatten(trainIdx);
+  const { X: Xho, y: yho } = flatten(holdIdx);
+
+  const { w, b } = fitLogistic(Xtr, ytr);
+  const newAuc = auc(Xho.map((x) => dot(w, x, b)), yho);
+  const baseW = ids.map((id) => existingWeights[id] || 0);
+  const baseAuc = auc(Xho.map((x) => dot(baseW, x, 0)), yho); // how well the LIVE weights already rank winner>loser
+
+  if (newAuc == null || baseAuc == null) return { skipped: true, reason: 'held-out split lacked both classes' };
+  if (newAuc <= baseAuc) return { skipped: true, reason: `held-out AUC ${newAuc.toFixed(3)} did not beat current ${baseAuc.toFixed(3)}` };
+
+  const finalWeights = clampAndRenormalize(w);
+  return { skipped: false, weights: ids.map((id, i) => [id, Math.round(finalWeights[i] * 1000) / 1000]), newAuc, baseAuc, n };
+}
+
+async function mainSynthetic() {
+  const triplets = await loadTriplets();
+  const keys = Object.keys(triplets);
+  if (!keys.length) { console.log('no eval triplets (eval/triplets.json empty/absent) — nothing to fit.'); return; }
+  console.log('eval triplets loaded:', keys.length);
+
+  const eng = await loadEngine({ root: ROOT });
+  const humanCounts = await humanRatingCounts();
+  const existing = await loadExistingWeights();
+
+  const byCat = {};
+  for (const key of keys) { const t = triplets[key]; if (t && CATALGOS[t.cat] && (t.winner === 'B' || t.winner === 'C')) (byCat[t.cat] = byCat[t.cat] || []).push(t); }
+
+  const out = { ...existing }; // preserve whatever the ratings refit already set (human-owned cats)
+  let changed = false;
+  for (const cat of Object.keys(CATALGOS)) {
+    const ids = CATALGOS[cat].map(([id]) => id);
+    if ((humanCounts[cat] || 0) >= MIN_RATINGS) { console.log(`${cat}: ${humanCounts[cat]} human ratings >= ${MIN_RATINGS} — synthetic skipped (human refit owns it)`); continue; }
+    const rows = (byCat[cat] || []).map((t) => syntheticRows(eng, ids, cat, t)).filter(Boolean);
+    const defaultWeights = Object.fromEntries(CATALGOS[cat]);
+    const existingForCat = existing[cat] ? Object.fromEntries(existing[cat]) : defaultWeights;
+    const result = refitCategorySynthetic(cat, ids, rows, existingForCat);
+    if (result.skipped) { console.log(`${cat}: synthetic skipped — ${result.reason}`); }
+    else { console.log(`${cat}: SYNTHETIC refit accepted — ${result.n} triplets, heldout AUC ${result.newAuc.toFixed(3)} vs current ${result.baseAuc.toFixed(3)}`); out[cat] = result.weights; changed = true; }
+  }
+
+  if (!changed) { console.log('No category cleared the synthetic gate this run — leaving weights.json untouched.'); return; }
+  await writeFile(OUT, JSON.stringify(out));
+  console.log('wrote', OUT, out);
+  await bumpSW();
+}
+
+(SYNTHETIC ? mainSynthetic() : main()).catch((e) => { console.error(e); process.exit(1); });
