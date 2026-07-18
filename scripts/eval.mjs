@@ -136,8 +136,12 @@ function describe(eng, id) {
   return bits.join(' — ');
 }
 
+let emptyLogged = 0;
 async function callAnthropic(prompt) {
-  const body = { model: JUDGE_MODEL, max_tokens: 128, messages: [{ role: 'user', content: prompt }] };
+  // 1024 (was 128): the first live runs returned EMPTY text for the hardest triplets — the model
+  // spends its token budget reaching an answer and never emits the text with a tighter cap. A short
+  // judgment still costs only a handful of output tokens; this just raises the ceiling.
+  const body = { model: JUDGE_MODEL, max_tokens: 1024, messages: [{ role: 'user', content: prompt }] };
   for (let attempt = 0; attempt <= 4; attempt++) {
     let res;
     try {
@@ -151,7 +155,9 @@ async function callAnthropic(prompt) {
       const j = await res.json();
       // concatenate ALL text blocks — a model may prepend a non-text (e.g. thinking) block, so
       // content[0].text can be undefined even when a perfectly good answer is in a later block.
-      return (j.content || []).filter((b) => b && b.type === 'text' && typeof b.text === 'string').map((b) => b.text).join('\n').trim();
+      const txt = (j.content || []).filter((b) => b && b.type === 'text' && typeof b.text === 'string').map((b) => b.text).join('\n').trim();
+      if (!txt && emptyLogged < 8) { emptyLogged++; console.error(`  [empty response #${emptyLogged}] stop_reason=${j.stop_reason} blocks=${JSON.stringify((j.content || []).map((b) => b && b.type))} usage=${JSON.stringify(j.usage)}`); }
+      return txt;
     }
     if (res.status === 429 || res.status >= 500) { await sleep(800 * 2 ** attempt); continue; }
     throw new Error(`Anthropic API ${res.status}: ${await res.text().catch(() => '')}`);
