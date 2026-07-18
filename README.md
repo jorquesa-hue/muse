@@ -65,6 +65,12 @@ Wikidata), derives its features on the fly, and runs the same algorithms. See `l
 - **`ingest.yml`** (daily, 03:30 UTC) → `ingest.mjs`: folds titles that users searched-but-missed
   (found via the live fallback, logged to Supabase) into `data.json` — so searched titles become
   permanent + instant + offline the next day.
+- **`enrich.yml`** (weekly, Mon, before `embed`) → `enrich.mjs`: a cheap bulk LLM (Haiku) re-rates
+  auto-derived / thin items (ids `-tmdb`/`sr-`, or <3 themes) against a **fixed rubric** — the 8 DNA
+  axes 0–100, 3–6 themes from the app vocabulary, and the category's subjective craft scalars — and
+  writes the result back into `data.json` (marking each with an `enr` version so re-runs skip it).
+  Hand-curated items are never touched; `MAX_ITEMS`-capped; needs `ANTHROPIC_API_KEY`. Runs in the
+  chain refresh → ingest → **enrich** → embed → eval → refit so upgraded metadata feeds the embeddings.
 - **`embed.yml`** (weekly, Mon) → `embed.mjs`: rebuilds `embeddings.b64.json` (the `emb` signal) from
   a local MiniLM model; caches the model between runs.
 - **`vibe.yml`** (weekly, Mon, after `embed`) → `vibe.mjs`: a cheap bulk LLM (Haiku) writes a ≤45-word

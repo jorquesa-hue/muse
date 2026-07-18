@@ -1,5 +1,5 @@
-# eval.mjs DRY_RUN sidecars — mock verdicts, never committed (would poison the live judge cache)
-eval/*.dryrun.json
+# DRY_RUN sidecars — mock outputs (eval verdicts, enrich data), never committed
+*.dryrun.json
 
 # node
 node_modules/
