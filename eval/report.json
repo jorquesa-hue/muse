@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-18T21:12:50.198Z",
+  "generatedAt": "2026-07-18T21:46:03.033Z",
   "judgeModel": "claude-sonnet-5",
   "overall": {
-    "accuracy": 77,
+    "accuracy": 77.5,
     "n": 400
   },
   "cross": {
-    "accuracy": 70,
+    "accuracy": 72.5,
     "n": 80
   },
   "perCategory": {
