@@ -32,8 +32,9 @@ Each item carries a precomputed feature set. `score(a, b, cat)` blends ~15 per-c
 (a text-**embedding** term `emb`, an atmosphere-**embedding** term `vibemb`, plus dna, theme, mood,
 genre, craft, creator, era, audience, culture) via the weighted `CATALGOS` table, using null-safe
 **prior-imputed** scoring, a coverage gate, and an **MMR diversity** re-rank. Cross-media picks use
-`crossScore`, which leads with `vibemb` (experiential feel transfers across media better than shared
-facts). Both embedding terms are **live**: weekly jobs rebuild `embeddings.b64.json` (`embed.yml` →
+`crossScore`, a blend led by the text-embedding `emb` term with `vibemb` as a supporting atmosphere
+voice (`emb .40 / dna .25 / vibemb .20 / theme .15`). Both embedding terms are **live**: weekly jobs
+rebuild `embeddings.b64.json` (`embed.yml` →
 `scripts/embed.mjs`, from the item's catalog text) and `vibe.b64.json` (`vibe.yml` →
 `scripts/vibe.mjs`, from an LLM-written "atmosphere only" description), and the app loads both at
 boot — each degrades gracefully to a no-op if its file hasn't been built yet.
