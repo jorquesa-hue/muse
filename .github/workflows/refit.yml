@@ -1,10 +1,14 @@
 name: Refit weights
 
-# Weekly: fits CATALGOS weights from logged ratings (Supabase `ratings`, read via service_role —
-# see T24), per category, gated on volume (>=150 ratings) and held-out AUC beating whatever's
-# currently live. Scheduled 2 hours after embed.yml so any ratings collected under a live
-# embedding get fit with it present. Shares the catalog-writes concurrency group so it queues
-# safely behind a same-day refresh/embed run instead of racing it.
+# Weekly: fits CATALGOS weights per category, gated on held-out AUC beating whatever's currently
+# live. Two passes:
+#   1. from logged human ratings (Supabase `ratings`, service_role — see T24), gated on volume
+#      (>=150 ratings). A no-op until real ratings accumulate.
+#   2. --synthetic (E1): from the eval triplets (eval/triplets.json) as pairwise ranking examples,
+#      so the weights learn to agree with the LLM judge BEFORE 150 human ratings exist. Any
+#      category that reaches >=150 human ratings ignores synthetic data (the ratings pass owns it).
+# Runs after eval.yml (so it sees the freshest triplets). Shares the catalog-writes concurrency
+# group so it queues safely rather than racing refresh/embed/eval.
 on:
   schedule:
     - cron: '17 9 * * 1'
@@ -32,6 +36,14 @@ jobs:
         env:
           SB_SERVICE_KEY: ${{ secrets.SB_SERVICE_KEY }}
         run: node scripts/refit.mjs
+
+      # E1: synthetic bootstrap from the eval triplets. Runs AFTER the ratings pass so it preserves
+      # any category the ratings pass owns (>=150 human ratings); needs the key only to read those
+      # rating counts (no key -> treats all as 0 and bootstraps every category).
+      - name: Bootstrap weights from eval triplets (synthetic)
+        env:
+          SB_SERVICE_KEY: ${{ secrets.SB_SERVICE_KEY }}
+        run: node scripts/refit.mjs --synthetic
 
       - name: Commit & push if changed
         run: |

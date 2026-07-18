@@ -44,8 +44,10 @@ pure-Node port of the scoring math proven byte-identical to `app.js` — so the 
 what ships. Runs weekly (`eval.yml`, after `embed.yml`), caches judged triplets in
 `eval/triplets.json` (never re-judged), and writes `eval/report.json` + a job-summary table.
 
-**Baseline:** _pending the first live eval run_ (needs the `ANTHROPIC_API_KEY` secret; recorded here
-once measured)._
+**Baseline** (judge `claude-sonnet-5`, 400 triplets, 2026-07-18): **76.8% overall**, 72.5% cross-media.
+Per category — movies 67.5, tv 82.5, books 82.5, music 72.5, games 80.0, anime 77.5, food 85.0,
+travel 75.0. Every later batch (E1–E6) must hold or beat this; the current numbers live in
+`eval/report.json`.
 
 ## Live "find anything" fallback
 If a search isn't in `data.json`, the app looks the title up **live and keylessly** (Wikipedia +
