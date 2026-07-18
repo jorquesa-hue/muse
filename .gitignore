@@ -1,0 +1,6 @@
+# eval.mjs DRY_RUN sidecars — mock verdicts, never committed (would poison the live judge cache)
+eval/*.dryrun.json
+
+# node
+node_modules/
+npm-debug.log*
