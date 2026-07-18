@@ -28,12 +28,15 @@ cross-media section. Trilingual (EN / ES / Brazilian-PT). Runs fully client-side
 3. Commit to `main`. GitHub Pages redeploys in ~1 minute.
 
 ## How matching works (in `app.js`)
-Each item carries a precomputed feature set. `score(a, b, cat)` blends ~14 per-category signals
-(a text-**embedding** term `emb`, plus dna, theme, mood, genre, craft, creator, era, audience,
-culture) via the weighted `CATALGOS` table, using null-safe **prior-imputed** scoring, a coverage
-gate, and an **MMR diversity** re-rank. Cross-media picks use `crossScore`. The `emb` term is
-**live** — a weekly job (`embed.yml` → `scripts/embed.mjs`) rebuilds `embeddings.b64.json` from a
-local MiniLM sentence-transformer, and the app loads it at boot.
+Each item carries a precomputed feature set. `score(a, b, cat)` blends ~15 per-category signals
+(a text-**embedding** term `emb`, an atmosphere-**embedding** term `vibemb`, plus dna, theme, mood,
+genre, craft, creator, era, audience, culture) via the weighted `CATALGOS` table, using null-safe
+**prior-imputed** scoring, a coverage gate, and an **MMR diversity** re-rank. Cross-media picks use
+`crossScore`, which leads with `vibemb` (experiential feel transfers across media better than shared
+facts). Both embedding terms are **live**: weekly jobs rebuild `embeddings.b64.json` (`embed.yml` →
+`scripts/embed.mjs`, from the item's catalog text) and `vibe.b64.json` (`vibe.yml` →
+`scripts/vibe.mjs`, from an LLM-written "atmosphere only" description), and the app loads both at
+boot — each degrades gracefully to a no-op if its file hasn't been built yet.
 
 ## Eval (how we know matching is any good)
 `scripts/eval.mjs` measures the engine against an LLM judge via **triplet accuracy**: it builds
@@ -62,6 +65,10 @@ Wikidata), derives its features on the fly, and runs the same algorithms. See `l
   permanent + instant + offline the next day.
 - **`embed.yml`** (weekly, Mon) → `embed.mjs`: rebuilds `embeddings.b64.json` (the `emb` signal) from
   a local MiniLM model; caches the model between runs.
+- **`vibe.yml`** (weekly, Mon, after `embed`) → `vibe.mjs`: a cheap bulk LLM (Haiku) writes a ≤45-word
+  "atmosphere only" descriptor per item (mood/energy/texture/tempo — no plot, names, or genre), cached
+  by id in `vibe/texts.json`; those texts are MiniLM-embedded into `vibe.b64.json` (the `vibemb` signal).
+  Texts are generated incrementally and `MAX_ITEMS`-capped; needs `ANTHROPIC_API_KEY`.
 - **`refit.yml`** (weekly, Mon) → `refit.mjs`: re-fits the per-category `CATALGOS` weights from logged
   ratings (or synthetic eval triplets — see `--synthetic`), gated on held-out AUC; writes `weights.json`.
 - **`eval.yml`** (weekly, Mon) → `eval.mjs`: triplet-accuracy eval vs an LLM judge (see **Eval** above);
@@ -69,7 +76,8 @@ Wikidata), derives its features on the fly, and runs the same algorithms. See `l
 - **`bump-sw.mjs`**: helper to increment the SW version after editing app files.
 
 The catalog/automation jobs commit only when something changed, and modify `data.json`, `sw.js`,
-`embeddings.b64.json`, `weights.json`, and/or `eval/*.json` only — never the app code.
+`embeddings.b64.json`, `vibe.b64.json`, `vibe/texts.json`, `weights.json`, and/or `eval/*.json` only —
+never the app code.
 
 ## Backend (Supabase, free tier)
 The client's Supabase **anon key is public by design** — Row-Level Security is **insert-only**, so
