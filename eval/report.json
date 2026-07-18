@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-07-18T17:49:59.594Z",
+  "judgeModel": "claude-sonnet-5",
+  "overall": {
+    "accuracy": 94,
+    "n": 151
+  },
+  "cross": {
+    "accuracy": 91.7,
+    "n": 12
+  },
+  "perCategory": {
+    "movies": {
+      "accuracy": 100,
+      "n": 12
+    },
+    "tv": {
+      "accuracy": 83.3,
+      "n": 12
+    },
+    "books": {
+      "accuracy": 91.3,
+      "n": 23
+    },
+    "music": {
+      "accuracy": 90,
+      "n": 20
+    },
+    "games": {
+      "accuracy": 96,
+      "n": 25
+    },
+    "anime": {
+      "accuracy": 100,
+      "n": 12
+    },
+    "food": {
+      "accuracy": 100,
+      "n": 18
+    },
+    "travel": {
+      "accuracy": 94.1,
+      "n": 17
+    }
+  },
+  "judgedTriplets": 151,
+  "builtTriplets": 400
+}
