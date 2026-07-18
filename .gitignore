@@ -1,6 +1,10 @@
 # DRY_RUN sidecars — mock outputs (eval verdicts, enrich data), never committed
 *.dryrun.json
 
+# E4 candidate-model embeddings — a throwaway bake-off artifact, never shipped (a real switch
+# rebuilds the live embeddings.b64.json via a normal embed run with the new default model)
+embeddings-*.b64.json
+
 # node
 node_modules/
 npm-debug.log*

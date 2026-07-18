@@ -1,0 +1,112 @@
+name: Embedding model bake-off
+
+# E4: one-off (workflow_dispatch) head-to-head between the current embedding model and a candidate,
+# decided by the eval. Builds the candidate's embeddings into a SEPARATE file (never touches the live
+# embeddings.b64.json or the SW), runs eval.mjs on BOTH models against the same catalog, and writes
+# eval/model-comparison.md with the verdict. Ship gate (applied by model-compare.mjs): switch only if
+# the candidate's overall triplet accuracy beats the baseline by >= 1 point. A switch is then a
+# one-line follow-up (change embed.mjs's default EMBED_MODEL); this job never flips it automatically.
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_model:
+        description: 'Candidate @xenova model id (384-d)'
+        required: false
+        default: 'Xenova/bge-small-en-v1.5'
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: catalog-writes
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    env:
+      CAND_MODEL: ${{ github.event.inputs.candidate_model || 'Xenova/bge-small-en-v1.5' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # cache keyed on the candidate id so the ONNX weights persist across re-runs of the same bake-off
+      - name: Cache candidate model
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: embed-model-${{ env.CAND_MODEL }}
+
+      - name: Install embedding deps
+        run: npm install @xenova/transformers
+
+      # build the candidate's embeddings into a throwaway file (EMBED_OUT set -> no SW bump, live file untouched)
+      - name: Build candidate embeddings
+        env:
+          EMBED_MODEL: ${{ env.CAND_MODEL }}
+          EMBED_OUT: embeddings-bge.b64.json
+        run: node scripts/embed.mjs
+
+      # baseline eval on the LIVE embeddings (mostly cache hits -> near-free); tagged report.minilm.json
+      - name: Eval baseline (current model)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          JUDGE_MODEL: ${{ vars.JUDGE_MODEL }}
+          EVAL_TAG: minilm
+        run: node scripts/eval.mjs
+
+      # candidate eval on the candidate embeddings; tagged report.bge.json (shares the triplet cache)
+      - name: Eval candidate
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          JUDGE_MODEL: ${{ vars.JUDGE_MODEL }}
+          EMB_FILE: embeddings-bge.b64.json
+          EVAL_TAG: bge
+        run: node scripts/eval.mjs
+
+      - name: Compare + apply gate
+        env:
+          BASE_NAME: all-MiniLM-L6-v2 (current)
+          CAND_NAME: ${{ env.CAND_MODEL }} (candidate)
+        run: node scripts/model-compare.mjs
+
+      - name: Commit comparison
+        run: |
+          git config user.name  "muse-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # embeddings-bge.b64.json is gitignored — only the reports + comparison + grown triplet cache land
+          git add eval/model-comparison.md eval/report.minilm.json eval/report.bge.json eval/triplets.json
+          if git diff --staged --quiet; then
+            echo "No comparison changes this run."
+            exit 0
+          fi
+          git commit -m "chore: embedding model bake-off (E4)"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push; then
+              exit 0
+            fi
+            echo "push attempt $i failed, retrying after backoff..."
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 5))
+          done
+          echo "FATAL: could not push the model comparison after 3 attempts." >&2
+          exit 1
+
+      - name: File an issue if this run failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `${context.workflow} failed`;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const { data: issues } = await github.rest.issues.listForRepo({ owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 50 });
+            const existing = issues.find(i => i.title === title && !i.pull_request);
+            if (existing) {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: existing.number, body: `Failed again on \`${context.sha.slice(0,7)}\`: ${runUrl}` });
+            } else {
+              await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body: `The **${context.workflow}** workflow failed on \`${context.sha.slice(0,7)}\`.\n\n${runUrl}` });
+            }

@@ -32,13 +32,18 @@ const CROSS_TRIPLETS = +(process.env.CROSS_TRIPLETS || 80);
 const MAX_JUDGE = +(process.env.MAX_JUDGE || 800);
 const CONCURRENCY = Math.max(1, +(process.env.JUDGE_CONCURRENCY || 4));
 const DRY_RUN = process.env.DRY_RUN === '1';
+// v3 §E4 model bake-off: EMB_FILE points the engine at a CANDIDATE embeddings file; EVAL_TAG routes
+// this run's report to report.<tag>.json (the triplet cache stays shared — it's keyed by triplet
+// hash, so a candidate's new triplets just accrete, and any overlaps hit the cache for free).
+const EMB_FILE = process.env.EMB_FILE || undefined;
+const EVAL_TAG = (process.env.EVAL_TAG || '').replace(/[^a-z0-9_-]/gi, '');
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const EVAL_DIR = ROOT + 'eval/';
 // DRY_RUN never touches the committed cache/report — its mock verdicts, keyed by the SAME real
 // triplet hashes, would otherwise poison the live run (mock verdicts read back as "already judged").
 const TRIPLETS_FILE = EVAL_DIR + (DRY_RUN ? 'triplets.dryrun.json' : 'triplets.json');
-const REPORT_FILE = EVAL_DIR + (DRY_RUN ? 'report.dryrun.json' : 'report.json');
+const REPORT_FILE = EVAL_DIR + (DRY_RUN ? 'report.dryrun.json' : (EVAL_TAG ? `report.${EVAL_TAG}.json` : 'report.json'));
 
 /* ---------- deterministic helpers ---------- */
 function mulberry32(seed) {
@@ -266,8 +271,8 @@ function printTable(report) {
 
 /* ---------- main ---------- */
 async function main() {
-  const eng = await loadEngine({ root: ROOT });
-  console.log(`engine loaded: ${eng.ALL.length} items, embeddings ${eng.embLoaded() ? 'live' : 'ABSENT'}`);
+  const eng = await loadEngine({ root: ROOT, embFile: EMB_FILE });
+  console.log(`engine loaded: ${eng.ALL.length} items, embeddings ${eng.embLoaded() ? 'live' : 'ABSENT'}${EMB_FILE ? ` (candidate: ${EMB_FILE})` : ''}${EVAL_TAG ? ` [tag: ${EVAL_TAG}]` : ''}`);
 
   console.log('building triplets...');
   const triplets = [...sameCatTriplets(eng), ...crossTriplets(eng)];

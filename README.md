@@ -81,6 +81,10 @@ Wikidata), derives its features on the fly, and runs the same algorithms. See `l
   ratings (or synthetic eval triplets — see `--synthetic`), gated on held-out AUC; writes `weights.json`.
 - **`eval.yml`** (weekly, Mon) → `eval.mjs`: triplet-accuracy eval vs an LLM judge (see **Eval** above);
   writes `eval/*.json`. Uses `scripts/engine-port.mjs` (byte-identical port of `app.js` scoring).
+- **`model-compare.yml`** (on-demand) → `embed.mjs` (`EMBED_MODEL`/`EMBED_OUT` env) + `eval.mjs` +
+  `model-compare.mjs`: E4 embedding-model bake-off. Builds a candidate model's embeddings into a
+  throwaway file, evals both against the same catalog, and writes `eval/model-comparison.md`. Ship
+  gate: switch the default model only if the candidate's overall accuracy beats the baseline by ≥1 pt.
 - **`bump-sw.mjs`**: helper to increment the SW version after editing app files.
 
 The catalog/automation jobs commit only when something changed, and modify `data.json`, `sw.js`,
