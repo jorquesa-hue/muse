@@ -158,6 +158,7 @@ const ALGO_NAMES = {
   vibe:{en:'Vibe match',es:'Afinidad de vibra',pt:'Afinidade de vibe'},
   climate:{en:'Climate',es:'Clima',pt:'Clima'},
   srcdem:{en:'Source & audience',es:'Origen y demografía',pt:'Origem e demografia'},
+  vibemb:{en:'Atmosphere match',es:'Coincidencia de atmósfera',pt:'Correspondência de atmosfera'},   // v3 §E2: vibe EMBEDDING (distinct from the travel 'vibe' tag signal above)
 };
 const CRAFT_NAMES = {
   movies:{en:'Pacing & style',es:'Ritmo y estilo',pt:'Ritmo e estilo'},
@@ -194,6 +195,7 @@ const ALGO_DESCS = {
   vibe:{en:'Overlap of destination vibe tags.',es:'Solapamiento de etiquetas de vibra del destino.',pt:'Sobreposição de tags de vibe do destino.'},
   climate:{en:'Climate family match.',es:'Coincidencia de familia climática.',pt:'Combinação de família climática.'},
   srcdem:{en:'Same source material and target demographic.',es:'Mismo material de origen y demografía.',pt:'Mesmo material de origem e demografia.'},
+  vibemb:{en:'AI embedding of a written atmosphere description — mood, energy, texture, tempo, aftertaste.',es:'Embedding de IA de una descripción de atmósfera: ánimo, energía, textura, tempo.',pt:'Embedding de IA de uma descrição de atmosfera — clima, energia, textura, ritmo.'},
 };
 const WHY = {
   emb:{en:'reads the same to a semantic model',es:'suena igual a un modelo semántico',pt:'soa igual a um modelo semântico'},
@@ -207,6 +209,7 @@ const WHY = {
   vibe:{en:'a matching vibe',es:'la misma vibra',pt:'a mesma vibe'},
   climate:{en:'a similar climate',es:'un clima similar',pt:'um clima parecido'},
   srcdem:{en:'same origin & audience',es:'mismo origen y público',pt:'mesma origem e público'},
+  vibemb:{en:'a matching atmosphere',es:'una atmósfera afín',pt:'uma atmosfera parecida'},
 };
 const WHY_THEME = {en:'they share {x}',es:'comparten {x}',pt:'compartilham {x}'};
 const WHY_GENRE = {en:'the same “{x}” spirit',es:'el mismo espíritu “{x}”',pt:'o mesmo espírito “{x}”'};
@@ -342,6 +345,16 @@ async function loadEmb(url='embeddings.b64.json'){ const j=await (await fetch(ur
 function embSim(a,b){ if(!EMB_BUF) return null; const ia=EMB_IDX[a.id], ib=EMB_IDX[b.id];
   if(ia==null||ib==null) return null; const oa=ia*EMB_DIM, ob=ib*EMB_DIM; let dot=0;
   for(let k=0;k<EMB_DIM;k++) dot+=EMB_BUF[oa+k]*EMB_BUF[ob+k]; return Math.max(0,dot/(127*127)); }
+/* v3 §E2: vibe embedding — a SEPARATE MiniLM embedding of a written "atmosphere only" description
+   (mood/energy/texture/tempo), not the catalog text. Same byte format + loader as loadEmb/embSim;
+   null until vibe.b64.json loads (graceful-absent). Distinct from the tag-based 'vibe' signal. */
+let VIBE_BUF=null, VIBE_IDX=null, VIBE_DIM=0;
+async function loadVibe(url='vibe.b64.json'){ const j=await (await fetch(url)).json();
+  const raw=Uint8Array.from(atob(j.data),c=>c.charCodeAt(0)); VIBE_BUF=new Int8Array(raw.buffer);
+  VIBE_DIM=j.dim; VIBE_IDX=Object.create(null); j.ids.forEach((id,i)=>{ VIBE_IDX[id]=i; }); }
+function vibeSim(a,b){ if(!VIBE_BUF) return null; const ia=VIBE_IDX[a.id], ib=VIBE_IDX[b.id];
+  if(ia==null||ib==null) return null; const oa=ia*VIBE_DIM, ob=ib*VIBE_DIM; let dot=0;
+  for(let k=0;k<VIBE_DIM;k++) dot+=VIBE_BUF[oa+k]*VIBE_BUF[ob+k]; return Math.max(0,dot/(127*127)); }
 
 const CRAFT_FN = {   // v2: blend() drops null sub-terms and renormalizes
   movies:(a,b)=>{const xa=a.x||{},xb=b.x||{};return blend([[featSim(xa,xb,['vis','dlg','twist']),.8],[prox(xa.run,xb.run,90),.2]]);},
@@ -356,6 +369,7 @@ const CRAFT_FN = {   // v2: blend() drops null sub-terms and renormalizes
 /* v2: unified dispatch — every entry returns number|null; a,b are items. */
 const ALGO = {
   emb:(a,b)=>embSim(a,b),
+  vibemb:(a,b)=>vibeSim(a,b),   // v3 §E2: vibe-embedding cosine (id kept distinct from tag 'vibe')
   theme:(a,b)=>wCos(a.th,b.th,themeIDF),
   mood:(a,b,cat)=>dnaSim(a.dna,b.dna,cat),
   genre:(a,b,cat)=>wCos(a.g,b.g,genreIDF[cat]),
@@ -372,18 +386,18 @@ const ALGO = {
   srcdem:(a,b)=>{const xa=a.x||{},xb=b.x||{}; if((xa.src==null&&xa.dem==null)||(xb.src==null&&xb.dem==null)) return null;   // symmetric: null if EITHER side lacks both fields (was A-only, so a candidate missing data scored a deceptive 0 instead of "no signal")
     return (xa.src&&xa.src===xb.src?.5:0)+(xa.dem&&xa.dem===xb.dem?.5:0);},
 };
-const CATALGOS = {   // v2: emb 0.22 added to every row (renormalizer rescales the rest)
-  movies:[['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.10],['era',.08],['audience',.08],['culture',.06]],
-  tv:    [['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.08],['era',.08],['audience',.10],['culture',.06]],
-  books: [['emb',.22],['theme',.22],['mood',.20],['genre',.14],['craft',.14],['creator',.08],['era',.08],['audience',.08],['culture',.06]],
-  music: [['emb',.22],['craft',.22],['mood',.20],['genre',.16],['theme',.12],['creator',.08],['era',.10],['audience',.06],['culture',.06]],
-  games: [['emb',.22],['craft',.22],['genre',.18],['mood',.16],['theme',.12],['creator',.06],['era',.08],['audience',.10],['culture',.08]],
-  anime: [['emb',.22],['theme',.18],['mood',.18],['genre',.16],['craft',.14],['creator',.12],['era',.08],['audience',.08],['srcdem',.06]],
-  food:  [['emb',.22],['craft',.26],['ing',.12],['tech',.06],['genre',.14],['mood',.14],['theme',.10],['culture',.12],['audience',.06]],
-  travel:[['emb',.22],['craft',.24],['vibe',.14],['mood',.16],['theme',.12],['genre',.12],['climate',.08],['culture',.08],['audience',.06]],
+const CATALGOS = {   // v2: emb 0.22 added to every row; v3 §E2: vibemb 0.10 appended (renormalizer rescales the rest)
+  movies:[['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.10],['era',.08],['audience',.08],['culture',.06],['vibemb',.10]],
+  tv:    [['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.08],['era',.08],['audience',.10],['culture',.06],['vibemb',.10]],
+  books: [['emb',.22],['theme',.22],['mood',.20],['genre',.14],['craft',.14],['creator',.08],['era',.08],['audience',.08],['culture',.06],['vibemb',.10]],
+  music: [['emb',.22],['craft',.22],['mood',.20],['genre',.16],['theme',.12],['creator',.08],['era',.10],['audience',.06],['culture',.06],['vibemb',.10]],
+  games: [['emb',.22],['craft',.22],['genre',.18],['mood',.16],['theme',.12],['creator',.06],['era',.08],['audience',.10],['culture',.08],['vibemb',.10]],
+  anime: [['emb',.22],['theme',.18],['mood',.18],['genre',.16],['craft',.14],['creator',.12],['era',.08],['audience',.08],['srcdem',.06],['vibemb',.10]],
+  food:  [['emb',.22],['craft',.26],['ing',.12],['tech',.06],['genre',.14],['mood',.14],['theme',.10],['culture',.12],['audience',.06],['vibemb',.10]],
+  travel:[['emb',.22],['craft',.24],['vibe',.14],['mood',.16],['theme',.12],['genre',.12],['climate',.08],['culture',.08],['audience',.06],['vibemb',.10]],
 };
 /* rows of CATALGOS[cat] that can actually fire right now — excludes 'emb' until embeddings.b64.json loads */
-const activeAlgoRows=cat=>CATALGOS[cat].filter(([id])=>id!=='emb'||EMB_BUF);
+const activeAlgoRows=cat=>CATALGOS[cat].filter(([id])=>(id!=='emb'||EMB_BUF)&&(id!=='vibemb'||VIBE_BUF));
 /* v2 §B6: weekly ratings->CATALGOS refit (scripts/refit.mjs). Loads a build-time file the same
    non-fatal way as loadEmb() — 404/malformed just means "keep the defaults", never a hard error.
    Only overrides a category when the fetched weights cover EXACTLY the same algo ids as the
@@ -436,7 +450,7 @@ function buildPriors(cat, sampleSize=300){
   const pool=D[cat]||[]; if(pool.length<2) return {priors:{}, p80:{}};
   const priors={}, p80={};
   for(const [id] of CATALGOS[cat]){
-    if(id==='emb') continue;
+    if(id==='emb'||id==='vibemb') continue;   // v3 §E2: embedding signals have no sampled prior
     const present=ALGO_PRESENT[id];
     const eligible=present?pool.filter(present):pool;
     const m=eligible.length; if(m<2){ priors[id]=null; p80[id]=null; continue; }
@@ -478,9 +492,12 @@ function score(a,b,cat){
    the FIRST one in data.json always won (measured: median 2, p90 11, max 56-way ties). Comparing
    raw floats makes an exact tie statistically negligible. */
 function crossScore(a,b){ let num=0,den=0;
-  const e=embSim(a,b);              if(e!=null){ num+=0.55*e; den+=0.55; }
-  const dn=dnaSim(a.dna,b.dna,null);if(dn!=null){ num+=0.30*dn; den+=0.30; }
-  const th=wCos(a.th,b.th,themeIDF);if(th!=null){ num+=0.15*th; den+=0.15; }
+  // v3 §E2: vibe-embedding leads cross-media (experiential atmosphere transfers across media better
+  // than catalog-text embeddings); skip-renormalize so it degrades gracefully if vibe.b64.json absent.
+  const vb=vibeSim(a,b);            if(vb!=null){ num+=0.45*vb; den+=0.45; }
+  const e=embSim(a,b);              if(e!=null){ num+=0.25*e; den+=0.25; }
+  const dn=dnaSim(a.dna,b.dna,null);if(dn!=null){ num+=0.20*dn; den+=0.20; }
+  const th=wCos(a.th,b.th,themeIDF);if(th!=null){ num+=0.10*th; den+=0.10; }
   return den>0?num/den:0;
 }
 const crossPct=v=>Math.min(99,Math.round(100*Math.pow(v,0.9)));
@@ -1260,6 +1277,7 @@ function finishInit(){
   // v2 §B-blend: renderAll() (not renderResults()) so a blend view (state.sel2 set) re-renders via
   // renderBlend() instead of being silently clobbered into a single-source view once these resolve.
   loadEmb('embeddings.b64.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // embeddings just went live — the cached pre-embedding scores are stale, force a fresh score
+  loadVibe('vibe.b64.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // v3 §E2: vibe embeddings just landed — refresh
   loadWeights('weights.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // v2 §B6: refit weights just landed — the cached pre-refit scores are stale, force a fresh score
 }
 window.addEventListener('hashchange',applyHash);
