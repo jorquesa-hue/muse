@@ -29,10 +29,23 @@ cross-media section. Trilingual (EN / ES / Brazilian-PT). Runs fully client-side
 
 ## How matching works (in `app.js`)
 Each item carries a precomputed feature set. `score(a, b, cat)` blends ~14 per-category signals
-(dna, theme, mood, genre, craft, creator, era, audience, culture, + a dormant `emb` embedding term)
-via the weighted `CATALGOS` table, using null-safe **skip-and-renormalize** scoring, a coverage
-gate, and an **MMR diversity** re-rank. Cross-media picks use `crossScore`. The embedding term is
-**dormant** — it activates if an `embeddings.b64.json` is added.
+(a text-**embedding** term `emb`, plus dna, theme, mood, genre, craft, creator, era, audience,
+culture) via the weighted `CATALGOS` table, using null-safe **prior-imputed** scoring, a coverage
+gate, and an **MMR diversity** re-rank. Cross-media picks use `crossScore`. The `emb` term is
+**live** — a weekly job (`embed.yml` → `scripts/embed.mjs`) rebuilds `embeddings.b64.json` from a
+local MiniLM sentence-transformer, and the app loads it at boot.
+
+## Eval (how we know matching is any good)
+`scripts/eval.mjs` measures the engine against an LLM judge via **triplet accuracy**: it builds
+triplets `(A, B, C)` where the engine ranks `B` above `C`, asks a judge which of `B`/`C` is actually
+closer to `A`, and scores the engine by how often it agreed (same-category triplets use `score()`,
+cross-media use `crossScore()`). It reads the engine through **`scripts/engine-port.mjs`** — a
+pure-Node port of the scoring math proven byte-identical to `app.js` — so the eval measures exactly
+what ships. Runs weekly (`eval.yml`, after `embed.yml`), caches judged triplets in
+`eval/triplets.json` (never re-judged), and writes `eval/report.json` + a job-summary table.
+
+**Baseline:** _pending the first live eval run_ (needs the `ANTHROPIC_API_KEY` secret; recorded here
+once measured)._
 
 ## Live "find anything" fallback
 If a search isn't in `data.json`, the app looks the title up **live and keylessly** (Wikipedia +
@@ -45,9 +58,16 @@ Wikidata), derives its features on the fly, and runs the same algorithms. See `l
 - **`ingest.yml`** (daily, 03:30 UTC) → `ingest.mjs`: folds titles that users searched-but-missed
   (found via the live fallback, logged to Supabase) into `data.json` — so searched titles become
   permanent + instant + offline the next day.
+- **`embed.yml`** (weekly, Mon) → `embed.mjs`: rebuilds `embeddings.b64.json` (the `emb` signal) from
+  a local MiniLM model; caches the model between runs.
+- **`refit.yml`** (weekly, Mon) → `refit.mjs`: re-fits the per-category `CATALGOS` weights from logged
+  ratings (or synthetic eval triplets — see `--synthetic`), gated on held-out AUC; writes `weights.json`.
+- **`eval.yml`** (weekly, Mon) → `eval.mjs`: triplet-accuracy eval vs an LLM judge (see **Eval** above);
+  writes `eval/*.json`. Uses `scripts/engine-port.mjs` (byte-identical port of `app.js` scoring).
 - **`bump-sw.mjs`**: helper to increment the SW version after editing app files.
 
-All three commit only when something changed, and modify `data.json` and/or `sw.js` only — never the app code.
+The catalog/automation jobs commit only when something changed, and modify `data.json`, `sw.js`,
+`embeddings.b64.json`, `weights.json`, and/or `eval/*.json` only — never the app code.
 
 ## Backend (Supabase, free tier)
 The client's Supabase **anon key is public by design** — Row-Level Security is **insert-only**, so
@@ -57,4 +77,9 @@ it can't read/steal anything. Two tables:
 
 ## Secrets / config
 - Repo secret **`TMDB_KEY`** — TMDB v4 Read Access Token (used only by the weekly refresh, never shipped).
+- Repo secret **`SB_SERVICE_KEY`** — Supabase service_role key (read-only use by `refit.mjs`; never shipped).
+- Repo secret **`ANTHROPIC_API_KEY`** — Claude API key for the LLM-in-Actions jobs (`eval.mjs`, and the
+  E2/E3/E6 enrichment jobs). Never shipped to the client — all LLM calls happen in Actions only.
+- Optional repo **variables**: `JUDGE_MODEL` (eval judge model, default `claude-sonnet-5`),
+  `EVAL_MAX_JUDGE` (cap on new judge calls per eval run).
 - Repo → Settings → Actions → **Workflow permissions must be "Read and write"** (so the jobs can commit).
