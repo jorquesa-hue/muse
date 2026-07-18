@@ -226,11 +226,10 @@ function score(a, b, cat) {
   const total = den > 0 ? num / den : 0, coverage = wtot > 0 ? presentDen / wtot : 0;
   return { parts, total, coverage, eligible: coverage >= MIN_COVERAGE, pct: Math.min(99, Math.round(100 * Math.pow(total, 0.8))) };
 }
-function crossScore(a, b) {   // v3 §E2 (retuned): emb .40 / dna .25 / vibe .20 / theme .15 — emb leads again (mirror app.js)
+function crossScore(a, b) {   // v3 §E2 (final): proven emb-led blend — vibe measured neutral-to-worse on cross, stays same-cat only (mirror app.js)
   let num = 0, den = 0;
-  const e = embSim(a, b); if (e != null) { num += 0.40 * e; den += 0.40; }
-  const dn = dnaSim(a.dna, b.dna, null); if (dn != null) { num += 0.25 * dn; den += 0.25; }
-  const vb = vibeSim(a, b); if (vb != null) { num += 0.20 * vb; den += 0.20; }
+  const e = embSim(a, b); if (e != null) { num += 0.55 * e; den += 0.55; }
+  const dn = dnaSim(a.dna, b.dna, null); if (dn != null) { num += 0.30 * dn; den += 0.30; }
   const th = wCos(a.th, b.th, themeIDF); if (th != null) { num += 0.15 * th; den += 0.15; }
   return den > 0 ? num / den : 0;
 }
