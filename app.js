@@ -492,12 +492,14 @@ function score(a,b,cat){
    the FIRST one in data.json always won (measured: median 2, p90 11, max 56-way ties). Comparing
    raw floats makes an exact tie statistically negligible. */
 function crossScore(a,b){ let num=0,den=0;
-  // v3 §E2: vibe-embedding leads cross-media (experiential atmosphere transfers across media better
-  // than catalog-text embeddings); skip-renormalize so it degrades gracefully if vibe.b64.json absent.
-  const vb=vibeSim(a,b);            if(vb!=null){ num+=0.45*vb; den+=0.45; }
-  const e=embSim(a,b);              if(e!=null){ num+=0.25*e; den+=0.25; }
-  const dn=dnaSim(a.dna,b.dna,null);if(dn!=null){ num+=0.20*dn; den+=0.20; }
-  const th=wCos(a.th,b.th,themeIDF);if(th!=null){ num+=0.10*th; den+=0.10; }
+  // v3 §E2 (retuned): the proven text-embedding term LEADS cross-media again; vibe is a SUPPORTING
+  // atmosphere voice (.20), not the lead. MEASURED: a .45 vibe lead regressed the cross gate to
+  // 67.5% (vs 72.5% emb-led); demoting it lets atmosphere add nuance without overriding emb/dna.
+  // skip-renormalize so each term drops out gracefully when its signal is null (e.g. vibe absent).
+  const e=embSim(a,b);              if(e!=null){ num+=0.40*e; den+=0.40; }
+  const dn=dnaSim(a.dna,b.dna,null);if(dn!=null){ num+=0.25*dn; den+=0.25; }
+  const vb=vibeSim(a,b);            if(vb!=null){ num+=0.20*vb; den+=0.20; }
+  const th=wCos(a.th,b.th,themeIDF);if(th!=null){ num+=0.15*th; den+=0.15; }
   return den>0?num/den:0;
 }
 const crossPct=v=>Math.min(99,Math.round(100*Math.pow(v,0.9)));
