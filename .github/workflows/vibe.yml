@@ -55,11 +55,21 @@ jobs:
           MAX_ITEMS: ${{ github.event.inputs.max_items }}
         run: node scripts/vibe.mjs
 
+      # Runs even when the build step FAILED (`!cancelled()`): the LLM text stage flushes
+      # vibe/texts.json every 25 items, so a mid-run failure (rate limit, credits, network) still
+      # leaves real, expensive progress on disk. Committing it means the NEXT run RESUMES from those
+      # cached texts instead of regenerating the whole catalog from scratch. The job still reports
+      # failure (this step succeeding doesn't mask the build step's non-zero exit) so the tracking
+      # issue below still fires.
       - name: Commit & push if changed
+        if: ${{ !cancelled() }}
         run: |
           git config user.name  "muse-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add vibe.b64.json sw.js
+          git add sw.js
+          # vibe.b64.json only exists once the embed stage ran (i.e. all texts were generated); on a
+          # partial/failed run it's absent, so guard the add rather than let it error.
+          if [ -f vibe.b64.json ]; then git add vibe.b64.json; fi
           if [ -f vibe/texts.json ]; then git add vibe/texts.json; fi
           if git diff --staged --quiet; then
             echo "No vibe changes this run."
