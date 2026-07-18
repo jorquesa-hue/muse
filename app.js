@@ -1257,8 +1257,10 @@ document.addEventListener('keydown',e=>{
 function finishInit(){
   indexData(); renderAll(); applyHash();
   markSeenCount();   // v2 §B5: once per load, AFTER the boot renders that compare against the last-visit baseline (renderAll+applyHash's own internal renderAll can each call renderEmpty) — updating it any earlier would erase the "+N new works" pill before the user ever saw it
-  loadEmb('embeddings.b64.json').then(()=>{ _resultsCache=null; if(state.sel) renderResults(); }).catch(()=>{});   // embeddings just went live — the cached pre-embedding scores are stale, force a fresh score
-  loadWeights('weights.json').then(()=>{ _resultsCache=null; if(state.sel) renderResults(); }).catch(()=>{});   // v2 §B6: refit weights just landed — the cached pre-refit scores are stale, force a fresh score
+  // v2 §B-blend: renderAll() (not renderResults()) so a blend view (state.sel2 set) re-renders via
+  // renderBlend() instead of being silently clobbered into a single-source view once these resolve.
+  loadEmb('embeddings.b64.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // embeddings just went live — the cached pre-embedding scores are stale, force a fresh score
+  loadWeights('weights.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // v2 §B6: refit weights just landed — the cached pre-refit scores are stale, force a fresh score
 }
 window.addEventListener('hashchange',applyHash);
 // render chrome + a loading state immediately, before data.json has even started resolving,
