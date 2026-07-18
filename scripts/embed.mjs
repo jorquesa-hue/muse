@@ -14,10 +14,13 @@ import { pipeline } from '@xenova/transformers';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const DATA = ROOT + 'data.json';
-const OUT  = ROOT + 'embeddings.b64.json';
+const LIVE_OUT = ROOT + 'embeddings.b64.json';
+// v3 §E4: model + output file are env-overridable so a candidate model can be built into a SEPARATE
+// file for an eval bake-off (see model-compare.yml) without touching the live embeddings or the SW.
+const OUT  = process.env.EMBED_OUT || LIVE_OUT;
 const SW   = ROOT + 'sw.js';
-const MODEL = 'Xenova/all-MiniLM-L6-v2';
-const DIM = 384;
+const MODEL = process.env.EMBED_MODEL || 'Xenova/all-MiniLM-L6-v2';
+const DIM = 384; // both the default MiniLM and the E4 candidate (bge-small-en-v1.5) are 384-d
 
 function itemText(it) {
   const by = it.by ? 'by ' + it.by : '';
@@ -75,8 +78,12 @@ async function main() {
   await writeFile(OUT, JSON.stringify(out));
   console.log(`wrote ${OUT}: ${ids.length} items, ${(flat.byteLength / 1024 / 1024).toFixed(2)} MB raw / ${(b64.length / 1024 / 1024).toFixed(2)} MB b64`);
 
-  let sw = await readFile(SW, 'utf8');
-  const m = sw.match(/muse-v(\d+)/);
-  if (m) { const next = `muse-v${parseInt(m[1], 10) + 1}`; sw = sw.replace(/muse-v\d+/g, next); await writeFile(SW, sw, 'utf8'); console.log('sw ->', next); }
+  // only bump the SW when we wrote the LIVE embeddings file — a candidate build (EMBED_OUT set) must
+  // leave the shipped app shell untouched.
+  if (OUT === LIVE_OUT) {
+    let sw = await readFile(SW, 'utf8');
+    const m = sw.match(/muse-v(\d+)/);
+    if (m) { const next = `muse-v${parseInt(m[1], 10) + 1}`; sw = sw.replace(/muse-v\d+/g, next); await writeFile(SW, sw, 'utf8'); console.log('sw ->', next); }
+  }
 }
 main().catch((e) => { console.error(e); process.exit(1); });
