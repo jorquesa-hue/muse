@@ -137,7 +137,7 @@ function describe(eng, id) {
 }
 
 async function callAnthropic(prompt) {
-  const body = { model: JUDGE_MODEL, max_tokens: 40, messages: [{ role: 'user', content: prompt }] };
+  const body = { model: JUDGE_MODEL, max_tokens: 128, messages: [{ role: 'user', content: prompt }] };
   for (let attempt = 0; attempt <= 4; attempt++) {
     let res;
     try {
@@ -147,7 +147,12 @@ async function callAnthropic(prompt) {
         body: JSON.stringify(body),
       });
     } catch (e) { if (attempt === 4) throw e; await sleep(500 * 2 ** attempt); continue; }
-    if (res.ok) { const j = await res.json(); return (j.content && j.content[0] && j.content[0].text) || ''; }
+    if (res.ok) {
+      const j = await res.json();
+      // concatenate ALL text blocks — a model may prepend a non-text (e.g. thinking) block, so
+      // content[0].text can be undefined even when a perfectly good answer is in a later block.
+      return (j.content || []).filter((b) => b && b.type === 'text' && typeof b.text === 'string').map((b) => b.text).join('\n').trim();
+    }
     if (res.status === 429 || res.status >= 500) { await sleep(800 * 2 ** attempt); continue; }
     throw new Error(`Anthropic API ${res.status}: ${await res.text().catch(() => '')}`);
   }
@@ -157,17 +162,23 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Parse a judge reply ("1"/"2" + reason) and map it back to whether the engine's higher pick (B)
 // won, given which item was shown as Option 1 vs Option 2. Pure + exported so it's unit-testable.
+const firstIndex = (str, re) => { const m = re.exec(str); return m ? m.index : -1; };
 export function parseVerdict(text, firstId, secondId, bId) {
   if (!text) return null;
   const s = String(text).trim();
-  // prefer a LEADING 1/2 (optionally "option 1"); fall back to the first 1/2 anywhere.
-  let pick = null;
-  const lead = /^\s*(?:option\s*)?([12])\b/i.exec(s);
-  if (lead) pick = lead[1]; else { const any = /([12])/.exec(s); if (any) pick = any[1]; }
-  if (!pick) return null;
+  const low = s.toLowerCase();
+  // accept the digit OR the spelled-out form ("first"/"one", "second"/"two"); pick whichever
+  // signal appears EARLIEST (the model was asked to lead with its answer).
+  const p1 = firstIndex(low, /\b(?:1|one|first)\b/);
+  const p2 = firstIndex(low, /\b(?:2|two|second)\b/);
+  let pick;
+  if (p1 < 0 && p2 < 0) return null;
+  else if (p2 < 0) pick = '1';
+  else if (p1 < 0) pick = '2';
+  else pick = p1 <= p2 ? '1' : '2';
   const chosenId = pick === '1' ? firstId : secondId;
   const winner = chosenId === bId ? 'B' : 'C';
-  const reason = s.replace(/^\D*[12]\s*[-–:.]*\s*/, '').replace(/\s+/g, ' ').trim().slice(0, 80);
+  const reason = s.replace(/^\s*(?:option\s*)?(?:1|2|one|two|first|second)\b\s*(?:option)?\s*[-–:.]*\s*/i, '').replace(/\s+/g, ' ').trim().slice(0, 80);
   return { winner, reason };
 }
 
@@ -180,8 +191,9 @@ async function judgeTriplet(eng, t) {
     `Reference work A:\n${describe(eng, t.a)}\n\n` +
     `Option 1:\n${describe(eng, firstId)}\n\n` +
     `Option 2:\n${describe(eng, secondId)}\n\n` +
-    `Which option is closer to A in overall experience and DNA — its mood, tone, feel, pacing and themes (NOT just shared facts)? ` +
-    `Reply with exactly "1" or "2", then a dash and a reason of 8 words or fewer.`;
+    `Begin your reply with the single digit 1 or 2 — whichever option is closer to A in overall ` +
+    `experience and DNA (its mood, tone, feel, pacing and themes, NOT just shared facts) — then a ` +
+    `dash and a reason of 8 words or fewer.`;
   let text;
   if (DRY_RUN || !API_KEY) {
     // deterministic mock: pick the engine-higher option ~72% of the time, keyed on the triplet hash
@@ -190,8 +202,11 @@ async function judgeTriplet(eng, t) {
   } else {
     text = await callAnthropic(prompt);
   }
-  return parseVerdict(text, firstId, secondId, t.b);
+  const v = parseVerdict(text, firstId, secondId, t.b);
+  if (!v && !DRY_RUN && nullLogged < 20) { nullLogged++; console.error(`  [unparsed judge reply #${nullLogged}] ${JSON.stringify(String(text).slice(0, 140))}`); }
+  return v;
 }
+let nullLogged = 0;
 
 // bounded-concurrency map
 async function pool(items, n, fn) {
