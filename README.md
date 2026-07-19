@@ -29,10 +29,12 @@ cross-media section. Trilingual (EN / ES / Brazilian-PT). Runs fully client-side
 
 ## How matching works (in `app.js`)
 Each item carries a precomputed feature set. `score(a, b, cat)` blends ~15 per-category signals
-(a text-**embedding** term `emb`, an atmosphere-**embedding** term `vibemb`, plus dna, theme, mood,
-genre, craft, creator, era, audience, culture) via the weighted `CATALGOS` table, using null-safe
-**prior-imputed** scoring, a coverage gate, and an **MMR diversity** re-rank. Cross-media picks use
-`crossScore`, a text-embedding-led blend (`emb .55 / dna .30 / theme .15`); the atmosphere embedding
+(a text-**embedding** term `emb`, an atmosphere-**embedding** term `vibemb`, a **lineage** graph term
+`lineage`, plus dna, theme, mood, genre, craft, creator, era, audience, culture) via the weighted
+`CATALGOS` table, using null-safe **prior-imputed** scoring, a coverage gate, and an **MMR diversity**
+re-rank. `lineage` scores 1.0 when two works are a direct influence/kin edge, 0.5 when they share a
+neighbour in the graph, else null — a light 0.05-weight nudge (see `influence.yml` below). Cross-media
+picks use `crossScore`, a text-embedding-led blend (`emb .55 / dna .30 / theme .15 / lineage .05`); the atmosphere embedding
 `vibemb` is a **within-category** signal only — adding it to cross-media measured neutral-to-worse
 against the judge (67.5% at a .45 lead, 70.0% at .20, vs the 72.5% emb-only baseline), so it stays
 out of `crossScore`. Both embedding terms are **live**: weekly jobs rebuild `embeddings.b64.json`
@@ -83,6 +85,12 @@ Wikidata), derives its features on the fly, and runs the same algorithms. See `l
   "atmosphere only" descriptor per item (mood/energy/texture/tempo — no plot, names, or genre), cached
   by id in `vibe/texts.json`; those texts are MiniLM-embedded into `vibe.b64.json` (the `vibemb` signal).
   Texts are generated incrementally and `MAX_ITEMS`-capped; needs `ANTHROPIC_API_KEY`.
+- **`influence.yml`** (weekly, Mon, after `embed`) → `influence.mjs`: for each item, a cheap bulk LLM
+  (Haiku) picks ≤4 of its 40 nearest embedding neighbours that are direct influences or spiritual kin
+  (answers restricted to those ids, so it stays grounded); edges are cached by id in `edges.json` (the
+  `lineage` signal — 1.0 for a direct edge, 0.5 for a shared neighbour). Built incrementally and
+  `MAX_ITEMS`-capped; needs `ANTHROPIC_API_KEY`. A no-API `lineage-probe.mjs` gate (writes
+  `eval/lineage-probe.json`) checks the signal lifts a known influence above a random peer by ≥1 pt.
 - **`refit.yml`** (weekly, Mon) → `refit.mjs`: re-fits the per-category `CATALGOS` weights from logged
   ratings (or synthetic eval triplets — see `--synthetic`), gated on held-out AUC; writes `weights.json`.
 - **`eval.yml`** (weekly, Mon) → `eval.mjs`: triplet-accuracy eval vs an LLM judge (see **Eval** above);
@@ -94,8 +102,8 @@ Wikidata), derives its features on the fly, and runs the same algorithms. See `l
 - **`bump-sw.mjs`**: helper to increment the SW version after editing app files.
 
 The catalog/automation jobs commit only when something changed, and modify `data.json`, `sw.js`,
-`embeddings.b64.json`, `vibe.b64.json`, `vibe/texts.json`, `weights.json`, and/or `eval/*.json` only —
-never the app code.
+`embeddings.b64.json`, `vibe.b64.json`, `vibe/texts.json`, `edges.json`, `weights.json`, and/or
+`eval/*.json` only — never the app code.
 
 ## Backend (Supabase, free tier)
 The client's Supabase **anon key is public by design** — Row-Level Security is **insert-only**, so

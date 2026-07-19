@@ -159,6 +159,7 @@ const ALGO_NAMES = {
   climate:{en:'Climate',es:'Clima',pt:'Clima'},
   srcdem:{en:'Source & audience',es:'Origen y demografía',pt:'Origem e demografia'},
   vibemb:{en:'Atmosphere match',es:'Coincidencia de atmósfera',pt:'Correspondência de atmosfera'},   // v3 §E2: vibe EMBEDDING (distinct from the travel 'vibe' tag signal above)
+  lineage:{en:'Lineage',es:'Linaje',pt:'Linhagem'},   // v3 §E6: influence-graph edge
 };
 const CRAFT_NAMES = {
   movies:{en:'Pacing & style',es:'Ritmo y estilo',pt:'Ritmo e estilo'},
@@ -196,6 +197,7 @@ const ALGO_DESCS = {
   climate:{en:'Climate family match.',es:'Coincidencia de familia climática.',pt:'Combinação de família climática.'},
   srcdem:{en:'Same source material and target demographic.',es:'Mismo material de origen y demografía.',pt:'Mesmo material de origem e demografia.'},
   vibemb:{en:'AI embedding of a written atmosphere description — mood, energy, texture, tempo, aftertaste.',es:'Embedding de IA de una descripción de atmósfera: ánimo, energía, textura, tempo.',pt:'Embedding de IA de uma descrição de atmosfera — clima, energia, textura, ritmo.'},
+  lineage:{en:'Direct influence or spiritual kin in the influence graph — a curated “descended from” link.',es:'Influencia directa o afinidad en el grafo de influencias — un vínculo de “desciende de”.',pt:'Influência direta ou afinidade no grafo de influências — um vínculo de “descende de”.'},
 };
 const WHY = {
   emb:{en:'reads the same to a semantic model',es:'suena igual a un modelo semántico',pt:'soa igual a um modelo semântico'},
@@ -210,6 +212,7 @@ const WHY = {
   climate:{en:'a similar climate',es:'un clima similar',pt:'um clima parecido'},
   srcdem:{en:'same origin & audience',es:'mismo origen y público',pt:'mesma origem e público'},
   vibemb:{en:'a matching atmosphere',es:'una atmósfera afín',pt:'uma atmosfera parecida'},
+  lineage:{en:'a shared lineage',es:'un linaje compartido',pt:'uma linhagem partilhada'},
 };
 const WHY_THEME = {en:'they share {x}',es:'comparten {x}',pt:'compartilham {x}'};
 const WHY_GENRE = {en:'the same “{x}” spirit',es:'el mismo espíritu “{x}”',pt:'o mesmo espírito “{x}”'};
@@ -355,6 +358,21 @@ async function loadVibe(url='vibe.b64.json'){ const j=await (await fetch(url)).j
 function vibeSim(a,b){ if(!VIBE_BUF) return null; const ia=VIBE_IDX[a.id], ib=VIBE_IDX[b.id];
   if(ia==null||ib==null) return null; const oa=ia*VIBE_DIM, ob=ib*VIBE_DIM; let dot=0;
   for(let k=0;k<VIBE_DIM;k++) dot+=VIBE_BUF[oa+k]*VIBE_BUF[ob+k]; return Math.max(0,dot/(127*127)); }
+/* v3 §E6: lineage / influence graph. edges.json maps each item id -> ids of its direct influences or
+   spiritual kin (an LLM picked them from the item's nearest embedding neighbors). EDGE_ADJ is the
+   UNDIRECTED adjacency (both endpoints of every edge). lineageSim: 1.0 direct edge (either direction),
+   0.5 shared neighbor, else null — never 0, since the absence of a known edge isn't dissimilarity.
+   Graceful-absent until edges.json loads. */
+let EDGE_ADJ=null;
+async function loadEdges(url='edges.json'){ const j=await (await fetch(url)).json(); const adj=Object.create(null);
+  const add=(x,y)=>{ (adj[x]||(adj[x]=new Set())).add(y); };
+  for(const id in j){ const es=j[id]; if(!Array.isArray(es)) continue; for(const e of es){ if(e&&e!==id){ add(id,e); add(e,id); } } }
+  EDGE_ADJ=adj; }
+function lineageSim(a,b){ if(!EDGE_ADJ) return null; const A=EDGE_ADJ[a.id], B=EDGE_ADJ[b.id];
+  if(!A&&!B) return null;
+  if((A&&A.has(b.id))||(B&&B.has(a.id))) return 1;
+  if(A&&B){ for(const x of A) if(B.has(x)) return .5; }
+  return null; }
 
 const CRAFT_FN = {   // v2: blend() drops null sub-terms and renormalizes
   movies:(a,b)=>{const xa=a.x||{},xb=b.x||{};return blend([[featSim(xa,xb,['vis','dlg','twist']),.8],[prox(xa.run,xb.run,90),.2]]);},
@@ -370,6 +388,7 @@ const CRAFT_FN = {   // v2: blend() drops null sub-terms and renormalizes
 const ALGO = {
   emb:(a,b)=>embSim(a,b),
   vibemb:(a,b)=>vibeSim(a,b),   // v3 §E2: vibe-embedding cosine (id kept distinct from tag 'vibe')
+  lineage:(a,b)=>lineageSim(a,b),   // v3 §E6: influence-graph edge (1.0) / shared neighbor (0.5) / null
   theme:(a,b)=>wCos(a.th,b.th,themeIDF),
   mood:(a,b,cat)=>dnaSim(a.dna,b.dna,cat),
   genre:(a,b,cat)=>wCos(a.g,b.g,genreIDF[cat]),
@@ -386,18 +405,18 @@ const ALGO = {
   srcdem:(a,b)=>{const xa=a.x||{},xb=b.x||{}; if((xa.src==null&&xa.dem==null)||(xb.src==null&&xb.dem==null)) return null;   // symmetric: null if EITHER side lacks both fields (was A-only, so a candidate missing data scored a deceptive 0 instead of "no signal")
     return (xa.src&&xa.src===xb.src?.5:0)+(xa.dem&&xa.dem===xb.dem?.5:0);},
 };
-const CATALGOS = {   // v2: emb 0.22 added to every row; v3 §E2: vibemb 0.10 appended (renormalizer rescales the rest)
-  movies:[['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.10],['era',.08],['audience',.08],['culture',.06],['vibemb',.10]],
-  tv:    [['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.08],['era',.08],['audience',.10],['culture',.06],['vibemb',.10]],
-  books: [['emb',.22],['theme',.22],['mood',.20],['genre',.14],['craft',.14],['creator',.08],['era',.08],['audience',.08],['culture',.06],['vibemb',.10]],
-  music: [['emb',.22],['craft',.22],['mood',.20],['genre',.16],['theme',.12],['creator',.08],['era',.10],['audience',.06],['culture',.06],['vibemb',.10]],
-  games: [['emb',.22],['craft',.22],['genre',.18],['mood',.16],['theme',.12],['creator',.06],['era',.08],['audience',.10],['culture',.08],['vibemb',.10]],
-  anime: [['emb',.22],['theme',.18],['mood',.18],['genre',.16],['craft',.14],['creator',.12],['era',.08],['audience',.08],['srcdem',.06],['vibemb',.10]],
-  food:  [['emb',.22],['craft',.26],['ing',.12],['tech',.06],['genre',.14],['mood',.14],['theme',.10],['culture',.12],['audience',.06],['vibemb',.10]],
-  travel:[['emb',.22],['craft',.24],['vibe',.14],['mood',.16],['theme',.12],['genre',.12],['climate',.08],['culture',.08],['audience',.06],['vibemb',.10]],
+const CATALGOS = {   // v2: emb 0.22; v3 §E2: vibemb 0.10; v3 §E6: lineage 0.05 appended (renormalizer rescales the rest)
+  movies:[['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.10],['era',.08],['audience',.08],['culture',.06],['vibemb',.10],['lineage',.05]],
+  tv:    [['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.08],['era',.08],['audience',.10],['culture',.06],['vibemb',.10],['lineage',.05]],
+  books: [['emb',.22],['theme',.22],['mood',.20],['genre',.14],['craft',.14],['creator',.08],['era',.08],['audience',.08],['culture',.06],['vibemb',.10],['lineage',.05]],
+  music: [['emb',.22],['craft',.22],['mood',.20],['genre',.16],['theme',.12],['creator',.08],['era',.10],['audience',.06],['culture',.06],['vibemb',.10],['lineage',.05]],
+  games: [['emb',.22],['craft',.22],['genre',.18],['mood',.16],['theme',.12],['creator',.06],['era',.08],['audience',.10],['culture',.08],['vibemb',.10],['lineage',.05]],
+  anime: [['emb',.22],['theme',.18],['mood',.18],['genre',.16],['craft',.14],['creator',.12],['era',.08],['audience',.08],['srcdem',.06],['vibemb',.10],['lineage',.05]],
+  food:  [['emb',.22],['craft',.26],['ing',.12],['tech',.06],['genre',.14],['mood',.14],['theme',.10],['culture',.12],['audience',.06],['vibemb',.10],['lineage',.05]],
+  travel:[['emb',.22],['craft',.24],['vibe',.14],['mood',.16],['theme',.12],['genre',.12],['climate',.08],['culture',.08],['audience',.06],['vibemb',.10],['lineage',.05]],
 };
 /* rows of CATALGOS[cat] that can actually fire right now — excludes 'emb' until embeddings.b64.json loads */
-const activeAlgoRows=cat=>CATALGOS[cat].filter(([id])=>(id!=='emb'||EMB_BUF)&&(id!=='vibemb'||VIBE_BUF));
+const activeAlgoRows=cat=>CATALGOS[cat].filter(([id])=>(id!=='emb'||EMB_BUF)&&(id!=='vibemb'||VIBE_BUF)&&(id!=='lineage'||EDGE_ADJ));
 /* v2 §B6: weekly ratings->CATALGOS refit (scripts/refit.mjs). Loads a build-time file the same
    non-fatal way as loadEmb() — 404/malformed just means "keep the defaults", never a hard error.
    Only overrides a category when the fetched weights cover EXACTLY the same algo ids as the
@@ -450,7 +469,7 @@ function buildPriors(cat, sampleSize=300){
   const pool=D[cat]||[]; if(pool.length<2) return {priors:{}, p80:{}};
   const priors={}, p80={};
   for(const [id] of CATALGOS[cat]){
-    if(id==='emb'||id==='vibemb') continue;   // v3 §E2: embedding signals have no sampled prior
+    if(id==='emb'||id==='vibemb'||id==='lineage') continue;   // v3 §E2/§E6: embedding + sparse-graph signals have no sampled prior
     const present=ALGO_PRESENT[id];
     const eligible=present?pool.filter(present):pool;
     const m=eligible.length; if(m<2){ priors[id]=null; p80[id]=null; continue; }
@@ -499,6 +518,7 @@ function crossScore(a,b){ let num=0,den=0;
   const e=embSim(a,b);              if(e!=null){ num+=0.55*e; den+=0.55; }
   const dn=dnaSim(a.dna,b.dna,null);if(dn!=null){ num+=0.30*dn; den+=0.30; }
   const th=wCos(a.th,b.th,themeIDF);if(th!=null){ num+=0.15*th; den+=0.15; }
+  const ln=lineageSim(a,b);         if(ln!=null){ num+=0.05*ln; den+=0.05; }   // v3 §E6: a known cross-media influence edge nudges the pair up
   return den>0?num/den:0;
 }
 const crossPct=v=>Math.min(99,Math.round(100*Math.pow(v,0.9)));
@@ -1279,6 +1299,7 @@ function finishInit(){
   // renderBlend() instead of being silently clobbered into a single-source view once these resolve.
   loadEmb('embeddings.b64.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // embeddings just went live — the cached pre-embedding scores are stale, force a fresh score
   loadVibe('vibe.b64.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // v3 §E2: vibe embeddings just landed — refresh
+  loadEdges('edges.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // v3 §E6: lineage graph just landed — refresh
   loadWeights('weights.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // v2 §B6: refit weights just landed — the cached pre-refit scores are stale, force a fresh score
 }
 window.addEventListener('hashchange',applyHash);
