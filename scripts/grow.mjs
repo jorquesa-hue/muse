@@ -51,6 +51,9 @@ const CATS = {
     genresHint: '2-4 food tags (e.g. comfort food, street food, dessert, seafood, breakfast, spicy, vegetarian, grilled)',
     extra: '"cuisine": national/regional cuisine (e.g. "Italian"), "flavors": [3-5 flavor words], "ingredients": [3-6 key ingredients], "technique": one prep word (e.g. "grilled"), "region": place of origin, "country": country of origin',
     defaultTheme: 'indulgence',
+    // rotate the prompt through these so each round targets a distinct cuisine instead of the LLM
+    // re-proposing the same globally-famous dishes (which just get deduped). Covers the culinary world.
+    pool: ['Italian', 'French', 'Japanese', 'Chinese (Sichuan)', 'Chinese (Cantonese)', 'Thai', 'Indian (North)', 'Indian (South)', 'Mexican', 'Korean', 'Vietnamese', 'Spanish', 'Greek', 'Turkish', 'Lebanese', 'Moroccan', 'Ethiopian', 'Brazilian', 'Peruvian', 'Argentine', 'German', 'British', 'American (Southern)', 'Cajun & Creole', 'Filipino', 'Indonesian', 'Malaysian', 'Portuguese', 'Polish', 'Russian', 'Hungarian', 'Nigerian', 'Egyptian', 'Jamaican & Caribbean', 'Cuban', 'Colombian', 'Georgian', 'Persian', 'Pakistani', 'Sri Lankan', 'Nepali & Tibetan', 'Nordic', 'Belgian', 'Swiss', 'Austrian', 'Israeli', 'Syrian', 'Tunisian', 'South African', 'Ukrainian', 'Taiwanese', 'Singaporean', 'Burmese', 'Cambodian', 'Bolivian', 'Ecuadorian', 'Chilean', 'Ghanaian', 'Kenyan', 'Icelandic'],
   },
   travel: {
     prefix: 'tr', noun: 'globally-recognized travel destination (city, landmark, natural site or region)',
@@ -59,6 +62,7 @@ const CATS = {
     genresHint: '2-4 travel tags (e.g. beach, city, nature, historic, adventure, cultural, mountain, island, desert)',
     extra: '"vibe": [3-5 vibe tags e.g. "ancient","romantic","bustling"], "climate": one of tropical/alpine/desert/temperate/mediterranean/continental/arid/polar, "region": broader region, "country": country',
     defaultTheme: 'adventure',
+    pool: ['Italy', 'France', 'Japan', 'China', 'Thailand', 'India', 'Mexico', 'Spain', 'Greece', 'Turkey', 'Egypt', 'Morocco', 'Brazil', 'Peru', 'Argentina', 'Germany', 'United Kingdom', 'United States (national parks)', 'Vietnam', 'Indonesia', 'Portugal', 'Croatia', 'Iceland', 'Norway', 'Switzerland', 'Austria', 'Ireland', 'Scotland', 'Nepal', 'Jordan', 'Kenya & Tanzania', 'South Africa', 'Australia', 'New Zealand', 'Canada', 'Chile', 'Colombia', 'Cuba', 'Cambodia', 'Sri Lanka', 'Philippines', 'Malaysia', 'South Korea', 'Georgia', 'Uzbekistan', 'Ethiopia', 'Namibia', 'Costa Rica', 'Bolivia', 'Finland'],
   },
 };
 
@@ -87,16 +91,16 @@ async function callAnthropic(p, maxTokens) {
   throw new Error('Anthropic API: exhausted retries');
 }
 
-function buildPrompt(cat, cfg, exclude) {
-  const ex = exclude.slice(-600).join(', '); // most-recent existing titles to avoid
+function buildPrompt(cat, cfg, exclude, focus) {
+  const ex = exclude.slice(-900).join(', '); // existing titles to avoid re-proposing
+  const lead = focus
+    ? `Propose ${BATCH} ${cfg.noun}s specifically from ${focus}${cat === 'food' ? ' cuisine' : ''}. Give a mix of its most ` +
+      `ICONIC, must-know ${cfg.noun}s AND its lesser-known-but-real regional ones. `
+    : `Propose ${BATCH} ${cfg.noun}s — a mix of canonical, globally-famous ones AND diverse regional choices. `;
   return (
-    `Propose ${BATCH} ${cfg.noun}s for a recommendation catalog. The catalog is currently THIN, so aim ` +
-    `for BOTH: (a) canonical, globally-famous ${cfg.noun}s that people would expect to find (do NOT skip ` +
-    `the obvious classics — e.g. for food that means the likes of ravioli, lasagna, carbonara, pho, ` +
-    `bibimbap, falafel, paella), AND (b) diverse regional or lesser-known-but-real choices from many ` +
-    `different countries and cuisines/regions. Each must be REAL and notable enough to have its own ` +
-    `English Wikipedia page. Every item MUST be different from all of these (already in the catalog) — do ` +
-    `not repeat any, even with slight rewording:\n${ex}\n\n` +
+    lead +
+    `Each must be REAL and notable enough to have its own English Wikipedia page. Every item MUST be ` +
+    `different from ALL of these (already in the catalog) — do not repeat any, even with slight rewording:\n${ex}\n\n` +
     `Return ONLY a JSON array (no prose). Each element:\n` +
     `{\n` +
     `  "name": "canonical English name (matches its Wikipedia title)",\n` +
@@ -224,9 +228,15 @@ async function growCategory(data, cat) {
   const want = Math.min(MAX_ITEMS, TARGET - list.length);
   console.log(`${cat}: ${list.length}/${TARGET}, aiming to add up to ${want} this run`);
 
-  let added = 0, dry = 0;
-  while (added < want && dry < 3) {
-    const prompt = buildPrompt(cat, cfg, existingTitles);
+  // Rotate the prompt through cfg.pool (cuisines/regions) so each round asks for a DIFFERENT area —
+  // this is what stops the LLM re-proposing the same famous dishes round after round (the reason a
+  // flat prompt stalls at +2). dry only trips once we've cycled the WHOLE pool with nothing new.
+  const rotation = (cfg.pool && cfg.pool.length) ? cfg.pool : [null];
+  const MAX_DRY = rotation.length + 3;
+  let added = 0, dry = 0, poolIdx = 0;
+  while (added < want && dry < MAX_DRY) {
+    const focus = rotation[poolIdx % rotation.length]; poolIdx++;
+    const prompt = buildPrompt(cat, cfg, existingTitles, focus);
     let raw = '', proposals;
     try {
       if (DRY_RUN || !API_KEY) { proposals = mockProposals(cat); }
@@ -242,7 +252,7 @@ async function growCategory(data, cat) {
       if (seen.has(dk)) { dupd++; continue; }
       seen.add(dk); fresh.push(p); // provisionally reserve (canonical title re-checked after wiki)
     }
-    console.log(`  parsed ${proposals.length}, fresh ${fresh.length} (deduped ${dupd})`);
+    console.log(`  [${focus || 'mixed'}] parsed ${proposals.length}, fresh ${fresh.length} (deduped ${dupd})`);
     if (!fresh.length) { dry++; continue; }
     // validate each against Wikipedia (bounded concurrency, polite pacing)
     const validated = await pool(fresh, CONCURRENCY, async (p) => {
@@ -296,8 +306,11 @@ async function main() {
 
   if (!DRY_RUN && !API_KEY) { console.error('FATAL: ANTHROPIC_API_KEY not set.'); process.exit(1); }
 
+  // GROW_CATS lets a dispatch focus on one category (e.g. "food") instead of both.
+  const cats = (process.env.GROW_CATS || 'food,travel').split(',').map((s) => s.trim()).filter((c) => CATS[c]);
+  console.log('growing:', cats.join(', '));
   let total = 0;
-  for (const cat of ['food', 'travel']) total += await growCategory(data, cat);
+  for (const cat of cats) total += await growCategory(data, cat);
 
   const after = Object.fromEntries(Object.keys(data).map((k) => [k, data[k].length]));
   console.log(`\nadded ${total} items. food ${before.food}->${after.food}, travel ${before.travel}->${after.travel}`);
