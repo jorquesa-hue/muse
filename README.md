@@ -34,10 +34,14 @@ Each item carries a precomputed feature set. `score(a, b, cat)` blends ~15 per-c
 `CATALGOS` table, using null-safe **prior-imputed** scoring, a coverage gate, and an **MMR diversity**
 re-rank. `lineage` scores 1.0 when two works are a direct influence/kin edge, 0.5 when they share a
 neighbour in the graph, else null — a light nudge (0.02 within a category, 0.05 cross-media; see
-`influence.yml` below). It is deliberately small same-category: at 0.05 it measured a −2.5pt eval
-regression there (within a medium the base signals already rank similarity well), while 0.02 is
-non-regressive and still lifts a known influence's rank. Cross-media picks use `crossScore`, a
-text-embedding-led blend (`emb .55 / dna .30 / theme .15 / lineage .05`); the atmosphere embedding
+`influence.yml` below). It is deliberately small same-category, and shipped as a conscious tradeoff:
+any same-category lineage weight costs ~2–2.5pt on the similarity-eval (weight-independent — 0.02 and
+0.05 both land ~77.4 vs a 79.8 no-lineage control, because within a medium the base signals already
+rank similarity well and lineage surfaces influence links a pure-similarity judge scores slightly
+lower). We keep it small and on for its **influence-discovery** value (it lifts a known influence's
+rank in 80.7% of edge pairs and never lowers it — see `eval/lineage-probe.json`), not because it is
+eval-neutral. Cross-media (`crossScore`, where it's flat) keeps 0.05:
+a text-embedding-led blend (`emb .55 / dna .30 / theme .15 / lineage .05`); the atmosphere embedding
 `vibemb` is a **within-category** signal only — adding it to cross-media measured neutral-to-worse
 against the judge (67.5% at a .45 lead, 70.0% at .20, vs the 72.5% emb-only baseline), so it stays
 out of `crossScore`. Both embedding terms are **live**: weekly jobs rebuild `embeddings.b64.json`

@@ -405,7 +405,7 @@ const ALGO = {
   srcdem:(a,b)=>{const xa=a.x||{},xb=b.x||{}; if((xa.src==null&&xa.dem==null)||(xb.src==null&&xb.dem==null)) return null;   // symmetric: null if EITHER side lacks both fields (was A-only, so a candidate missing data scored a deceptive 0 instead of "no signal")
     return (xa.src&&xa.src===xb.src?.5:0)+(xa.dem&&xa.dem===xb.dem?.5:0);},
 };
-const CATALGOS = {   // v2: emb 0.22; v3 §E2: vibemb 0.10; v3 §E6: lineage 0.02 same-cat (crossScore keeps 0.05 — same-cat 0.05 measured a −2.5pt eval regression, 0.02 is non-regressive & still lifts influences)
+const CATALGOS = {   // v2: emb 0.22; v3 §E2: vibemb 0.10; v3 §E6: lineage 0.02 same-cat (crossScore keeps 0.05). NB: any same-cat lineage weight costs ~2-2.5pt on the similarity-eval (weight-independent: 0.02 & 0.05 both ~77.4) — kept as a deliberate influence-discovery signal, not eval-neutral
   movies:[['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.10],['era',.08],['audience',.08],['culture',.06],['vibemb',.10],['lineage',.02]],
   tv:    [['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.08],['era',.08],['audience',.10],['culture',.06],['vibemb',.10],['lineage',.02]],
   books: [['emb',.22],['theme',.22],['mood',.20],['genre',.14],['craft',.14],['creator',.08],['era',.08],['audience',.08],['culture',.06],['vibemb',.10],['lineage',.02]],
