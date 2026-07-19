@@ -33,8 +33,11 @@ Each item carries a precomputed feature set. `score(a, b, cat)` blends ~15 per-c
 `lineage`, plus dna, theme, mood, genre, craft, creator, era, audience, culture) via the weighted
 `CATALGOS` table, using null-safe **prior-imputed** scoring, a coverage gate, and an **MMR diversity**
 re-rank. `lineage` scores 1.0 when two works are a direct influence/kin edge, 0.5 when they share a
-neighbour in the graph, else null — a light 0.05-weight nudge (see `influence.yml` below). Cross-media
-picks use `crossScore`, a text-embedding-led blend (`emb .55 / dna .30 / theme .15 / lineage .05`); the atmosphere embedding
+neighbour in the graph, else null — a light nudge (0.02 within a category, 0.05 cross-media; see
+`influence.yml` below). It is deliberately small same-category: at 0.05 it measured a −2.5pt eval
+regression there (within a medium the base signals already rank similarity well), while 0.02 is
+non-regressive and still lifts a known influence's rank. Cross-media picks use `crossScore`, a
+text-embedding-led blend (`emb .55 / dna .30 / theme .15 / lineage .05`); the atmosphere embedding
 `vibemb` is a **within-category** signal only — adding it to cross-media measured neutral-to-worse
 against the judge (67.5% at a .45 lead, 70.0% at .20, vs the 72.5% emb-only baseline), so it stays
 out of `crossScore`. Both embedding terms are **live**: weekly jobs rebuild `embeddings.b64.json`
