@@ -35,7 +35,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .cache
-          key: embed-model-Xenova-all-MiniLM-L6-v2
+          key: embed-model-Xenova-bge-small-en-v1.5
 
       - name: Install embedding model deps
         run: npm install @xenova/transformers
