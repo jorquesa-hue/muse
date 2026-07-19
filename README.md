@@ -71,8 +71,9 @@ Wikidata), derives its features on the fly, and runs the same algorithms. See `l
   writes the result back into `data.json` (marking each with an `enr` version so re-runs skip it).
   Hand-curated items are never touched; `MAX_ITEMS`-capped; needs `ANTHROPIC_API_KEY`. Runs in the
   chain refresh → ingest → **enrich** → embed → eval → refit so upgraded metadata feeds the embeddings.
-- **`embed.yml`** (weekly, Mon) → `embed.mjs`: rebuilds `embeddings.b64.json` (the `emb` signal) from
-  a local MiniLM model; caches the model between runs.
+- **`embed.yml`** (weekly, Mon) → `embed.mjs`: rebuilds `embeddings.b64.json` (the `emb` signal) with
+  a local 384-d sentence-transformer (`bge-small-en-v1.5`, chosen over MiniLM by the E4 eval bake-off —
+  see `eval/model-comparison.md`); caches the model between runs. `EMBED_MODEL` overrides it.
 - **`vibe.yml`** (weekly, Mon, after `embed`) → `vibe.mjs`: a cheap bulk LLM (Haiku) writes a ≤45-word
   "atmosphere only" descriptor per item (mood/energy/texture/tempo — no plot, names, or genre), cached
   by id in `vibe/texts.json`; those texts are MiniLM-embedded into `vibe.b64.json` (the `vibemb` signal).

@@ -19,8 +19,10 @@ const LIVE_OUT = ROOT + 'embeddings.b64.json';
 // file for an eval bake-off (see model-compare.yml) without touching the live embeddings or the SW.
 const OUT  = process.env.EMBED_OUT || LIVE_OUT;
 const SW   = ROOT + 'sw.js';
-const MODEL = process.env.EMBED_MODEL || 'Xenova/all-MiniLM-L6-v2';
-const DIM = 384; // both the default MiniLM and the E4 candidate (bge-small-en-v1.5) are 384-d
+// v3 §E4: switched MiniLM -> bge-small-en-v1.5 after the eval bake-off (overall 78.3->79.8,
+// cross-media 66.3->82.5; see eval/model-comparison.md). Still 384-d, so it's a drop-in.
+const MODEL = process.env.EMBED_MODEL || 'Xenova/bge-small-en-v1.5';
+const DIM = 384; // bge-small-en-v1.5 (and the prior MiniLM) are both 384-d
 
 function itemText(it) {
   const by = it.by ? 'by ' + it.by : '';
