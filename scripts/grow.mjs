@@ -27,7 +27,7 @@ const TARGET = +(process.env.GROW_TARGET || 600);
 const MAX_ITEMS = +(process.env.GROW_MAX_ITEMS || 50);
 const CONCURRENCY = Math.max(1, +(process.env.GROW_CONCURRENCY || 3));
 const DRY_RUN = process.env.DRY_RUN === '1';
-const BATCH = 12; // items requested per LLM call
+const BATCH = 16; // items requested per LLM call
 
 /* ---------- helpers replicated from refresh.mjs (keep in sync) ---------- */
 const slug = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -88,11 +88,14 @@ async function callAnthropic(p, maxTokens) {
 }
 
 function buildPrompt(cat, cfg, exclude) {
-  const ex = exclude.slice(0, 400).join(', ');
+  const ex = exclude.slice(-500).join(', '); // most-recent 500 existing titles to avoid
   return (
-    `Propose ${BATCH} ${cfg.noun}s for a recommendation catalog. They must be REAL, canonical, and ` +
-    `well-known enough to have an English Wikipedia page. Do NOT propose any of these (already in the ` +
-    `catalog): ${ex}.\n\n` +
+    `Propose ${BATCH} DIVERSE ${cfg.noun}s for a recommendation catalog. Each must be REAL and notable ` +
+    `enough to have its own English Wikipedia page — but the catalog already has the most globally-famous ` +
+    `ones, so favor VARIETY: draw from many different countries, cuisines/regions and styles, and include ` +
+    `strong regional or lesser-known-but-real choices, not just the top-10 most obvious. Every item MUST ` +
+    `be different from all of these (already in the catalog) — do not repeat any, even with slight ` +
+    `rewording:\n${ex}\n\n` +
     `Return ONLY a JSON array (no prose). Each element:\n` +
     `{\n` +
     `  "name": "canonical English name (matches its Wikipedia title)",\n` +
@@ -108,8 +111,13 @@ function buildPrompt(cat, cfg, exclude) {
 
 function parseArray(txt) {
   if (!txt) return [];
-  const m = String(txt).match(/\[[\s\S]*\]/); if (!m) return [];
-  try { const a = JSON.parse(m[0]); return Array.isArray(a) ? a : []; } catch { return []; }
+  let s = String(txt).trim();
+  s = s.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, ''); // strip markdown code fences
+  const m = s.match(/\[[\s\S]*\]/); if (!m) return [];
+  try { const a = JSON.parse(m[0]); return Array.isArray(a) ? a : []; } catch {}
+  // fallback: an object like {"items":[...]} or {"dishes":[...]}
+  try { const o = JSON.parse(s); if (o && typeof o === 'object') { for (const v of Object.values(o)) if (Array.isArray(v)) return v; } } catch {}
+  return [];
 }
 
 /* ---------- Wikipedia validation (keyless) ---------- */
@@ -202,19 +210,24 @@ async function growCategory(data, cat) {
   console.log(`${cat}: ${list.length}/${TARGET}, aiming to add up to ${want} this run`);
 
   let added = 0, dry = 0;
-  while (added < want && dry < 2) {
+  while (added < want && dry < 3) {
     const prompt = buildPrompt(cat, cfg, existingTitles);
-    let proposals;
-    try { proposals = DRY_RUN || !API_KEY ? mockProposals(cat) : parseArray(await callAnthropic(prompt, 3072)); }
-    catch (e) { console.error(`  [LLM failed] ${cat}: ${e.message}`); break; }
+    let raw = '', proposals;
+    try {
+      if (DRY_RUN || !API_KEY) { proposals = mockProposals(cat); }
+      else { raw = await callAnthropic(prompt, 4096); proposals = parseArray(raw); }
+    } catch (e) { console.error(`  [LLM failed] ${cat}: ${e.message}`); break; }
+    if (!proposals.length) console.error(`  parsed 0 proposals; raw snippet: ${JSON.stringify(String(raw).slice(0, 200))}`);
     // dedupe proposals by name against what we already have / added, before spending Wikipedia calls
     const fresh = [];
+    let dupd = 0;
     for (const p of proposals) {
       const nm = p && str(p.name); if (!nm) continue;
       const dk = dedupKey(nm);
-      if (seen.has(dk)) continue;
+      if (seen.has(dk)) { dupd++; continue; }
       seen.add(dk); fresh.push(p); // provisionally reserve (canonical title re-checked after wiki)
     }
+    console.log(`  parsed ${proposals.length}, fresh ${fresh.length} (deduped ${dupd})`);
     if (!fresh.length) { dry++; continue; }
     // validate each against Wikipedia (bounded concurrency, polite pacing)
     const validated = await pool(fresh, CONCURRENCY, async (p) => {
@@ -222,6 +235,7 @@ async function growCategory(data, cat) {
       const w = await wikiValidate(str(p.name));
       return w ? { p, w } : null;
     });
+    console.log(`  wikipedia-validated ${validated.filter(Boolean).length}/${fresh.length}`);
     let roundAdded = 0;
     for (const v of validated) {
       if (!v || added >= want) continue;
