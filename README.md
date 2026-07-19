@@ -65,6 +65,11 @@ Wikidata), derives its features on the fly, and runs the same algorithms. See `l
 - **`ingest.yml`** (daily, 03:30 UTC) → `ingest.mjs`: folds titles that users searched-but-missed
   (found via the live fallback, logged to Supabase) into `data.json` — so searched titles become
   permanent + instant + offline the next day.
+- **`grow.yml`** (weekly, Mon, before `enrich`) → `grow.mjs`: E5 catalog rebalance — grows the two
+  starved categories **food** and **travel** toward ≥600. A bulk LLM (Haiku) proposes canonical
+  dishes/destinations with full metadata; each is **validated against a real Wikipedia page** (keyless
+  — title + thumbnail) before it's kept, so hallucinations are dropped. New items get `-tmdb` ids so
+  `enrich` re-rates them; `GROW_MAX_ITEMS`-capped per run; needs `ANTHROPIC_API_KEY`.
 - **`enrich.yml`** (weekly, Mon, before `embed`) → `enrich.mjs`: a cheap bulk LLM (Haiku) re-rates
   auto-derived / thin items (ids `-tmdb`/`sr-`, or <3 themes) against a **fixed rubric** — the 8 DNA
   axes 0–100, 3–6 themes from the app vocabulary, and the category's subjective craft scalars — and
