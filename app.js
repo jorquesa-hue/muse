@@ -680,7 +680,6 @@ function renderChrome(){
   $('q').setAttribute('aria-label',tr(T.ariaSearch));
   $('dice').setAttribute('aria-label',tr(T.ariaSurprise));
   { const cats=$('cats'); if(cats) cats.setAttribute('aria-label',tr(T.ariaCategories)); }
-  $('protoTag').textContent=tr(T.proto);
   $('tagline').innerHTML=tr(T.tagline);
   $('stats').innerHTML=tr(T.stats,{n:ALL.length,a:activeAlgoRows(state.cat).length});
   $('dice').innerHTML=DICE_SVG+'<span>'+tr(T.surprise)+'</span>';
