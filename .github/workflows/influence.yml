@@ -1,0 +1,102 @@
+name: Build influence graph
+
+# Weekly (E6): for each catalog item, asks a cheap bulk LLM (Haiku) which of its 40 nearest embedding
+# neighbours are direct INFLUENCES or spiritual KIN — restricting answers to the provided neighbour ids
+# keeps the model grounded (it can't invent an edge to something outside the catalog). Edges are cached
+# by id in edges.json (the shipped, precached graph) and turn on the `lineage` signal: a 0.05-weight
+# nudge that lifts works sharing a lineage/tradition in both same-category and cross-media matching.
+#
+# Reads embeddings.b64.json directly for neighbours (no ONNX model needed here — just Node), so it runs
+# after embed.yml has refreshed the vectors. Shares the catalog-writes concurrency group so it queues
+# safely behind any overrunning catalog job. Edges are built INCREMENTALLY (only items missing from the
+# cache) and capped per run by MAX_ITEMS; to build the whole catalog at once (the E6 ship gate), dispatch
+# this manually with a large MAX_ITEMS.
+on:
+  schedule:
+    - cron: '53 8 * * 1'
+  workflow_dispatch:
+    inputs:
+      max_items:
+        description: 'Cap on NEW items given edges this run (default 400)'
+        required: false
+        default: '400'
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: catalog-writes
+  cancel-in-progress: false
+
+jobs:
+  influence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build edges.json
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          BULK_MODEL: ${{ vars.BULK_MODEL }}
+          MAX_ITEMS: ${{ github.event.inputs.max_items }}
+        run: node scripts/influence.mjs
+
+      # Lineage probe (no API): does the engine rank a known influence/kin above a random same-category
+      # item MORE OFTEN with the lineage signal than without? Runs even if the build step failed (there
+      # may still be a partial edges.json worth measuring). It sets exitCode=2 when the probe FAILS the
+      # +1pt gate — surfaced in the job summary and the tracking issue, but it must not block committing
+      # the (valid, cached) edges, so `|| true` keeps this step green and the report is committed below.
+      - name: Lineage probe gate
+        if: ${{ !cancelled() }}
+        run: node scripts/lineage-probe.mjs || true
+
+      # Runs even when the build FAILED (`!cancelled()`): influence.mjs flushes edges.json every 50
+      # items, so a mid-run failure (rate limit, credits, network) still leaves real, paid-for progress
+      # on disk. Committing it means the NEXT run RESUMES from the cache instead of rebuilding from
+      # scratch. The job still reports failure (this step succeeding doesn't mask the build's non-zero
+      # exit), so the tracking issue below still fires.
+      - name: Commit & push if changed
+        if: ${{ !cancelled() }}
+        run: |
+          git config user.name  "muse-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f edges.json ]; then git add edges.json; fi
+          if [ -f eval/lineage-probe.json ]; then git add eval/lineage-probe.json; fi
+          git add sw.js
+          if git diff --staged --quiet; then
+            echo "No influence changes this run."
+            exit 0
+          fi
+          git commit -m "chore: rebuild influence graph"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push; then
+              exit 0
+            fi
+            echo "push attempt $i failed, retrying after backoff..."
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 5))
+          done
+          echo "FATAL: could not push after 3 attempts — the edges are NOT lost, they're still committed locally in this run's checkout, but the run is failing so it isn't silently dropped." >&2
+          exit 1
+
+      # scheduled-workflow failures are easy to miss (GitHub's own email notification for these is
+      # unreliable) — file/update a tracking issue so a failure is actually visible somewhere.
+      - name: File an issue if this run failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `${context.workflow} failed`;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const { data: issues } = await github.rest.issues.listForRepo({ owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 50 });
+            const existing = issues.find(i => i.title === title && !i.pull_request);
+            if (existing) {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: existing.number, body: `Failed again on \`${context.sha.slice(0,7)}\`: ${runUrl}` });
+            } else {
+              await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body: `The **${context.workflow}** workflow failed on \`${context.sha.slice(0,7)}\`.\n\n${runUrl}` });
+            }

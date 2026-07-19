@@ -1,6 +1,6 @@
 /* Muse — service worker (offline-first app shell) */
 /* bump this version string on every deploy so returning users get the update */
-const CACHE = 'muse-v42';
+const CACHE = 'muse-v43';
 const ASSETS = [
   './index.html',
   './style.css',
@@ -18,6 +18,7 @@ self.addEventListener('install', (e) => {
       .then((c) => c.addAll(ASSETS).then(() => Promise.all([
         c.add('embeddings.b64.json').catch(() => {}),
         c.add('vibe.b64.json').catch(() => {}),
+        c.add('edges.json').catch(() => {}),
         c.add('weights.json').catch(() => {}),
       ])))
       .then(() => self.skipWaiting())
