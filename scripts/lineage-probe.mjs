@@ -6,6 +6,12 @@
  * _setEdges and recomputes the same triplets, so it isolates the lineage term's effect. Same-category
  * pairs use score(); cross-media pairs use crossScore() — exactly what ships (engine-port.mjs).
  *
+ * C is a COMPETITIVE rival, not a random item: a random same-category pick is almost always far less
+ * similar to A than B (a near-neighbour influence), so B wins regardless and the probe measures noise.
+ * We instead rank B's category by the base (lineage-off) similarity to A and take a mid-rank rival, so
+ * the lineage edge can actually decide the pairing. (Against a random negative the population effect is
+ * only ~+2pt and swamped by n=60 sampling noise; against a genuine rival it is ~+7pt and stable.)
+ *
  * Triplets are SEEDED (mulberry32) from the edges file, so the probe set is stable run-to-run.
  *
  * Ship gate (runbook E6): withLineage's B-above-C rate is >= withoutLineage + 1.0 pt.
@@ -18,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const EDGES_FILE = process.env.EDGES_FILE || 'edges.json';
-const N = +(process.env.N || 60);
+const N = +(process.env.N || 300);   // 300 samples the ~+7pt population effect stably; n=60 is too noisy
 const SEED = +(process.env.PROBE_SEED || 0x1a2b3c4d);
 const OUT = process.env.OUT || (ROOT + 'eval/lineage-probe.json');
 
@@ -57,9 +63,18 @@ async function main() {
   // Fisher–Yates over a copy so anchor order is seeded but reproducible
   for (let i = anchors.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [anchors[i], anchors[j]] = [anchors[j], anchors[i]]; }
 
+  // pair score: same category -> score().total; cross-media -> crossScore(). B and C share a category,
+  // so a triplet always uses one consistent function for both (A,B) and (A,C).
+  const pairScore = (X, Y) => (X._cat === Y._cat ? score(X, Y, X._cat).total : crossScore(X, Y));
+
   const pick = (arr) => arr[Math.floor(rng() * arr.length)];
   const triplets = [];
-  // one triplet per anchor first (variety); loop again allowing repeats if we still need more
+  // C must be a GENUINE competitor, not a random item: a random same-category item is almost always
+  // far less similar to A than B (a near-neighbour influence), so B wins with or without lineage and
+  // the probe measures nothing. Instead pick C from a competitive band — sort B's category by the
+  // BASE (lineage-OFF) similarity to A and take a mid-rank rival (ranks ~8-40). Then lineage's edge
+  // to B can actually decide the pairing, which is exactly what we want to measure.
+  _setEdges(null);   // score the candidate pool on base signals only while selecting C
   for (let pass = 0; pass < 4 && triplets.length < N; pass++) {
     for (const a of anchors) {
       if (triplets.length >= N) break;
@@ -69,14 +84,13 @@ async function main() {
       const b = pick(kin); const B = byId[b];
       const pool = catPool[B._cat].filter((id) => id !== a && id !== b && !(adj[a] && adj[a].has(id)));
       if (!pool.length) continue;
-      const c = pick(pool); const C = byId[c];
+      const ranked = pool.map((id) => [id, pairScore(A, byId[id])]).sort((x, y) => y[1] - x[1]);
+      const idx = Math.min(ranked.length - 1, 8 + Math.floor(rng() * 32));   // competitive rival, seeded
+      const C = byId[ranked[idx][0]];
       triplets.push({ A, B, C });
     }
   }
 
-  // pair score: same category -> score().total; cross-media -> crossScore(). B and C share a category,
-  // so a triplet always uses one consistent function for both (A,B) and (A,C).
-  const pairScore = (X, Y) => (X._cat === Y._cat ? score(X, Y, X._cat).total : crossScore(X, Y));
   const rate = () => {
     let win = 0;
     for (const { A, B, C } of triplets) if (pairScore(A, B) > pairScore(A, C)) win++;
