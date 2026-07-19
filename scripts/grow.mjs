@@ -27,7 +27,7 @@ const TARGET = +(process.env.GROW_TARGET || 600);
 const MAX_ITEMS = +(process.env.GROW_MAX_ITEMS || 50);
 const CONCURRENCY = Math.max(1, +(process.env.GROW_CONCURRENCY || 3));
 const DRY_RUN = process.env.DRY_RUN === '1';
-const BATCH = 16; // items requested per LLM call
+const BATCH = 8; // items per LLM call — small enough that the JSON array fits well under max_tokens
 
 /* ---------- helpers replicated from refresh.mjs (keep in sync) ---------- */
 const slug = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -113,11 +113,23 @@ function parseArray(txt) {
   if (!txt) return [];
   let s = String(txt).trim();
   s = s.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, ''); // strip markdown code fences
-  const m = s.match(/\[[\s\S]*\]/); if (!m) return [];
-  try { const a = JSON.parse(m[0]); return Array.isArray(a) ? a : []; } catch {}
+  const m = s.match(/\[[\s\S]*\]/);
+  if (m) { try { const a = JSON.parse(m[0]); if (Array.isArray(a)) return a; } catch {} }
   // fallback: an object like {"items":[...]} or {"dishes":[...]}
   try { const o = JSON.parse(s); if (o && typeof o === 'object') { for (const v of Object.values(o)) if (Array.isArray(v)) return v; } } catch {}
-  return [];
+  // SALVAGE (handles a max_tokens-TRUNCATED array): scan for complete, balanced top-level {...}
+  // objects — string-aware so braces inside descriptions don't confuse the depth count — and parse
+  // each individually, keeping the ones that completed. Recovers all whole items from a cut-off array.
+  const out = [];
+  let depth = 0, start = -1, inStr = false, esc = false;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (inStr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') inStr = false; continue; }
+    if (c === '"') { inStr = true; continue; }
+    if (c === '{') { if (depth === 0) start = i; depth++; }
+    else if (c === '}') { if (depth > 0) { depth--; if (depth === 0 && start >= 0) { try { out.push(JSON.parse(s.slice(start, i + 1))); } catch {} start = -1; } } }
+  }
+  return out;
 }
 
 /* ---------- Wikipedia validation (keyless) ---------- */
@@ -215,7 +227,7 @@ async function growCategory(data, cat) {
     let raw = '', proposals;
     try {
       if (DRY_RUN || !API_KEY) { proposals = mockProposals(cat); }
-      else { raw = await callAnthropic(prompt, 4096); proposals = parseArray(raw); }
+      else { raw = await callAnthropic(prompt, 8192); proposals = parseArray(raw); }
     } catch (e) { console.error(`  [LLM failed] ${cat}: ${e.message}`); break; }
     if (!proposals.length) console.error(`  parsed 0 proposals; raw snippet: ${JSON.stringify(String(raw).slice(0, 200))}`);
     // dedupe proposals by name against what we already have / added, before spending Wikipedia calls
