@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-19T14:24:07.288Z",
+  "generatedAt": "2026-07-19T14:41:28.862Z",
   "judgeModel": "claude-sonnet-5",
   "overall": {
-    "accuracy": 77.3,
+    "accuracy": 77.5,
     "n": 400
   },
   "cross": {
@@ -11,35 +11,35 @@
   },
   "perCategory": {
     "movies": {
-      "accuracy": 90,
+      "accuracy": 77.5,
       "n": 40
     },
     "tv": {
-      "accuracy": 72.5,
+      "accuracy": 70,
       "n": 40
     },
     "books": {
-      "accuracy": 75,
-      "n": 40
-    },
-    "music": {
       "accuracy": 72.5,
       "n": 40
     },
+    "music": {
+      "accuracy": 75,
+      "n": 40
+    },
     "games": {
-      "accuracy": 77.5,
-      "n": 40
-    },
-    "anime": {
-      "accuracy": 65,
-      "n": 40
-    },
-    "food": {
       "accuracy": 85,
       "n": 40
     },
+    "anime": {
+      "accuracy": 72.5,
+      "n": 40
+    },
+    "food": {
+      "accuracy": 82.5,
+      "n": 40
+    },
     "travel": {
-      "accuracy": 77.5,
+      "accuracy": 82.5,
       "n": 40
     }
   },
