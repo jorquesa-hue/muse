@@ -1297,9 +1297,11 @@ document.addEventListener('keydown',e=>{
 });
 
 /* boot: use inline data if present, else fetch external data.json (deployed build) */
+function scrollHomeTop(){ if(state.sel) return; const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; if(window.scrollTo) window.scrollTo(0,0); }
 function finishInit(){
   indexData(); renderAll(); applyHash();
   markSeenCount();   // v2 §B5: once per load, AFTER the boot renders that compare against the last-visit baseline (renderAll+applyHash's own internal renderAll can each call renderEmpty) — updating it any earlier would erase the "+N new works" pill before the user ever saw it
+  scrollHomeTop();   // open the home screen at the TOP (hero first) — not wherever an installed iOS PWA restored the scroll (which left users landing on the browse grid, hero scrolled off the top)
   // v2 §B-blend: renderAll() (not renderResults()) so a blend view (state.sel2 set) re-renders via
   // renderBlend() instead of being silently clobbered into a single-source view once these resolve.
   loadEmb('embeddings.b64.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // embeddings just went live — the cached pre-embedding scores are stale, force a fresh score
@@ -1307,6 +1309,8 @@ function finishInit(){
   loadEdges('edges.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // v3 §E6: lineage graph just landed — refresh
   loadWeights('weights.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // v2 §B6: refit weights just landed — the cached pre-refit scores are stale, force a fresh score
 }
+try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(e){}   // don't let the browser/PWA restore a mid-page scroll on reopen — home must open at the top
+window.addEventListener('pageshow',scrollHomeTop);   // fires on reopen / bfcache restore (the installed-PWA "reopen" path): re-pin the home screen to the top
 window.addEventListener('hashchange',applyHash);
 // render chrome + a loading state immediately, before data.json has even started resolving,
 // so first-time visitors never see a dead blank screen while the ~3.6MB catalog downloads.
