@@ -595,6 +595,7 @@ function indexData(){
     CAT_ORDER.forEach(k=>(D[k]||[]).forEach(it=>{
       normalizeItemArrays(it);
       it._cat=k; it._keys=[norm(it.t)].concat(it.alt.map(norm)).concat(it.tl?['en','es','pt'].map(l=>norm(it.tl[l]||'')):[]).filter(Boolean);
+      it._ing=(it.x&&Array.isArray(it.x.ing))?it.x.ing.map(norm).filter(Boolean):[];   // searchable ingredients (e.g. "shrimp" finds every dish that contains it), scored a tier below titles
       byId[it.id]=it; ALL.push(it);
     }));
     buildIDF(ALL);
@@ -947,6 +948,10 @@ function suggScore(qq,it){
         const d=lev(qq,k,2); if(d<=2) s=68-9*d;
         else for(const w of words){ if(Math.abs(w.length-qq.length)<=2){ const dw=lev(qq,w,2); if(dw<=2) s=Math.max(s,60-8*dw); } } } }
     if(s>best) best=s; }
+  // ingredient matches rank a tier below any title/alt hit (70 exact/prefix, 62 substring), so a dish
+  // NAMED shrimp still beats one that merely CONTAINS shrimp — but "shrimp" now finds both.
+  if(best<70&&it._ing&&it._ing.length){ for(const g of it._ing){ if(!g) continue;
+    if(g===qq||g.startsWith(qq)) best=Math.max(best,70); else if(qq.length>=3&&g.indexOf(qq)>=0) best=Math.max(best,62); } }
   return best? best+(it.pop||0)*.08 : 0;
 }
 function suggest(qq,restrictCat){
