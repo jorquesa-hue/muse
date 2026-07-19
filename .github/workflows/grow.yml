@@ -19,6 +19,10 @@ on:
         description: 'Grow each category up to this size (default 600)'
         required: false
         default: '600'
+      cats:
+        description: 'Which categories to grow (comma-separated, e.g. "food")'
+        required: false
+        default: 'food,travel'
 
 permissions:
   contents: write
@@ -44,6 +48,7 @@ jobs:
           BULK_MODEL: ${{ vars.BULK_MODEL }}
           GROW_MAX_ITEMS: ${{ github.event.inputs.max_items }}
           GROW_TARGET: ${{ github.event.inputs.target }}
+          GROW_CATS: ${{ github.event.inputs.cats }}
         run: node scripts/grow.mjs
 
       # grow.mjs writes data.json once at the end (accumulated items), so there's no partial-flush to
