@@ -88,17 +88,19 @@ async function callAnthropic(p, maxTokens) {
 }
 
 function buildPrompt(cat, cfg, exclude) {
-  const ex = exclude.slice(-500).join(', '); // most-recent 500 existing titles to avoid
+  const ex = exclude.slice(-600).join(', '); // most-recent existing titles to avoid
   return (
-    `Propose ${BATCH} DIVERSE ${cfg.noun}s for a recommendation catalog. Each must be REAL and notable ` +
-    `enough to have its own English Wikipedia page — but the catalog already has the most globally-famous ` +
-    `ones, so favor VARIETY: draw from many different countries, cuisines/regions and styles, and include ` +
-    `strong regional or lesser-known-but-real choices, not just the top-10 most obvious. Every item MUST ` +
-    `be different from all of these (already in the catalog) — do not repeat any, even with slight ` +
-    `rewording:\n${ex}\n\n` +
+    `Propose ${BATCH} ${cfg.noun}s for a recommendation catalog. The catalog is currently THIN, so aim ` +
+    `for BOTH: (a) canonical, globally-famous ${cfg.noun}s that people would expect to find (do NOT skip ` +
+    `the obvious classics — e.g. for food that means the likes of ravioli, lasagna, carbonara, pho, ` +
+    `bibimbap, falafel, paella), AND (b) diverse regional or lesser-known-but-real choices from many ` +
+    `different countries and cuisines/regions. Each must be REAL and notable enough to have its own ` +
+    `English Wikipedia page. Every item MUST be different from all of these (already in the catalog) — do ` +
+    `not repeat any, even with slight rewording:\n${ex}\n\n` +
     `Return ONLY a JSON array (no prose). Each element:\n` +
     `{\n` +
     `  "name": "canonical English name (matches its Wikipedia title)",\n` +
+    `  "alt": ["2-5 alternate names for search: the name in its origin language + common spellings/variants"],\n` +
     `  "genres": [${cfg.genresHint}],\n` +
     `  "dna": [8 integers 0-100 in order ${DNA_AXES.join(', ')}],\n` +
     `  "themes": [3-6 strings from this list ONLY: ${THEME_VOCAB.join(', ')}],\n` +
@@ -189,8 +191,9 @@ function buildItem(cat, cfg, p, wiki, ids) {
   const base = slug(t) || ('id' + seed);
   let id = `${cfg.prefix}-${base}-tmdb`, b = id, i = 2; while (ids.has(id)) { id = `${b}${i}`; i++; } ids.add(id);
   const g = strArr(p.genres, 4); if (!g.length) g.push(cat === 'food' ? 'comfort food' : 'city');
+  const alt = strArr(p.alt, 6).filter((a) => normT(a) && normT(a) !== normT(t)); // alt names for multilingual/variant search (drop empties + the canonical title itself)
   const item = {
-    id, t, alt: [], y: null, by: cat === 'food' ? (str(p.cuisine) ? str(p.cuisine).toLowerCase() + ' cuisine' : '') : str(p.country),
+    id, t, alt, y: null, by: cat === 'food' ? (str(p.cuisine) ? str(p.cuisine).toLowerCase() + ' cuisine' : '') : str(p.country),
     g, th: cleanThemes(p.themes, cfg.defaultTheme), dna,
     pop: 55, acc: 60, main: 52, c: str(p.country),
     d: { en, es: str(d.es) || en, pt: str(d.pt) || en }, hue: seed, img: wiki.img || null,
@@ -274,7 +277,7 @@ function mockProposals(cat) {
     const name = `Mock ${cat} ${mockN}`;
     const craft = {}; for (const c of CATS[cat].craft) craft[c] = (mockN * 7 + c.length * 11) % 101;
     out.push({
-      name, genres: [cat === 'food' ? 'street food' : 'city', 'popular'],
+      name, alt: [name.toLowerCase(), 'alt-' + mockN], genres: [cat === 'food' ? 'street food' : 'city', 'popular'],
       dna: Array.from({ length: 8 }, (_, k) => (mockN * 13 + k * 17) % 101),
       themes: [THEME_VOCAB[mockN % THEME_VOCAB.length], THEME_VOCAB[(mockN + 5) % THEME_VOCAB.length], THEME_VOCAB[(mockN + 9) % THEME_VOCAB.length]],
       craft, cuisine: 'Testland', country: 'Testland', region: 'Test Region',

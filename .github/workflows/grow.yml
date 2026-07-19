@@ -15,6 +15,10 @@ on:
         description: 'Max NEW items per category this run (default 50)'
         required: false
         default: '50'
+      target:
+        description: 'Grow each category up to this size (default 600)'
+        required: false
+        default: '600'
 
 permissions:
   contents: write
@@ -39,6 +43,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           BULK_MODEL: ${{ vars.BULK_MODEL }}
           GROW_MAX_ITEMS: ${{ github.event.inputs.max_items }}
+          GROW_TARGET: ${{ github.event.inputs.target }}
         run: node scripts/grow.mjs
 
       # grow.mjs writes data.json once at the end (accumulated items), so there's no partial-flush to
