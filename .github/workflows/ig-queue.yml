@@ -1,0 +1,55 @@
+name: Instagram — build post queue
+
+# Renders the "if you love X" cards with REAL covers and commits them under ig/ (served by GitHub
+# Pages at muse-find.com/ig/...) plus ig/queue.json (the auto-poster's worklist). Already-posted
+# entries keep their `posted` flag across rebuilds, so refreshing the queue never re-posts anything.
+# Manual: run this to load / top up the posting queue.
+
+on:
+  workflow_dispatch:
+    inputs:
+      per_cat:
+        description: 'Anchors per category (×8 = rough card count)'
+        required: false
+        default: '6'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ig-queue
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright + Chromium
+        run: |
+          npm install playwright@^1.47
+          npx playwright install --with-deps chromium
+
+      - name: Render cards + build queue
+        env:
+          PER_CAT: ${{ github.event.inputs.per_cat }}
+          OUT_DIR: ${{ github.workspace }}/ig
+        run: node scripts/ig-cards.mjs
+
+      - name: Commit ig/ (posts + queue)
+        run: |
+          git config user.name  "muse-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ig/posts ig/queue.json ig/captions.md ig/contact-sheet.png
+          if git diff --staged --quiet; then echo "No queue changes."; exit 0; fi
+          git commit -m "chore: refresh Instagram post queue [skip ci]"
+          for i in 1 2 3; do
+            if git pull --rebase origin "${GITHUB_REF_NAME}" && git push; then exit 0; fi
+            echo "push attempt $i failed, retrying…"; git rebase --abort 2>/dev/null || true; sleep $((i*5))
+          done
+          echo "FATAL: could not push the queue." >&2; exit 1
