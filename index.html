@@ -66,6 +66,24 @@
     <div class="homebar" aria-hidden="true"><i></i></div>
   </div>
 </div>
+
+<!-- first-visit intro: dormant by default (hidden + no video src). app.js sets the src and
+     only reveals it once the first frame decodes; if intro.mp4 404s/errors it stays hidden. -->
+<div class="intro" id="introModal" role="dialog" aria-modal="true" aria-labelledby="introTitle" hidden>
+  <div class="intro-backdrop" data-intro-close></div>
+  <div class="intro-card" role="document">
+    <button class="intro-x" type="button" data-intro-close id="introX" aria-label="Close">&times;</button>
+    <div class="intro-video-wrap">
+      <video id="introVideo" playsinline muted controls preload="none"></video>
+    </div>
+    <div class="intro-body">
+      <h2 class="intro-title" id="introTitle"></h2>
+      <p class="intro-sub" id="introSub"></p>
+      <button class="intro-cta" type="button" data-intro-close id="introCta"></button>
+    </div>
+  </div>
+</div>
+
 <script src="boot-data.js"></script>
 <script src="app.js"></script>
 <script src="register-sw.js"></script>
