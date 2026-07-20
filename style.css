@@ -81,6 +81,12 @@
   .wordmark .dot{width:5px;height:5px;border-radius:50%;background:var(--acc);align-self:flex-end;margin-bottom:3px;transition:background .5s ease}
   .proto{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
     border:1px solid var(--line2);padding:2px 6px;border-radius:5px}
+  .topright{display:flex;align-items:center;gap:9px}
+  .ig-top{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+    color:var(--dim);border:1px solid var(--line);border-radius:8px;
+    transition:color .2s,border-color .2s}
+  .ig-top:hover,.ig-top:active{color:var(--acc);border-color:color-mix(in srgb,var(--acc) 45%,var(--line2))}
+  .ig-top svg{width:17px;height:17px}
   .langs{display:flex;gap:1px;border:1px solid var(--line);border-radius:8px;padding:2px}
   .langs button{font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--dim);padding:4px 8px;border-radius:6px;transition:color .2s,background .2s}
   .langs button.on{background:var(--ink);color:var(--bg)}
