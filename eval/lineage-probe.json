@@ -1,8 +1,8 @@
 {
   "n": 300,
-  "withLineage": 49.67,
-  "withoutLineage": 47,
-  "delta": 2.67,
+  "withLineage": 55.67,
+  "withoutLineage": 52.33,
+  "delta": 3.33,
   "pass": true,
   "edgesFile": "edges.json"
 }
