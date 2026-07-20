@@ -313,6 +313,14 @@
     text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line2);cursor:pointer;transition:color .2s,border-color .2s}
   .fixlink:hover{color:var(--acc);border-color:var(--acc)}
   .srcactions{display:flex;gap:18px;flex-wrap:wrap}
+
+  /* ---------- social footer ---------- */
+  .social{display:flex;justify-content:center;padding:2px 16px 26px}
+  .social .ig{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--dim);
+    font-family:var(--mono);font-size:12px;letter-spacing:.05em;padding:7px 13px;
+    border:1px solid var(--line);border-radius:10px;transition:color .2s,border-color .2s}
+  .social .ig:hover,.social .ig:active{color:var(--acc);border-color:color-mix(in srgb,var(--acc) 45%,var(--line2))}
+  .social .ig svg{width:19px;height:19px}
   .srcactions .fixlink{margin-top:0}
   /* ---------- rate-the-match feedback (algorithm training signal) ---------- */
   .rate{display:flex;align-items:center;gap:7px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line);position:relative}
