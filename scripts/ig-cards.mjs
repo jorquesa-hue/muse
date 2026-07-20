@@ -51,7 +51,10 @@ for (const cat of CAT_ORDER) {
   for (const it of pool) { const k = it.t.toLowerCase().slice(0,6); if (seen.has(k)) continue; seen.add(k); picked.push(it); if (picked.length>=PER_CAT) break; }
   anchors.push(...picked);
 }
-const posts = [];
+// Draft: keep MORE candidates than we'll show (best qualifying match in every other category),
+// preferring ones that actually carry a cover image. We finalize AFTER fetching, dropping any post
+// whose subject has no real image and trimming matches to those that got one.
+const draft = [];
 for (const a of anchors) {
   const best = [];
   for (const cat of CAT_ORDER) {
@@ -59,46 +62,70 @@ for (const a of anchors) {
     let cands = [];
     for (const b of (D[cat]||[])) { if (!b || !b.t) continue; if (shareWord(a,b) && (b.pop||0)<55) continue; cands.push({ b, s: crossScore(a,b) }); }
     if (!cands.length) continue;
-    const recog = cands.filter(c => (c.b.pop||0)>=30); const pool = recog.length?recog:cands;
+    const recogImg = cands.filter(c => (c.b.pop||0)>=30 && c.b.img);   // recognizable AND has a cover url
+    const imged = cands.filter(c => c.b.img);
+    const pool = recogImg.length ? recogImg : imged.length ? imged : cands;
     pool.sort((x,y)=>y.s-x.s); const top = pool[0];
     if (top && top.s>0) best.push({ ...lite(top.b), pct: pctOf(top.s), _s: top.s });
   }
   best.sort((x,y)=>y._s-x._s);
-  const matches = best.filter(m=>m.pct>=52).slice(0,N_MATCHES).map(({_s,...m})=>m);
-  if (matches.length>=4) posts.push({ anchor: lite(a), matches });
+  const cands = best.filter(m=>m.pct>=52).map(({_s,...m})=>m);          // up to 7 candidates
+  if (cands.length>=4) draft.push({ anchor: lite(a), cands });
 }
-console.log('generated', posts.length, 'posts');
+console.log('drafted', draft.length, 'candidate posts');
 
 /* ---------------- fetch real cover images -> data URIs (with cap + fallback) ---------------- */
 const imgCache = new Map();
+// Browser-like UA + Accept: several CDNs (Apple Music mzstatic especially) reject non-browser agents.
+const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+async function fetchOnce(url){
+  const ctrl = new AbortController(); const t = setTimeout(()=>ctrl.abort(), 20000);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal, redirect: 'follow', headers: {
+      'User-Agent': UA, 'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8', 'Accept-Language': 'en-US,en;q=0.9' } });
+    if (r.status === 429 || r.status >= 500) return { retry: true };
+    if (!r.ok) return { ok: false };
+    const buf = Buffer.from(await r.arrayBuffer());
+    if (buf.length < 200 || buf.length > 8_000_000) return { ok: false };
+    let mime = (r.headers.get('content-type')||'').split(';')[0].trim();
+    if (!/^image\//.test(mime)) mime = /\.png/i.test(url)?'image/png':/\.svg/i.test(url)?'image/svg+xml':'image/jpeg';
+    return { ok: true, uri: 'data:'+mime+';base64,'+buf.toString('base64') };
+  } finally { clearTimeout(t); }
+}
+const FAKE_URI = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="#8899cc"/></svg>');
 async function fetchImg(url){
-  if (!url || NO_IMAGES) return null;
+  if (!url) return null;
+  if (process.env.FAKE_IMAGES) return FAKE_URI;   // local-only: pretend every cover resolved (render smoke test)
+  if (NO_IMAGES) return null;
   if (imgCache.has(url)) return imgCache.get(url);
   let out = null;
-  try {
-    const ctrl = new AbortController(); const t = setTimeout(()=>ctrl.abort(), 15000);
-    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'muse-find-cards/1.0 (https://muse-find.com; marketing render)' } });
-    clearTimeout(t);
-    if (r.ok) {
-      const buf = Buffer.from(await r.arrayBuffer());
-      if (buf.length > 200 && buf.length < 6_000_000) {
-        let mime = (r.headers.get('content-type')||'').split(';')[0].trim();
-        if (!/^image\//.test(mime)) mime = /\.png$/i.test(url)?'image/png':/\.svg$/i.test(url)?'image/svg+xml':'image/jpeg';
-        out = 'data:'+mime+';base64,'+buf.toString('base64');
-      }
-    }
-  } catch { /* fall through to generative cover */ }
+  for (let attempt = 0; attempt < 3; attempt++) {                       // retry transient failures / 429 / 5xx
+    try { const r = await fetchOnce(url); if (r.ok) { out = r.uri; break; } if (!r.retry) break; } catch { /* retry */ }
+    await new Promise(res => setTimeout(res, 500 * (attempt + 1)));
+  }
   imgCache.set(url, out); return out;
 }
 async function pool(items, n, fn){ const q=[...items]; const runners=Array.from({length:n},async()=>{ while(q.length) await fn(q.shift()); }); await Promise.all(runners); }
 
 const IMG = {};
 const need = new Map();
-for (const p of posts) for (const it of [p.anchor, ...p.matches]) if (it.img && !need.has(it.id)) need.set(it.id, it.img);
+for (const p of draft) for (const it of [p.anchor, ...p.cands]) if (it.img && !need.has(it.id)) need.set(it.id, it.img);
 console.log('fetching', need.size, 'cover images…');
 let done=0, hit=0;
-await pool([...need.entries()], 8, async ([id,url]) => { const u = await fetchImg(url); if (u){ IMG[id]=u; hit++; } if(++done%40===0) console.log('  ', done, '/', need.size); });
+await pool([...need.entries()], 6, async ([id,url]) => { const u = await fetchImg(url); if (u){ IMG[id]=u; hit++; } if(++done%40===0) console.log('  ', done, '/', need.size); });
 console.log('covers fetched:', hit, '/', need.size, NO_IMAGES?'(NO_IMAGES: all fallback)':'');
+
+// Finalize: a post ships ONLY if its subject has a real image and >=4 of its matches do too.
+// No image -> no post (and no generative filler in this batch). This keeps every tile a real cover.
+const posts = [];
+let dropNoAnchor = 0, dropFewMatches = 0;
+for (const p of draft) {
+  if (!IMG[p.anchor.id]) { dropNoAnchor++; continue; }
+  const matches = p.cands.filter(m => IMG[m.id]).slice(0, N_MATCHES);
+  if (matches.length < 4) { dropFewMatches++; continue; }
+  posts.push({ anchor: p.anchor, matches });
+}
+console.log(`kept ${posts.length} posts (dropped ${dropNoAnchor} with no subject image, ${dropFewMatches} with <4 imaged matches)`);
 
 /* ---------------- render ---------------- */
 const _S = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">';
