@@ -851,7 +851,7 @@ function renderResults(){
     if(pl.length) pairs='<div class="sechead"><h3>'+esc(tr({en:'Perfect pairings',es:'Maridajes perfectos',pt:'Harmonizações perfeitas'}))+'</h3><span class="sub">'+esc(tr({en:'drinks & dishes that complete the meal',es:'bebidas y platos que completan la comida',pt:'bebidas e pratos que completam a refeição'}))+'</span></div><div class="beyond">'+
       pl.map(x=>'<div class="bx" data-sel="'+esc(x.it.id)+'" tabindex="0" role="button" aria-label="'+esc(tr(T.exploreFrom))+' — '+esc(TT(x.it))+'" style="--acc:'+CATS.food.acc+'"><div class="cathead" style="color:'+CATS.food.acc+'">'+(CAT_ICON.food||'')+esc(((x.it.x&&x.it.x.reg)||x.it.c||'dish'))+'</div><div class="row">'+tile(x.it)+'<div><div class="nm">'+esc(TT(x.it))+'</div></div><span class="pc" style="color:'+CATS.food.acc+'">'+x.p+'</span></div></div>').join('')+'</div>';
   }
-  $('out').innerHTML=srcCard+pairs+list+bey;   // v2 §7.5: in-category matches (what the user searched for) before the thinner cross-media Beyond signal
+  $('out').innerHTML=srcCard+(beyond.length?bey:'')+pairs+list;   // cross-media "Beyond" first (Muse's hero: find it in every other medium), then in-category matches
   animateFills($('out'));
 }
 /* v2 §B-blend: "A + B →" — a candidate card in the two-anchor blend view. Deliberately NOT
