@@ -1,29 +1,29 @@
-/* Muse — Instagram "if you love X" card generator (marketing asset, run via .github/workflows/ig-cards.yml).
+/* Muse — Instagram "if you love X" card generator (marketing asset; run via .github/workflows/ig-cards.yml).
  *
- * Produces the "one love in — a universe out" cards: a popular anchor + its best real cross-media
- * matches (straight from the app engine via engine-port.mjs), rendered as 1080x1350 light-theme cards.
+ * The "one love in — a universe out" cards: a popular anchor + its best real cross-media matches
+ * (from the app engine via engine-port.mjs), rendered 1080x1350, light theme, with each item's REAL
+ * cover image (it.img — Wikimedia / Open Library / Apple Music).
  *
- * Each tile uses the item's REAL cover image (it.img — Wikimedia / Open Library / Apple Music). Those
- * hosts are unreachable from the web-session sandbox but ARE reachable on GitHub's runners, which is why
- * this runs in Actions. Any image that fails to fetch degrades to an original generative gradient cover,
- * so the batch never breaks.
+ * Images are loaded by the BROWSER (Chromium), not Node fetch: browsers load these hosts far more
+ * reliably (correct UA/referer handling per host), so the real-cover hit rate is high. We first PROBE
+ * every candidate cover in a hidden page, then finalize: a post ships ONLY if its subject cover loaded
+ * AND >=4 of its match covers loaded. No image -> no post (no generative filler in this batch).
  *
- * Output: OUT_DIR (default ./ig-out) — posts/NN-slug.jpg, contact-sheet.png, captions.md. The workflow
- * uploads that folder as a downloadable artifact; nothing is committed to the repo.
+ * The cover hosts are blocked from the Claude web-session sandbox but reachable on GitHub runners, which
+ * is why this runs in Actions. Output: OUT_DIR (default ./ig-out) — posts/NN-slug.jpg, contact-sheet.png,
+ * captions.md, index.json — uploaded as an artifact; nothing is committed.
  *
- * Env: PER_CAT (anchors per category, default 5), OUT_DIR, NO_IMAGES=1 (skip fetch, all fallback — for
- * local smoke tests), PW_CHROMIUM (chromium executable override — for local runs).
- *
- * Node 20+ (global fetch). Dev dep: playwright (installed in the workflow, not committed).
+ * Env: PER_CAT (anchors/category, default 6), OUT_DIR, PW_CHROMIUM (chromium override, local), FAKE_IMAGES=1
+ * (local: pretend every cover loaded, for render smoke tests). Node 20+. Dev dep: playwright (workflow only).
  */
 import { chromium } from 'playwright';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { loadEngine } from './engine-port.mjs';
 
 const OUT = process.env.OUT_DIR || new URL('../ig-out', import.meta.url).pathname;
-const PER_CAT = +(process.env.PER_CAT || 5);
-const NO_IMAGES = !!process.env.NO_IMAGES;
-const EXE = process.env.PW_CHROMIUM || undefined;   // undefined => Playwright's bundled chromium
+const PER_CAT = +(process.env.PER_CAT || 6);
+const EXE = process.env.PW_CHROMIUM || undefined;
+const FAKE = !!process.env.FAKE_IMAGES;
 const N_MATCHES = 5;
 
 const CAT_META = {
@@ -32,9 +32,9 @@ const CAT_META = {
   food:{acc:'#ff8a3c',name:'Food'}, travel:{acc:'#1fd1c1',name:'Travel'},
 };
 
-/* ---------------- match generation (mirror of the local ig-gen logic) ---------------- */
+/* ---------------- candidate generation (from the real engine) ---------------- */
 const eng = await loadEngine();
-const { D, CAT_ORDER, crossScore, byId } = eng;
+const { D, CAT_ORDER, crossScore } = eng;
 console.log('engine loaded, embeddings:', eng.embLoaded());
 
 const pctOf = cs => Math.min(99, Math.max(1, Math.round(100 * Math.pow(cs, 0.8))));
@@ -46,88 +46,30 @@ const shareWord = (a,b) => { const tb = toks(b.t); for (const w of toks(a.t)) if
 
 const anchors = [];
 for (const cat of CAT_ORDER) {
-  const pool = (D[cat]||[]).filter(it => it && it.t && typeof it.pop === 'number').sort((a,b)=>b.pop-a.pop);
+  const pool = (D[cat]||[]).filter(it => it && it.t && typeof it.pop === 'number' && it.img).sort((a,b)=>b.pop-a.pop);
   const picked = [], seen = new Set();
   for (const it of pool) { const k = it.t.toLowerCase().slice(0,6); if (seen.has(k)) continue; seen.add(k); picked.push(it); if (picked.length>=PER_CAT) break; }
   anchors.push(...picked);
 }
-// Draft: keep MORE candidates than we'll show (best qualifying match in every other category),
-// preferring ones that actually carry a cover image. We finalize AFTER fetching, dropping any post
-// whose subject has no real image and trimming matches to those that got one.
 const draft = [];
 for (const a of anchors) {
   const best = [];
   for (const cat of CAT_ORDER) {
     if (cat === a._cat) continue;
     let cands = [];
-    for (const b of (D[cat]||[])) { if (!b || !b.t) continue; if (shareWord(a,b) && (b.pop||0)<55) continue; cands.push({ b, s: crossScore(a,b) }); }
+    for (const b of (D[cat]||[])) { if (!b || !b.t || !b.img) continue; if (shareWord(a,b) && (b.pop||0)<55) continue; cands.push({ b, s: crossScore(a,b) }); }
     if (!cands.length) continue;
-    const recogImg = cands.filter(c => (c.b.pop||0)>=30 && c.b.img);   // recognizable AND has a cover url
-    const imged = cands.filter(c => c.b.img);
-    const pool = recogImg.length ? recogImg : imged.length ? imged : cands;
+    const recog = cands.filter(c => (c.b.pop||0)>=30); const pool = recog.length?recog:cands;
     pool.sort((x,y)=>y.s-x.s); const top = pool[0];
     if (top && top.s>0) best.push({ ...lite(top.b), pct: pctOf(top.s), _s: top.s });
   }
   best.sort((x,y)=>y._s-x._s);
-  const cands = best.filter(m=>m.pct>=52).map(({_s,...m})=>m);          // up to 7 candidates
+  const cands = best.filter(m=>m.pct>=52).map(({_s,...m})=>m);
   if (cands.length>=4) draft.push({ anchor: lite(a), cands });
 }
 console.log('drafted', draft.length, 'candidate posts');
 
-/* ---------------- fetch real cover images -> data URIs (with cap + fallback) ---------------- */
-const imgCache = new Map();
-// Browser-like UA + Accept: several CDNs (Apple Music mzstatic especially) reject non-browser agents.
-const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
-async function fetchOnce(url){
-  const ctrl = new AbortController(); const t = setTimeout(()=>ctrl.abort(), 20000);
-  try {
-    const r = await fetch(url, { signal: ctrl.signal, redirect: 'follow', headers: {
-      'User-Agent': UA, 'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8', 'Accept-Language': 'en-US,en;q=0.9' } });
-    if (r.status === 429 || r.status >= 500) return { retry: true };
-    if (!r.ok) return { ok: false };
-    const buf = Buffer.from(await r.arrayBuffer());
-    if (buf.length < 200 || buf.length > 8_000_000) return { ok: false };
-    let mime = (r.headers.get('content-type')||'').split(';')[0].trim();
-    if (!/^image\//.test(mime)) mime = /\.png/i.test(url)?'image/png':/\.svg/i.test(url)?'image/svg+xml':'image/jpeg';
-    return { ok: true, uri: 'data:'+mime+';base64,'+buf.toString('base64') };
-  } finally { clearTimeout(t); }
-}
-const FAKE_URI = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="#8899cc"/></svg>');
-async function fetchImg(url){
-  if (!url) return null;
-  if (process.env.FAKE_IMAGES) return FAKE_URI;   // local-only: pretend every cover resolved (render smoke test)
-  if (NO_IMAGES) return null;
-  if (imgCache.has(url)) return imgCache.get(url);
-  let out = null;
-  for (let attempt = 0; attempt < 3; attempt++) {                       // retry transient failures / 429 / 5xx
-    try { const r = await fetchOnce(url); if (r.ok) { out = r.uri; break; } if (!r.retry) break; } catch { /* retry */ }
-    await new Promise(res => setTimeout(res, 500 * (attempt + 1)));
-  }
-  imgCache.set(url, out); return out;
-}
-async function pool(items, n, fn){ const q=[...items]; const runners=Array.from({length:n},async()=>{ while(q.length) await fn(q.shift()); }); await Promise.all(runners); }
-
-const IMG = {};
-const need = new Map();
-for (const p of draft) for (const it of [p.anchor, ...p.cands]) if (it.img && !need.has(it.id)) need.set(it.id, it.img);
-console.log('fetching', need.size, 'cover images…');
-let done=0, hit=0;
-await pool([...need.entries()], 6, async ([id,url]) => { const u = await fetchImg(url); if (u){ IMG[id]=u; hit++; } if(++done%40===0) console.log('  ', done, '/', need.size); });
-console.log('covers fetched:', hit, '/', need.size, NO_IMAGES?'(NO_IMAGES: all fallback)':'');
-
-// Finalize: a post ships ONLY if its subject has a real image and >=4 of its matches do too.
-// No image -> no post (and no generative filler in this batch). This keeps every tile a real cover.
-const posts = [];
-let dropNoAnchor = 0, dropFewMatches = 0;
-for (const p of draft) {
-  if (!IMG[p.anchor.id]) { dropNoAnchor++; continue; }
-  const matches = p.cands.filter(m => IMG[m.id]).slice(0, N_MATCHES);
-  if (matches.length < 4) { dropFewMatches++; continue; }
-  posts.push({ anchor: p.anchor, matches });
-}
-console.log(`kept ${posts.length} posts (dropped ${dropNoAnchor} with no subject image, ${dropFewMatches} with <4 imaged matches)`);
-
-/* ---------------- render ---------------- */
+/* ---------------- render assets ---------------- */
 const _S = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">';
 const CAT_ICON = {
   movies:_S+'<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M10 8.4l5.6 3.6L10 15.6z"/></svg>',
@@ -141,15 +83,10 @@ const CAT_ICON = {
 };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const qualColor = p => p>=85?'#1f9d64':p>=70?'#5a9c3a':p>=55?'#c0871f':'#a06a3a';
-const GRAIN = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
-function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
-function cover(it){ const h=(((it.hue==null?222:it.hue)%360)+360)%360, sd=hash(it.id||it.t||'x'), h2=(h+18+(sd%54))%360, ang=105+(sd%90),
-  x1=16+(sd%26), y1=14+((sd>>3)%22), x2=68+((sd>>6)%24), y2=74+((sd>>9)%18);
-  return `background:radial-gradient(circle at ${x1}% ${y1}%, hsl(${h} 78% 66%), transparent 56%),radial-gradient(circle at ${x2}% ${y2}%, hsl(${h2} 70% 45%), transparent 60%),linear-gradient(${ang}deg, hsl(${h} 62% 53%), hsl(${h2} 58% 37%));`; }
+let OK = {};   // id -> cover URL that loaded
 function tile(it, size, icon){
-  const uri = IMG[it.id];
-  const inner = uri ? `<img class="cov" src="${uri}" alt="">` : `<span class="gen" style="${cover(it)}"></span><span class="grain"></span>`;
-  return `<div class="tile" style="width:${size}px;height:${size}px">${inner}<span class="tcat" style="width:${icon}px;height:${icon}px">${CAT_ICON[it.cat]||''}</span></div>`;
+  const src = OK[it.id] || '';
+  return `<div class="tile" style="width:${size}px;height:${size}px"><img class="cov" src="${esc(src)}" referrerpolicy="no-referrer" alt=""><span class="tcat" style="width:${icon}px;height:${icon}px">${CAT_ICON[it.cat]||''}</span></div>`;
 }
 function row(m){ const cm=CAT_META[m.cat]; return `<div class="mrow">${tile(m,98,22)}
   <div class="minfo"><div class="mcat" style="color:${cm.acc}">${CAT_ICON[m.cat]}<span>${esc(cm.name)}</span></div>
@@ -192,20 +129,59 @@ const CSS = `
   .mmeta{font-family:var(--mono);font-size:18px;color:var(--dim);margin-top:3px}
   .pct{flex:none;font-family:var(--mono);font-size:34px;font-weight:700;border:2px solid;border-radius:14px;padding:8px 14px;min-width:96px;text-align:center}
   .pct span{font-size:19px;opacity:.7;margin-left:1px}
-  .tile{position:relative;border-radius:16px;overflow:hidden;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 0 1px rgba(0,0,0,.08)}
-  .tile .cov{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:#e6e4df}
-  .tile .gen{position:absolute;inset:0}
-  .tile .grain{position:absolute;inset:0;background-image:${GRAIN};background-size:150px 150px;mix-blend-mode:soft-light;opacity:.5}
-  .tile .tcat{position:absolute;left:10px;bottom:9px;color:#fff;opacity:.92;filter:drop-shadow(0 1px 3px rgba(0,0,0,.55))}
+  .tile{position:relative;border-radius:16px;overflow:hidden;flex:none;background:#e6e4df;box-shadow:inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 0 1px rgba(0,0,0,.08)}
+  .tile .cov{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .tile .tcat{position:absolute;left:10px;bottom:9px;color:#fff;opacity:.92;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
   .tile .tcat svg{width:100%;height:100%}
   .foot{display:flex;align-items:center;justify-content:space-between;margin-top:32px;padding-top:28px;border-top:1px solid var(--line)}
   .ig{display:inline-flex;align-items:center;gap:11px;font-family:var(--mono);font-size:26px;color:var(--ink);letter-spacing:.02em}
   .ig svg{width:30px;height:30px}
   .cta{font-family:var(--mono);font-size:23px;letter-spacing:.02em;color:var(--acc);font-weight:700}`;
 
+/* ---------------- browser: probe covers, then render ---------------- */
 await mkdir(OUT + '/posts', { recursive: true });
 const browser = await chromium.launch({ headless: true, executablePath: EXE });
-const ctx = await browser.newContext({ viewport:{width:1080,height:1350}, deviceScaleFactor:2 });
+const ctx = await browser.newContext({ viewport:{width:1080,height:1350}, deviceScaleFactor:2, userAgent:
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' });
+
+// PROBE: load every candidate cover in the browser; keep the ones that actually decode (>1px).
+const urls = [...new Set(draft.flatMap(p => [p.anchor, ...p.cands]).map(it => it.img).filter(Boolean))];
+console.log('probing', urls.length, 'cover images in-browser…');
+let loaded = {};
+if (FAKE) {
+  for (const u of urls) loaded[u] = true;
+} else {
+  const probe = await ctx.newPage();
+  loaded = await probe.evaluate(async (urls) => {
+    const res = {};
+    await Promise.all(urls.map(u => new Promise(done => {
+      const im = new Image(); let fin = false;
+      const end = ok => { if (fin) return; fin = true; res[u] = ok; done(); };
+      im.onload = () => end(im.naturalWidth > 1 && im.naturalHeight > 1);
+      im.onerror = () => end(false);
+      im.referrerPolicy = 'no-referrer';
+      im.src = u;
+      setTimeout(() => end(false), 25000);
+    })));
+    return res;
+  }, urls);
+  await probe.close();
+}
+for (const it of draft.flatMap(p => [p.anchor, ...p.cands])) if (it.img && loaded[it.img]) OK[it.id] = FAKE ? ('data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="#89c"/></svg>')) : it.img;
+const okCount = Object.values(loaded).filter(Boolean).length;
+console.log('covers loaded:', okCount, '/', urls.length);
+
+// FINALIZE: subject cover must have loaded AND >=4 match covers too, else drop the post.
+const posts = [];
+let dropNoAnchor = 0, dropFewMatches = 0;
+for (const p of draft) {
+  if (!OK[p.anchor.id]) { dropNoAnchor++; continue; }
+  const matches = p.cands.filter(m => OK[m.id]).slice(0, N_MATCHES);
+  if (matches.length < 4) { dropFewMatches++; continue; }
+  posts.push({ anchor: p.anchor, matches });
+}
+console.log(`kept ${posts.length} posts (dropped ${dropNoAnchor} no subject cover, ${dropFewMatches} <4 match covers)`);
+
 const page = await ctx.newPage();
 const idx = [];
 let i=0;
@@ -215,21 +191,24 @@ for (const p of posts) {
   await page.setContent(`<!doctype html><meta charset="utf8"><style>${CSS}</style>${card(p)}`, { waitUntil:'load' });
   await page.evaluate(() => Promise.all(Array.from(document.images).map(im => im.complete ? 0 : im.decode().catch(()=>0))));
   await page.screenshot({ path: `${OUT}/posts/${slug}.jpg`, type:'jpeg', quality:92 });
-  idx.push({ n:i, slug, anchor:p.anchor.t, cat:p.anchor.cat, cover: !!IMG[p.anchor.id] });
+  idx.push({ n:i, slug, anchor:p.anchor.t, cat:p.anchor.cat });
 }
 
 // contact sheet
-const cells = posts.map((p,k)=>`<div class="cell"><div class="scl">${card(p)}</div><div class="cnum">${String(k+1).padStart(2,'0')}</div></div>`).join('');
-const sheetCSS = CSS + `body{width:auto;height:auto;background:#e9e7e2}
-  .sheet{display:grid;grid-template-columns:repeat(5,270px);gap:20px;padding:28px;width:max-content}
-  .cell{position:relative;width:270px;height:337px;border-radius:12px;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.18);border:1px solid rgba(0,0,0,.08)}
-  .scl{transform:scale(.25);transform-origin:top left;width:1080px;height:1350px}
-  .cnum{position:absolute;top:8px;left:9px;font-family:var(--mono);font-size:13px;color:#fff;background:rgba(0,0,0,.45);border-radius:6px;padding:2px 7px}`;
-const sheet = await ctx.newPage();
-await sheet.setViewportSize({ width:1490, height:100 });
-await sheet.setContent(`<!doctype html><meta charset="utf8"><style>${sheetCSS}</style><div class="sheet">${cells}</div>`, { waitUntil:'load' });
-await sheet.evaluate(() => Promise.all(Array.from(document.images).map(im => im.complete ? 0 : im.decode().catch(()=>0))));
-await (await sheet.$('.sheet')).screenshot({ path: `${OUT}/contact-sheet.png` });
+if (posts.length) {
+  const cells = posts.map((p,k)=>`<div class="cell"><div class="scl">${card(p)}</div><div class="cnum">${String(k+1).padStart(2,'0')}</div></div>`).join('');
+  const sheetCSS = CSS + `body{width:auto;height:auto;background:#e9e7e2}
+    .sheet{display:grid;grid-template-columns:repeat(5,270px);gap:20px;padding:28px;width:max-content}
+    .cell{position:relative;width:270px;height:337px;border-radius:12px;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.18);border:1px solid rgba(0,0,0,.08)}
+    .scl{transform:scale(.25);transform-origin:top left;width:1080px;height:1350px}
+    .cnum{position:absolute;top:8px;left:9px;font-family:var(--mono);font-size:13px;color:#fff;background:rgba(0,0,0,.45);border-radius:6px;padding:2px 7px}`;
+  const cols = 5, rows = Math.ceil(posts.length/cols);
+  const sheet = await ctx.newPage();
+  await sheet.setViewportSize({ width: cols*290+56, height: rows*357+56 });
+  await sheet.setContent(`<!doctype html><meta charset="utf8"><style>${sheetCSS}</style><div class="sheet">${cells}</div>`, { waitUntil:'load' });
+  await sheet.evaluate(() => Promise.all(Array.from(document.images).map(im => im.complete ? 0 : im.decode().catch(()=>0))));
+  await (await sheet.$('.sheet')).screenshot({ path: `${OUT}/contact-sheet.png` });
+}
 await ctx.close(); await browser.close();
 
 // captions
@@ -251,6 +230,4 @@ posts.forEach((p,k)=>{ const a=p.anchor, shown=p.matches.slice(0,5);
   md += `## ${k+1}. ${a.t}  \`posts/${idx[k].slug}.jpg\`\n\n> ${HOOKS[k%HOOKS.length](a.t)}\n> \n> ${chain}\n> \n> Muse finds the echo of what you love in every other medium — one in, a universe out.\n> \n> Try it free 👉 muse-find.com (link in bio)\n> \n> ${tags.join(' ')}\n\n---\n\n`; });
 await writeFile(OUT + '/captions.md', md);
 await writeFile(OUT + '/index.json', JSON.stringify(idx, null, 2));
-
-const withCover = idx.filter(x=>x.cover).length;
-console.log(`done: ${idx.length} cards -> ${OUT} (anchors with real cover: ${withCover}/${idx.length}, ${hit}/${need.size} images fetched)`);
+console.log(`done: ${idx.length} cards -> ${OUT} (covers loaded ${okCount}/${urls.length})`);
