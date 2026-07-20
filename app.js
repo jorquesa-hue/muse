@@ -695,7 +695,7 @@ function renderChrome(){
   $('q').setAttribute('aria-label',tr(T.ariaSearch));
   $('dice').setAttribute('aria-label',tr(T.ariaSurprise));
   { const cats=$('cats'); if(cats) cats.setAttribute('aria-label',tr(T.ariaCategories)); }
-  { const ig=$('igLink'); if(ig) ig.setAttribute('aria-label',tr(T.igLabel)); }
+  ['igLink','igTop'].forEach(id=>{ const ig=$(id); if(ig) ig.setAttribute('aria-label',tr(T.igLabel)); });
   $('tagline').innerHTML=tr(T.tagline);
   $('stats').innerHTML=tr(T.stats,{n:ALL.length,a:activeAlgoRows(state.cat).length});
   $('dice').innerHTML=DICE_SVG+'<span>'+tr(T.surprise)+'</span>';
