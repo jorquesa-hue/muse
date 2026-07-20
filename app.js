@@ -59,6 +59,12 @@ const HEART_SVG='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.5S
 /* ================= i18n ================= */
 const T = {
   proto:{en:'prototype',es:'prototipo',pt:'protótipo'},
+  introTitle:{en:'Welcome to Muse',es:'Bienvenido a Muse',pt:'Bem-vindo ao Muse'},
+  introSub:{en:'Love one thing — Muse finds everything like it, across movies, books, music, games, food and more.',
+            es:'Ama una cosa: Muse encuentra todo lo que se le parece, en cine, libros, música, juegos, comida y más.',
+            pt:'Ame uma coisa — o Muse encontra tudo parecido, em filmes, livros, música, jogos, comida e mais.'},
+  introCta:{en:'Start exploring',es:'Empezar a explorar',pt:'Começar a explorar'},
+  introClose:{en:'Close',es:'Cerrar',pt:'Fechar'},
   tagline:{en:'Love <em>one thing</em>. Find <em>everything</em> like it.',
            es:'Ama <em>una cosa</em>. Encuentra <em>todo</em> lo que se le parece.',
            pt:'Ame <em>uma coisa</em>. Encontre <em>tudo</em> parecido.'},
@@ -1230,6 +1236,7 @@ async function selectLive(cat, query){
   liveBusy=false;
 }
 document.addEventListener('click',e=>{
+  if(e.target.closest('[data-intro-close]')){ dismissIntro(); return; }
   const lb=e.target.closest('[data-lang]');
   if(lb){ state.lang=lb.dataset.lang; try{localStorage.setItem('vibra-lang',state.lang);}catch(err){} renderAll(); return; }
   if(e.target.closest('[data-home]')){ state.sel=null; state.sel2=null; state.open=null; pickingSecond=false; $('q').value=''; hideAC(); renderAll(); if(!_applyingHash) location.hash=''; const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; if(window.scrollTo) window.scrollTo(0,0); return; }
@@ -1288,6 +1295,7 @@ $('dice').addEventListener('click',surprise);
 /* broken/blocked cover image -> drop it so the monogram shows through */
 document.addEventListener('error',function(e){ const t=e.target; if(t&&t.classList&&t.classList.contains('cov')) t.remove(); },true);
 document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ const im=$('introModal'); if(im&&!im.hidden){ e.preventDefault(); dismissIntro(); return; } }
   if(e.key==='/'&&document.activeElement!==$('q')){ e.preventDefault(); $('q').focus(); return; }
   if(e.key!=='Enter'&&e.key!==' ') return;
   const t=e.target; if(!t.matches) return;
@@ -1295,12 +1303,54 @@ document.addEventListener('keydown',e=>{
   if(t.matches('[data-sel][role="button"]')){ e.preventDefault(); select(t.getAttribute('data-sel'),true); return; }
 });
 
+/* ---- first-visit intro popup (v3 §E7) ----
+   Shows a short welcome video the first time someone opens the site. It's fully self-gating:
+   nothing loads until we're actually going to show it, it reveals ONLY once the first frame
+   decodes, and if intro.mp4 is missing/errors it stays dormant (no empty popup). The video is
+   deliberately NOT in the SW precache — it fetches lazily here so offline installs stay light. */
+function dismissIntro(){
+  const m=$('introModal'); if(!m||m.hidden) return;
+  const v=$('introVideo'); try{ if(v) v.pause(); }catch(e){}
+  m.hidden=true;
+  try{ localStorage.setItem('muse-intro-seen','1'); }catch(e){}
+  const q=$('q'); if(q&&q.focus){ try{ q.focus(); }catch(e){} }
+}
+function maybeShowIntro(){
+  let seen=true; try{ seen=localStorage.getItem('muse-intro-seen')==='1'; }catch(e){ seen=false; }
+  if(seen) return;
+  // a shared deep link (#cat/id) opens straight to that result — don't cover it with the splash
+  if(location.hash && location.hash.length>1) return;
+  const m=$('introModal'), v=$('introVideo'); if(!m||!v) return;
+  const setTx=(id,o)=>{ const el=$(id); if(el) el.textContent=tr(o); };
+  setTx('introTitle',T.introTitle); setTx('introSub',T.introSub); setTx('introCta',T.introCta);
+  const x=$('introX'); if(x) x.setAttribute('aria-label',tr(T.introClose));
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let shown=false, done=false;
+  const reveal=()=>{ if(shown||done) return; shown=true; m.hidden=false;
+    // mark seen the instant it's actually on screen, so a refresh mid-watch won't replay it
+    try{ localStorage.setItem('muse-intro-seen','1'); }catch(e){}
+    if(!reduce){ try{ const p=v.play&&v.play(); if(p&&p.catch) p.catch(()=>{}); }catch(e){} }
+    if(x&&x.focus){ try{ x.focus(); }catch(e){} }
+  };
+  const fail=()=>{ if(shown) return; done=true; };   // never revealed -> stay dormant, do NOT mark seen
+  v.addEventListener('loadeddata',reveal,{once:true});
+  v.addEventListener('canplay',reveal,{once:true});
+  v.addEventListener('error',fail,{once:true});
+  setTimeout(()=>{ if(!shown) fail(); },6000);   // slow/blocked network -> give up quietly
+  v.muted=true;
+  if(!reduce) v.setAttribute('autoplay','');
+  v.preload='auto';
+  v.src='intro.mp4';
+  try{ v.load(); }catch(e){}
+}
+
 /* boot: use inline data if present, else fetch external data.json (deployed build) */
 function scrollHomeTop(){ if(state.sel) return; const sc=document.querySelector('.appscroll'); if(sc) sc.scrollTop=0; if(window.scrollTo) window.scrollTo(0,0); }
 function finishInit(){
   indexData(); renderAll(); applyHash();
   markSeenCount();   // v2 §B5: once per load, AFTER the boot renders that compare against the last-visit baseline (renderAll+applyHash's own internal renderAll can each call renderEmpty) — updating it any earlier would erase the "+N new works" pill before the user ever saw it
   scrollHomeTop();   // open the home screen at the TOP (hero first) — not wherever an installed iOS PWA restored the scroll (which left users landing on the browse grid, hero scrolled off the top)
+  maybeShowIntro();  // v3 §E7: first-visit welcome video (dormant unless intro.mp4 loads)
   // v2 §B-blend: renderAll() (not renderResults()) so a blend view (state.sel2 set) re-renders via
   // renderBlend() instead of being silently clobbered into a single-source view once these resolve.
   loadEmb('embeddings.b64.json').then(()=>{ _resultsCache=null; if(state.sel) renderAll(); }).catch(()=>{});   // embeddings just went live — the cached pre-embedding scores are stale, force a fresh score
