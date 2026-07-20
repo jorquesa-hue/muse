@@ -582,7 +582,15 @@ function lev(a,b,max){
 
 /* ================= state & index ================= */
 const state = { lang:'en', cat:'movies', sel:null, sel2:null, open:null };
-try{ const l=localStorage.getItem('vibra-lang'); if(l&&['en','es','pt'].includes(l)) state.lang=l; }catch(e){}
+try{
+  const l=localStorage.getItem('vibra-lang');
+  if(l&&['en','es','pt'].includes(l)) state.lang=l;                    // explicit past choice wins
+  else{                                                                // first visit: greet in the browser's language
+    const nav=((navigator.languages&&navigator.languages[0])||navigator.language||'en').toLowerCase();
+    if(nav.indexOf('pt')===0) state.lang='pt';
+    else if(nav.indexOf('es')===0) state.lang='es';
+  }
+}catch(e){}
 const byId={}; const ALL=[];
 let dataOK = false;
 /* data.json is bot-maintained and occasionally ships a scalar where the schema expects an array
@@ -1304,10 +1312,11 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ---- first-visit intro popup (v3 §E7) ----
-   Shows a short welcome video the first time someone opens the site. It's fully self-gating:
-   nothing loads until we're actually going to show it, it reveals ONLY once the first frame
-   decodes, and if intro.mp4 is missing/errors it stays dormant (no empty popup). The video is
-   deliberately NOT in the SW precache — it fetches lazily here so offline installs stay light. */
+   Shows a short welcome video the first time someone opens the site, in the viewer's language.
+   It's fully self-gating: nothing loads until we're actually going to show it, it reveals ONLY
+   once the first frame decodes, and if no clip loads it stays dormant (no empty popup). Videos
+   are deliberately NOT in the SW precache — they fetch lazily here so offline installs stay light. */
+const INTRO_VIDEO = { en:'intro.mp4', pt:'intro-pt.mp4', es:'intro-es.mp4' };
 function dismissIntro(){
   const m=$('introModal'); if(!m||m.hidden) return;
   const v=$('introVideo'); try{ if(v) v.pause(); }catch(e){}
@@ -1325,6 +1334,11 @@ function maybeShowIntro(){
   setTx('introTitle',T.introTitle); setTx('introSub',T.introSub); setTx('introCta',T.introCta);
   const x=$('introX'); if(x) x.setAttribute('aria-label',tr(T.introClose));
   const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+  // pick the clip for this language, falling back to the English default if the localized one is
+  // missing (e.g. the es cut isn't shipped yet) — so a missing translation degrades to English,
+  // never to no popup at all.
+  const primary=INTRO_VIDEO[state.lang]||INTRO_VIDEO.en;
+  const queue=(primary===INTRO_VIDEO.en)?[INTRO_VIDEO.en]:[primary,INTRO_VIDEO.en];
   let shown=false, done=false;
   const reveal=()=>{ if(shown||done) return; shown=true; m.hidden=false;
     // mark seen the instant it's actually on screen, so a refresh mid-watch won't replay it
@@ -1332,16 +1346,19 @@ function maybeShowIntro(){
     if(!reduce){ try{ const p=v.play&&v.play(); if(p&&p.catch) p.catch(()=>{}); }catch(e){} }
     if(x&&x.focus){ try{ x.focus(); }catch(e){} }
   };
-  const fail=()=>{ if(shown) return; done=true; };   // never revealed -> stay dormant, do NOT mark seen
-  v.addEventListener('loadeddata',reveal,{once:true});
-  v.addEventListener('canplay',reveal,{once:true});
-  v.addEventListener('error',fail,{once:true});
-  setTimeout(()=>{ if(!shown) fail(); },6000);   // slow/blocked network -> give up quietly
+  const tryNext=()=>{   // this source failed -> try the next candidate; empty -> stay dormant, no flag
+    if(shown||done) return;
+    if(!queue.length){ done=true; return; }
+    const url=queue.shift(); v.src=url; try{ v.load(); }catch(e){}
+  };
+  v.addEventListener('loadeddata',reveal);
+  v.addEventListener('canplay',reveal);
+  v.addEventListener('error',tryNext);
+  setTimeout(()=>{ if(!shown) done=true; },8000);   // slow/blocked network -> give up quietly
   v.muted=true;
   if(!reduce) v.setAttribute('autoplay','');
   v.preload='auto';
-  v.src='intro.mp4';
-  try{ v.load(); }catch(e){}
+  tryNext();
 }
 
 /* boot: use inline data if present, else fetch external data.json (deployed build) */
