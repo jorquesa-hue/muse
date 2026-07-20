@@ -737,8 +737,11 @@ function renderEmpty(){
     '<section class="spotlight"><h2><span class="dot"></span>'+esc(tr(T.spotTitle))+'</h2>'+
     '<div class="sp-diagram"><span class="heart">'+HEART_SVG+'</span><span class="arrow">&rarr;</span><span class="fan">'+fan+'</span></div>'+
     '<p>'+esc(tr(T.spotLine))+'</p></section>'+
-    newPill+dailyCard+recentShelf+lovedShelf+
+    newPill+
     '<div class="browse"><div class="browse-l">'+esc(tr(T.browseLabel))+'</div><div class="cgrid">'+grid+'</div></div>'+
+    // v3: the personal block (Today's Muse + your shelves) sits BELOW the categories — browse first,
+    // then the "for you" sections, then the stats footer.
+    dailyCard+recentShelf+lovedShelf+
     '<div class="home-stats">'+tr(T.stats,{n:ALL.length,a:activeAlgoRows(state.cat).length})+'</div>';
 }
 /* ===== rate-the-match feedback: the training signal for re-fitting the algorithm weights ===== */
