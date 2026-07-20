@@ -17,7 +17,7 @@
  * (local: pretend every cover loaded, for render smoke tests). Node 20+. Dev dep: playwright (workflow only).
  */
 import { chromium } from 'playwright';
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, readFile, mkdir } from 'node:fs/promises';
 import { loadEngine } from './engine-port.mjs';
 
 const OUT = process.env.OUT_DIR || new URL('../ig-out', import.meta.url).pathname;
@@ -222,12 +222,27 @@ const HASH = { movies:['#movierecommendations','#whattowatch','#filmtok'], tv:['
   food:['#foodie','#whattoeat','#foodlover'], travel:['#travelinspo','#wheretogo','#bucketlist'] };
 const GEN = ['#muse','#tasteengine','#ifyoulike','#recommendations','#foryou','#discovery','#crossmedia'];
 const uniq = a => [...new Set(a)];
+function captionText(p, k){
+  const a = p.anchor, shown = p.matches.slice(0,5);
+  const chain = shown.map(m => `${EMO[m.cat]} ${m.t}`).join('  ·  ');
+  const cats = uniq(shown.map(m => m.cat));
+  const tags = uniq([...(HASH[a.cat]||[]), ...cats.flatMap(c => (HASH[c]||[]).slice(0,1)), ...GEN]).slice(0,14);
+  return `${HOOKS[k % HOOKS.length](a.t)}\n\n${chain}\n\nMuse finds the echo of what you love in every other medium — one in, a universe out.\n\nTry it free 👉 muse-find.com (link in bio)\n\n${tags.join(' ')}`;
+}
 let md = `# Muse — recommendation cards (real covers)\n\nEvery match is a real muse-find.com result. Bio link: muse-find.com\n\n---\n\n`;
-posts.forEach((p,k)=>{ const a=p.anchor, shown=p.matches.slice(0,5);
-  const chain = shown.map(m=>`${EMO[m.cat]} ${m.t}`).join('  ·  ');
-  const cats = uniq(shown.map(m=>m.cat));
-  const tags = uniq([...(HASH[a.cat]||[]), ...cats.flatMap(c=>(HASH[c]||[]).slice(0,1)), ...GEN]).slice(0,14);
-  md += `## ${k+1}. ${a.t}  \`posts/${idx[k].slug}.jpg\`\n\n> ${HOOKS[k%HOOKS.length](a.t)}\n> \n> ${chain}\n> \n> Muse finds the echo of what you love in every other medium — one in, a universe out.\n> \n> Try it free 👉 muse-find.com (link in bio)\n> \n> ${tags.join(' ')}\n\n---\n\n`; });
+posts.forEach((p,k)=>{ md += `## ${k+1}. ${p.anchor.t}  \`posts/${idx[k].slug}.jpg\`\n\n> ${captionText(p,k).replace(/\n/g,'\n> ')}\n\n---\n\n`; });
 await writeFile(OUT + '/captions.md', md);
 await writeFile(OUT + '/index.json', JSON.stringify(idx, null, 2));
-console.log(`done: ${idx.length} cards -> ${OUT} (covers loaded ${okCount}/${urls.length})`);
+
+// queue.json — the auto-poster's worklist. Preserve `posted` state (keyed by anchor id) across
+// rebuilds so a re-run of the queue builder never re-posts something already published.
+let prevPosted = {};
+try { const old = JSON.parse(await readFile(OUT + '/queue.json', 'utf8')); for (const e of (old.posts||[])) if (e.posted) prevPosted[e.key] = e; } catch { /* first build */ }
+const queue = { generated: posts.length, posts: posts.map((p,k) => {
+  const key = p.anchor.id, prev = prevPosted[key];
+  return { key, n:k+1, img:`posts/${idx[k].slug}.jpg`, anchor:p.anchor.t, cat:p.anchor.cat,
+    caption: captionText(p,k), posted: prev ? true : false, ...(prev && prev.posted_id ? { posted_id: prev.posted_id } : {}) };
+}) };
+await writeFile(OUT + '/queue.json', JSON.stringify(queue, null, 2));
+const already = queue.posts.filter(p=>p.posted).length;
+console.log(`done: ${idx.length} cards -> ${OUT} (covers ${okCount}/${urls.length}; queue: ${queue.posts.length} posts, ${already} already posted)`);
