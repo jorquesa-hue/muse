@@ -1,0 +1,47 @@
+name: Instagram cards (real covers)
+
+# Renders the "if you love X → a universe out" recommendation cards with REAL cover images.
+# The cover hosts (Wikimedia / Open Library / Apple Music) are blocked from the web-session
+# sandbox but reachable from GitHub's runners, so this manual job fetches them, renders every
+# card + a contact sheet + captions, and uploads the folder as a downloadable artifact.
+# Nothing is committed to the repo — the artifact is the deliverable (Actions run → Artifacts).
+
+on:
+  workflow_dispatch:
+    inputs:
+      per_cat:
+        description: 'Anchors per category (8 categories × this = card count)'
+        required: false
+        default: '5'
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright + Chromium
+        run: |
+          npm install playwright@^1.47
+          npx playwright install --with-deps chromium
+
+      - name: Render cards
+        env:
+          PER_CAT: ${{ github.event.inputs.per_cat }}
+          OUT_DIR: ${{ github.workspace }}/ig-out
+        run: node scripts/ig-cards.mjs
+
+      - name: Upload cards artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: muse-ig-cards
+          path: ig-out
+          retention-days: 30
+          if-no-files-found: error
