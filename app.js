@@ -148,6 +148,7 @@ const T = {
   ariaSearch:{en:'Search',es:'Buscar',pt:'Pesquisar'},
   ariaSurprise:{en:'Surprise me',es:'Sorpréndeme',pt:'Surpreenda-me'},
   ariaCategories:{en:'Categories',es:'Categorías',pt:'Categorias'},
+  igLabel:{en:'Muse on Instagram',es:'Muse en Instagram',pt:'Muse no Instagram'},
 };
 
 const ALGO_NAMES = {
@@ -694,6 +695,7 @@ function renderChrome(){
   $('q').setAttribute('aria-label',tr(T.ariaSearch));
   $('dice').setAttribute('aria-label',tr(T.ariaSurprise));
   { const cats=$('cats'); if(cats) cats.setAttribute('aria-label',tr(T.ariaCategories)); }
+  { const ig=$('igLink'); if(ig) ig.setAttribute('aria-label',tr(T.igLabel)); }
   $('tagline').innerHTML=tr(T.tagline);
   $('stats').innerHTML=tr(T.stats,{n:ALL.length,a:activeAlgoRows(state.cat).length});
   $('dice').innerHTML=DICE_SVG+'<span>'+tr(T.surprise)+'</span>';
