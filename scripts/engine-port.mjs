@@ -44,15 +44,17 @@ const DNA_SIGMA = 0.14, FEAT_SIGMA = 0.16;
 const MIN_COVERAGE = 0.5;
 
 // CATALGOS — mirror app.js exactly (id order matters: it defines the parts-vector order refit uses).
-const CATALGOS_DEFAULT = {   // v3 §E2: vibemb 0.10; §E6: lineage 0.02 same-cat (crossScore keeps 0.05) — mirror app.js
-  movies: [['emb', .22], ['theme', .20], ['mood', .20], ['genre', .15], ['craft', .13], ['creator', .10], ['era', .08], ['audience', .08], ['culture', .06], ['vibemb', .10], ['lineage', .02]],
-  tv:     [['emb', .22], ['theme', .20], ['mood', .20], ['genre', .15], ['craft', .13], ['creator', .08], ['era', .08], ['audience', .10], ['culture', .06], ['vibemb', .10], ['lineage', .02]],
-  books:  [['emb', .22], ['theme', .22], ['mood', .20], ['genre', .14], ['craft', .14], ['creator', .08], ['era', .08], ['audience', .08], ['culture', .06], ['vibemb', .10], ['lineage', .02]],
-  music:  [['emb', .22], ['craft', .22], ['mood', .20], ['genre', .16], ['theme', .12], ['creator', .08], ['era', .10], ['audience', .06], ['culture', .06], ['vibemb', .10], ['lineage', .02]],
-  games:  [['emb', .22], ['craft', .22], ['genre', .18], ['mood', .16], ['theme', .12], ['creator', .06], ['era', .08], ['audience', .10], ['culture', .08], ['vibemb', .10], ['lineage', .02]],
-  anime:  [['emb', .22], ['theme', .18], ['mood', .18], ['genre', .16], ['craft', .14], ['creator', .12], ['era', .08], ['audience', .08], ['srcdem', .06], ['vibemb', .10], ['lineage', .02]],
-  food:   [['emb', .22], ['craft', .26], ['ing', .12], ['tech', .06], ['genre', .14], ['mood', .14], ['theme', .10], ['culture', .12], ['audience', .06], ['vibemb', .10], ['lineage', .02]],
-  travel: [['emb', .22], ['craft', .24], ['vibe', .14], ['mood', .16], ['theme', .12], ['genre', .12], ['climate', .08], ['culture', .08], ['audience', .06], ['vibemb', .10], ['lineage', .02]],
+// v3 §E8: applied to RANK-NORMALIZED signals (see rankNormalize) so weight == share of the
+// ranking decision. Mirror app.js CATALGOS exactly (id order = parts-vector order refit trains on).
+const CATALGOS_DEFAULT = {
+  movies: [['emb', .22], ['theme', .18], ['mood', .18], ['genre', .12], ['craft', .08], ['creator', .05], ['era', .03], ['audience', .03], ['culture', .04], ['vibemb', .14], ['lineage', .05]],
+  tv:     [['emb', .22], ['theme', .18], ['mood', .18], ['genre', .12], ['craft', .08], ['creator', .05], ['era', .03], ['audience', .04], ['culture', .04], ['vibemb', .14], ['lineage', .05]],
+  books:  [['emb', .22], ['theme', .20], ['mood', .17], ['genre', .11], ['craft', .10], ['creator', .05], ['era', .03], ['audience', .03], ['culture', .04], ['vibemb', .13], ['lineage', .05]],
+  music:  [['emb', .20], ['craft', .20], ['mood', .18], ['genre', .12], ['theme', .08], ['creator', .05], ['era', .05], ['audience', .03], ['culture', .04], ['vibemb', .13], ['lineage', .04]],
+  games:  [['emb', .20], ['craft', .20], ['genre', .14], ['mood', .14], ['theme', .08], ['creator', .04], ['era', .03], ['audience', .04], ['culture', .04], ['vibemb', .12], ['lineage', .04]],
+  anime:  [['emb', .22], ['theme', .17], ['mood', .17], ['genre', .12], ['craft', .10], ['creator', .06], ['era', .03], ['audience', .03], ['srcdem', .04], ['vibemb', .13], ['lineage', .04]],
+  food:   [['emb', .20], ['craft', .22], ['ing', .12], ['tech', .05], ['genre', .10], ['mood', .10], ['theme', .07], ['culture', .08], ['audience', .03], ['vibemb', .10], ['lineage', .03]],
+  travel: [['emb', .20], ['craft', .20], ['vibe', .12], ['mood', .13], ['theme', .08], ['genre', .08], ['climate', .07], ['culture', .06], ['audience', .03], ['vibemb', .11], ['lineage', .03]],
 };
 
 /* ================= module state ================= */
@@ -101,13 +103,17 @@ function featSim(xa, xb, keys) {
 }
 function prox(a, b, span) { if (!isNum(a) || !isNum(b)) return null; return Math.max(0, 1 - Math.abs(a - b) / span); }
 function eraSim(ya, yb, sg) { if (!isNum(ya) || !isNum(yb)) return null; const d = ya - yb; return Math.exp(-d * d / (2 * sg * sg)); }
+// v3 §E8 (mirror app.js): director/studio still meaningful; a single shared actor is mostly
+// noise, so no cast overlap returns null (no vote, not "dissimilar") and overlap is capped low.
 function creatorSim(a, b) {
   if (a.by && b.by && norm(a.by) === norm(b.by)) return 1;
   const xa = a.x || {}, xb = b.x || {};
-  if (xa.st && xb.st && xa.st === xb.st) return .8;
-  const ca = (a.cast || []).map(norm), cb = (b.cast || []).map(norm);
-  if (ca.some((x) => x && cb.includes(x))) return .65;
-  return 0;
+  if (xa.st && xb.st && xa.st === xb.st) return .6;
+  const ca = (a.cast || []).map(norm).filter(Boolean), cb = (b.cast || []).map(norm).filter(Boolean);
+  if (!ca.length || !cb.length) return null;
+  let n = 0; for (const x of ca) if (cb.includes(x)) n++;
+  if (!n) return null;
+  return Math.min(.45, .18 * n);
 }
 function cultureSim(a, b) {
   const ca = (a.x && a.x.reg) || a.c, cb = (b.x && b.x.reg) || b.c;
@@ -247,10 +253,45 @@ function crossScore(a, b) {   // v3 §E2 (final): proven emb-led blend — vibe 
 // convenience: the raw per-signal parts object for a pair (= score().parts). Used by refit --synthetic.
 function parts(a, b, cat) { return score(a, b, cat).parts; }
 
+/* v3 §E8 (mirror app.js pctNormalize): rank-normalize a scored candidate pool, then re-blend.
+   score() sums RAW signal values, but they sit on wildly different scales (an emb cosine spans a
+   narrow band while era spans 0-1), so in a weighted sum influence == weight x SPREAD and the
+   high-spread signals decide the order regardless of weight. Converting each signal to its
+   percentile WITHIN THIS QUERY'S POOL puts them on one scale, so the CATALGOS weights mean what
+   they say. Ties share the mid-rank; a null stays null and simply doesn't vote. Each row is
+   { s: scoreResult }; mutates s.total in place. Returns the same array for chaining.
+   `scored` items may be { s } (eval) or any object exposing `.s`. */
+function pctNormalize(scored, cat) {
+  const rows = CATALGOS[cat], n = scored.length; if (!n) return scored;
+  for (const [id] of rows) {
+    const idx = [];
+    for (let i = 0; i < n; i++) { const v = scored[i].s.parts[id]; if (v != null) idx.push([v, i]); }
+    idx.sort((p, q) => p[0] - q[0]);
+    const m = idx.length;
+    for (let i = 0; i < m;) {
+      let j = i; while (j + 1 < m && idx[j + 1][0] === idx[i][0]) j++;
+      const p = m > 1 ? ((i + j) / 2) / (m - 1) : .5;
+      for (let k = i; k <= j; k++) { const t = scored[idx[k][1]]; (t._np || (t._np = {}))[id] = p; }
+      i = j + 1;
+    }
+  }
+  for (const t of scored) {
+    let num = 0, den = 0;
+    for (const [id, w] of rows) { const p = t._np && t._np[id]; if (p == null) continue; num += p * w; den += w; }
+    t.s.total = den > 0 ? num / den : 0;
+  }
+  return scored;
+}
+
 /* ================= weights.json override (mirror app.js loadWeights) ================= */
+// v3 §E8: weights apply to RANK-NORMALIZED signals now, so a pre-§E8 (raw-value) weights.json is
+// wrong here — gate on __schema, honoring only WEIGHTS_SCHEMA files (refit.mjs stamps it).
+const WEIGHTS_SCHEMA = 2;
 function applyWeights(j) {
   if (!j || typeof j !== 'object') return;
+  if (j.__schema !== WEIGHTS_SCHEMA) return;   // stale/unstamped weights: keep the §E8 defaults
   for (const cat of Object.keys(j)) {
+    if (cat === '__schema') continue;
     if (!CATALGOS[cat]) continue;
     const arr = j[cat];
     if (!Array.isArray(arr) || !arr.length) continue;
@@ -323,10 +364,10 @@ export async function loadEngine(opts = {}) {
   return {
     D, byId, ALL, CAT_ORDER,
     get CATALGOS() { return CATALGOS; },
-    ALGO, score, crossScore, parts,
+    ALGO, score, crossScore, parts, pctNormalize,
     embLoaded: () => !!EMB_BUF,
   };
 }
 
 // also export the pure pieces for targeted testing
-export { CAT_ORDER, CATALGOS_DEFAULT, score, crossScore, parts, ALGO };
+export { CAT_ORDER, CATALGOS_DEFAULT, score, crossScore, parts, pctNormalize, ALGO };

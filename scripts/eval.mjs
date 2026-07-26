@@ -91,9 +91,11 @@ function sameCatTriplets(eng) {
     const seedIdx = distinctInts(rng, pool.length, SEEDS_PER_CAT);
     for (const si of seedIdx) {
       const A = pool[si];
-      const ranked = pool.filter((x) => x.id !== A.id)
-        .map((x) => ({ x, s: eng.score(A, x, cat).total }))
-        .sort((p, q) => q.s - p.s);
+      // v3 §E8: rank the pool the way the app now ranks it — percentile-normalize each signal
+      // across the candidate pool, then blend — so the triplets measure the SHIPPED order.
+      const rows = pool.filter((x) => x.id !== A.id).map((x) => ({ x, s: eng.score(A, x, cat) }));
+      eng.pctNormalize(rows, cat);
+      const ranked = rows.sort((p, q) => q.s.total - p.s.total);
       if (ranked.length < 80) continue;
       const top10 = ranked.slice(0, 10), mid = ranked.slice(30, 80);
       const B = top10[(rng() * top10.length) | 0].x;

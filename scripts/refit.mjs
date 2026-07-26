@@ -26,16 +26,24 @@ const SYNTHETIC = process.argv.includes('--synthetic'); // E1: fit from eval tri
 // project). Only the algo IDS and their DEFAULT weights matter here (the id list defines which
 // `parts` fields this category's feature vector is built from; the weights are the fallback
 // baseline a refit must beat when no weights.json exists yet).
-const CATALGOS = {   // v3 §E2: vibemb 0.10; v3 §E6: lineage 0.02 same-cat (crossScore keeps 0.05) — mirror app.js/engine-port
-  movies:[['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.10],['era',.08],['audience',.08],['culture',.06],['vibemb',.10],['lineage',.02]],
-  tv:    [['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.08],['era',.08],['audience',.10],['culture',.06],['vibemb',.10],['lineage',.02]],
-  books: [['emb',.22],['theme',.22],['mood',.20],['genre',.14],['craft',.14],['creator',.08],['era',.08],['audience',.08],['culture',.06],['vibemb',.10],['lineage',.02]],
-  music: [['emb',.22],['craft',.22],['mood',.20],['genre',.16],['theme',.12],['creator',.08],['era',.10],['audience',.06],['culture',.06],['vibemb',.10],['lineage',.02]],
-  games: [['emb',.22],['craft',.22],['genre',.18],['mood',.16],['theme',.12],['creator',.06],['era',.08],['audience',.10],['culture',.08],['vibemb',.10],['lineage',.02]],
-  anime: [['emb',.22],['theme',.18],['mood',.18],['genre',.16],['craft',.14],['creator',.12],['era',.08],['audience',.08],['srcdem',.06],['vibemb',.10],['lineage',.02]],
-  food:  [['emb',.22],['craft',.26],['ing',.12],['tech',.06],['genre',.14],['mood',.14],['theme',.10],['culture',.12],['audience',.06],['vibemb',.10],['lineage',.02]],
-  travel:[['emb',.22],['craft',.24],['vibe',.14],['mood',.16],['theme',.12],['genre',.12],['climate',.08],['culture',.08],['audience',.06],['vibemb',.10],['lineage',.02]],
+// v3 §E8: mirror app.js/engine-port CATALGOS_DEFAULT EXACTLY (id order = feature-vector order). These
+// weights are the fallback baseline a refit must beat, and — critically — they are applied to
+// RANK-NORMALIZED signals now, so this refit fits its logistic over normalized features too (see
+// npFeature). A refit therefore produces §E8-scheme weights, stamped with WEIGHTS_SCHEMA on write.
+const CATALGOS = {
+  movies:[['emb',.22],['theme',.18],['mood',.18],['genre',.12],['craft',.08],['creator',.05],['era',.03],['audience',.03],['culture',.04],['vibemb',.14],['lineage',.05]],
+  tv:    [['emb',.22],['theme',.18],['mood',.18],['genre',.12],['craft',.08],['creator',.05],['era',.03],['audience',.04],['culture',.04],['vibemb',.14],['lineage',.05]],
+  books: [['emb',.22],['theme',.20],['mood',.17],['genre',.11],['craft',.10],['creator',.05],['era',.03],['audience',.03],['culture',.04],['vibemb',.13],['lineage',.05]],
+  music: [['emb',.20],['craft',.20],['mood',.18],['genre',.12],['theme',.08],['creator',.05],['era',.05],['audience',.03],['culture',.04],['vibemb',.13],['lineage',.04]],
+  games: [['emb',.20],['craft',.20],['genre',.14],['mood',.14],['theme',.08],['creator',.04],['era',.03],['audience',.04],['culture',.04],['vibemb',.12],['lineage',.04]],
+  anime: [['emb',.22],['theme',.17],['mood',.17],['genre',.12],['craft',.10],['creator',.06],['era',.03],['audience',.03],['srcdem',.04],['vibemb',.13],['lineage',.04]],
+  food:  [['emb',.20],['craft',.22],['ing',.12],['tech',.05],['genre',.10],['mood',.10],['theme',.07],['culture',.08],['audience',.03],['vibemb',.10],['lineage',.03]],
+  travel:[['emb',.20],['craft',.20],['vibe',.12],['mood',.13],['theme',.08],['genre',.08],['climate',.07],['culture',.06],['audience',.03],['vibemb',.11],['lineage',.03]],
 };
+
+// v3 §E8: a written weights.json is stamped with this so app.js/engine-port (which apply weights to
+// RANK-NORMALIZED signals) only honor §E8-scheme files and ignore any pre-§E8 (raw-value) file.
+const WEIGHTS_SCHEMA = 2;
 
 const MIN_RATINGS = 150;
 // E1: synthetic mode needs far fewer rows than the 150-HUMAN-rating gate — the eval only produces
@@ -94,8 +102,8 @@ function shuffle(arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0;
 // Clamping then renormalizing in a single pass can push values back OUTSIDE [min,max] whenever
 // the post-clamp sum isn't exactly 1 (e.g. clamp to 0.35, sum lands at 0.99, rescale -> 0.3535 >
 // 0.35). Iterate clamp+rescale to a fixed point — a standard box-constrained simplex projection;
-// with 9 features and bounds [0.02,0.35] the [sum=1] target is always feasible (min possible sum
-// 9*0.02=0.18, max 9*0.35=3.15), so this converges.
+// with 11 features and bounds [0.02,0.35] the [sum=1] target is always feasible (min possible sum
+// 11*0.02=0.22, max 11*0.35=3.85), so this converges.
 function clampAndRenormalize(weights, iterations = 20) {
   let w = weights.slice();
   for (let it = 0; it < iterations; it++) {
@@ -106,14 +114,44 @@ function clampAndRenormalize(weights, iterations = 20) {
   return w;
 }
 
-// ---------- per-category refit ----------
-// existingWeights: {id: weight} baseline for this category (from weights.json or CATALGOS default).
-function refitCategory(cat, ids, rows, existingWeights) {
-  const n = rows.length;
-  if (n < MIN_RATINGS) return { skipped: true, reason: `only ${n} ratings, need ${MIN_RATINGS}` };
+// ---------- v3 §E8: rank-normalized features ----------
+// The engine blends RANK-NORMALIZED signals within each query's candidate pool (app.js pctNormalize),
+// so a refit must learn its weights over the SAME features, not the raw `parts`. For anchor A we score
+// the whole category pool, percentile-normalize every signal across it, and read each candidate's
+// percentile vector. Memoized by anchor (the pool pass is the cost). A missing signal -> neutral 0.5
+// (no information), matching "a null simply doesn't vote" in the live blend.
+const _npCache = new Map();
+function anchorNpVectors(eng, cat, anchorId) {
+  const key = cat + '::' + anchorId;
+  let m = _npCache.get(key);
+  if (m) return m;
+  m = new Map();
+  const A = eng.byId[anchorId];
+  if (A) {
+    const pool = eng.D[cat] || [];
+    const rows = [];
+    for (const b of pool) { if (b.id === anchorId) continue; rows.push({ id: b.id, s: eng.score(A, b, cat) }); }
+    eng.pctNormalize(rows, cat);
+    for (const r of rows) m.set(r.id, r._np || {});
+  }
+  _npCache.set(key, m);
+  return m;
+}
+// the §E8 feature vector (in `ids` order) for how `targetId` ranks within `anchorId`'s pool.
+function npFeature(eng, cat, anchorId, targetId, ids) {
+  const np = anchorNpVectors(eng, cat, anchorId).get(targetId) || {};
+  return ids.map((id) => (typeof np[id] === 'number' ? np[id] : 0.5));
+}
 
-  const X = rows.map((r) => ids.map((id) => (typeof r.parts[id] === 'number' ? r.parts[id] : 0)));
-  const y = rows.map((r) => r.r);
+// ---------- per-category refit ----------
+// samples: [{x: number[] (in `ids` order), y: +-1}] — already §E8-normalized features (see npFeature).
+// existingWeights: {id: weight} baseline for this category (from weights.json or CATALGOS default).
+function refitCategory(cat, ids, samples, existingWeights) {
+  const n = samples.length;
+  if (n < MIN_RATINGS) return { skipped: true, reason: `only ${n} usable ratings, need ${MIN_RATINGS}` };
+
+  const X = samples.map((s) => s.x);
+  const y = samples.map((s) => s.y);
 
   const order = shuffle([...Array(n).keys()]);
   const nHold = Math.max(20, Math.round(n * HOLDOUT_FRAC));
@@ -143,7 +181,8 @@ function refitCategory(cat, ids, rows, existingWeights) {
 // ---------- Supabase read ----------
 async function fetchRatings() {
   if (!KEY) { console.error('FATAL: missing SB_SERVICE_KEY env/secret.'); process.exit(1); }
-  const url = `${SB}/rest/v1/ratings?select=cat,r,parts`;
+  // v3 §E8: src/match let us recompute each rated match's percentile WITHIN its anchor's pool.
+  const url = `${SB}/rest/v1/ratings?select=cat,r,parts,src,match`;
   const r = await fetch(url, { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } });
   if (!r.ok) { console.error('FATAL: Supabase read failed', r.status, await r.text().catch(() => '')); process.exit(1); }
   return r.json();
@@ -163,9 +202,16 @@ async function main() {
   const rows = await fetchRatings();
   console.log('ratings fetched:', rows.length);
   const existing = await loadExistingWeights();
+  // v3 §E8: the engine turns each rated match into its percentile WITHIN its anchor's pool, so a
+  // refit needs the live engine (data.json + embeddings) to rebuild those features.
+  const eng = await loadEngine({ root: ROOT });
 
   const byCat = {};
-  for (const r of rows) { if (!r || !CATALGOS[r.cat] || (r.r !== 1 && r.r !== -1) || !r.parts) continue; (byCat[r.cat] = byCat[r.cat] || []).push(r); }
+  for (const r of rows) {
+    if (!r || !CATALGOS[r.cat] || (r.r !== 1 && r.r !== -1) || !r.src || !r.match) continue;
+    if (!eng.byId[r.src] || !eng.byId[r.match]) continue;   // item since removed from the catalog
+    (byCat[r.cat] = byCat[r.cat] || []).push(r);
+  }
 
   const out = { ...existing };
   let changed = false;
@@ -173,8 +219,8 @@ async function main() {
     const ids = CATALGOS[cat].map(([id]) => id);
     const defaultWeights = Object.fromEntries(CATALGOS[cat]);
     const existingForCat = existing[cat] ? Object.fromEntries(existing[cat]) : defaultWeights;
-    const rowsForCat = byCat[cat] || [];
-    const result = refitCategory(cat, ids, rowsForCat, existingForCat);
+    const samples = (byCat[cat] || []).map((r) => ({ x: npFeature(eng, cat, r.src, r.match, ids), y: r.r }));
+    const result = refitCategory(cat, ids, samples, existingForCat);
     if (result.skipped) {
       console.log(`${cat}: skipped — ${result.reason}`);
     } else {
@@ -189,6 +235,7 @@ async function main() {
     return;
   }
 
+  out.__schema = WEIGHTS_SCHEMA;   // v3 §E8: mark this as a normalized-scheme weights file
   await writeFile(OUT, JSON.stringify(out));
   console.log('wrote', OUT, out);
   await bumpSW();
@@ -218,14 +265,14 @@ async function humanRatingCounts() {
 }
 
 // one triplet -> [ +1 (winner-minus-loser), -1 (its mirror) ] feature rows, in `ids` order.
+// v3 §E8: features are the winner's/loser's percentile vectors WITHIN A's pool (npFeature), the
+// same representation the engine blends — so the learned weights are directly the §E8 weights.
 function syntheticRows(eng, ids, cat, t) {
-  const A = eng.byId[t.a];
-  const winner = eng.byId[t.winner === 'B' ? t.b : t.c];
-  const loser  = eng.byId[t.winner === 'B' ? t.c : t.b];
-  if (!A || !winner || !loser) return null;
-  const pw = eng.parts(A, winner, cat), pl = eng.parts(A, loser, cat);
-  const num = (v) => (typeof v === 'number' ? v : 0); // null signal -> 0, same as the ratings path
-  const diff = ids.map((id) => num(pw[id]) - num(pl[id]));
+  const winnerId = t.winner === 'B' ? t.b : t.c;
+  const loserId  = t.winner === 'B' ? t.c : t.b;
+  if (!eng.byId[t.a] || !eng.byId[winnerId] || !eng.byId[loserId]) return null;
+  const pw = npFeature(eng, cat, t.a, winnerId, ids), pl = npFeature(eng, cat, t.a, loserId, ids);
+  const diff = ids.map((_, i) => pw[i] - pl[i]);
   return [{ x: diff, y: 1 }, { x: diff.map((v) => -v), y: -1 }];
 }
 
@@ -280,6 +327,7 @@ async function mainSynthetic() {
   }
 
   if (!changed) { console.log('No category cleared the synthetic gate this run — leaving weights.json untouched.'); return; }
+  out.__schema = WEIGHTS_SCHEMA;   // v3 §E8: mark this as a normalized-scheme weights file
   await writeFile(OUT, JSON.stringify(out));
   console.log('wrote', OUT, out);
   await bumpSW();

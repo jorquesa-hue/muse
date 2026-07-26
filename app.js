@@ -334,13 +334,22 @@ function featSim(xa,xb,keys){ if(!xa||!xb) return null; let s=0,n=0;   // v2: pr
   if(n===0) return null; const d=Math.sqrt(s/n); return Math.exp(-(d*d)/(2*FEAT_SIGMA*FEAT_SIGMA)); }
 function prox(a,b,span){ if(!isNum(a)||!isNum(b)) return null; return Math.max(0, 1-Math.abs(a-b)/span); }   // v2: null (was 0.5)
 function eraSim(ya,yb,sg){ if(!isNum(ya)||!isNum(yb)) return null; const d=ya-yb; return Math.exp(-d*d/(2*sg*sg)); }   // v2: takes YEARS, null on missing
+/* v3 §E8: a shared NAME is weak taste evidence, and its absence is no evidence at all.
+   The old version returned a flat .65 for a single shared cast member and 0 otherwise — so
+   "no shared actor" read as actively dissimilar, while one shared actor scored as high as a
+   real thematic match. That spike leapfrogged titles ~28 places (Titanic -> Eternal Sunshine
+   at #1 on Kate Winslet alone; Jurassic Park's whole top 4 was Spielberg). Now: a same director
+   still counts fully, a shared studio moderately, cast scales with overlap and is capped below
+   any genuine affinity — and no overlap returns null (no vote), like lineageSim. */
 function creatorSim(a,b){
   if(a.by&&b.by&&norm(a.by)===norm(b.by)) return 1;
   const xa=a.x||{}, xb=b.x||{};
-  if(xa.st&&xb.st&&xa.st===xb.st) return .8;
-  const ca=(a.cast||[]).map(norm), cb=(b.cast||[]).map(norm);
-  if(ca.some(x=>x&&cb.includes(x))) return .65;
-  return 0; }
+  if(xa.st&&xb.st&&xa.st===xb.st) return .6;
+  const ca=(a.cast||[]).map(norm).filter(Boolean), cb=(b.cast||[]).map(norm).filter(Boolean);
+  if(!ca.length||!cb.length) return null;
+  let n=0; for(const x of ca) if(cb.includes(x)) n++;
+  if(!n) return null;
+  return Math.min(.45,.18*n); }
 function cultureSim(a,b){
   const ca=(a.x&&a.x.reg)||a.c, cb=(b.x&&b.x.reg)||b.c;
   if(!ca||!cb) return null; if(ca===cb) return 1;   // v2: null if EITHER lacks region/country (can't compare against "unknown")
@@ -412,15 +421,22 @@ const ALGO = {
   srcdem:(a,b)=>{const xa=a.x||{},xb=b.x||{}; if((xa.src==null&&xa.dem==null)||(xb.src==null&&xb.dem==null)) return null;   // symmetric: null if EITHER side lacks both fields (was A-only, so a candidate missing data scored a deceptive 0 instead of "no signal")
     return (xa.src&&xa.src===xb.src?.5:0)+(xa.dem&&xa.dem===xb.dem?.5:0);},
 };
-const CATALGOS = {   // v2: emb 0.22; v3 §E2: vibemb 0.10; v3 §E6: lineage 0.02 same-cat (crossScore keeps 0.05). NB: any same-cat lineage weight costs ~2-2.5pt on the similarity-eval (weight-independent: 0.02 & 0.05 both ~77.4) — kept as a deliberate influence-discovery signal, not eval-neutral
-  movies:[['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.10],['era',.08],['audience',.08],['culture',.06],['vibemb',.10],['lineage',.02]],
-  tv:    [['emb',.22],['theme',.20],['mood',.20],['genre',.15],['craft',.13],['creator',.08],['era',.08],['audience',.10],['culture',.06],['vibemb',.10],['lineage',.02]],
-  books: [['emb',.22],['theme',.22],['mood',.20],['genre',.14],['craft',.14],['creator',.08],['era',.08],['audience',.08],['culture',.06],['vibemb',.10],['lineage',.02]],
-  music: [['emb',.22],['craft',.22],['mood',.20],['genre',.16],['theme',.12],['creator',.08],['era',.10],['audience',.06],['culture',.06],['vibemb',.10],['lineage',.02]],
-  games: [['emb',.22],['craft',.22],['genre',.18],['mood',.16],['theme',.12],['creator',.06],['era',.08],['audience',.10],['culture',.08],['vibemb',.10],['lineage',.02]],
-  anime: [['emb',.22],['theme',.18],['mood',.18],['genre',.16],['craft',.14],['creator',.12],['era',.08],['audience',.08],['srcdem',.06],['vibemb',.10],['lineage',.02]],
-  food:  [['emb',.22],['craft',.26],['ing',.12],['tech',.06],['genre',.14],['mood',.14],['theme',.10],['culture',.12],['audience',.06],['vibemb',.10],['lineage',.02]],
-  travel:[['emb',.22],['craft',.24],['vibe',.14],['mood',.16],['theme',.12],['genre',.12],['climate',.08],['culture',.08],['audience',.06],['vibemb',.10],['lineage',.02]],
+/* v3 §E8: weights are applied to RANK-NORMALIZED signals (see pctNormalize), so a weight finally
+   means "this share of the ranking decision". Under the old raw-value blend, influence was
+   weight x SPREAD, so `era` (spread 0.34) quietly outranked `emb` (spread 0.07) despite equal
+   weight — the engine matched on release year, not taste. Rebalanced accordingly: the meaning
+   signals (emb/theme/mood/vibemb) lead, `era` and `creator` are now minor tie-breakers.
+   ORDER IS CONTRACT — it defines the parts-vector order refit.mjs trains on. Mirror any change in
+   scripts/engine-port.mjs and scripts/refit.mjs. */
+const CATALGOS = {
+  movies:[['emb',.22],['theme',.18],['mood',.18],['genre',.12],['craft',.08],['creator',.05],['era',.03],['audience',.03],['culture',.04],['vibemb',.14],['lineage',.05]],
+  tv:    [['emb',.22],['theme',.18],['mood',.18],['genre',.12],['craft',.08],['creator',.05],['era',.03],['audience',.04],['culture',.04],['vibemb',.14],['lineage',.05]],
+  books: [['emb',.22],['theme',.20],['mood',.17],['genre',.11],['craft',.10],['creator',.05],['era',.03],['audience',.03],['culture',.04],['vibemb',.13],['lineage',.05]],
+  music: [['emb',.20],['craft',.20],['mood',.18],['genre',.12],['theme',.08],['creator',.05],['era',.05],['audience',.03],['culture',.04],['vibemb',.13],['lineage',.04]],
+  games: [['emb',.20],['craft',.20],['genre',.14],['mood',.14],['theme',.08],['creator',.04],['era',.03],['audience',.04],['culture',.04],['vibemb',.12],['lineage',.04]],
+  anime: [['emb',.22],['theme',.17],['mood',.17],['genre',.12],['craft',.10],['creator',.06],['era',.03],['audience',.03],['srcdem',.04],['vibemb',.13],['lineage',.04]],
+  food:  [['emb',.20],['craft',.22],['ing',.12],['tech',.05],['genre',.10],['mood',.10],['theme',.07],['culture',.08],['audience',.03],['vibemb',.10],['lineage',.03]],
+  travel:[['emb',.20],['craft',.20],['vibe',.12],['mood',.13],['theme',.08],['genre',.08],['climate',.07],['culture',.06],['audience',.03],['vibemb',.11],['lineage',.03]],
 };
 /* rows of CATALGOS[cat] that can actually fire right now — excludes 'emb' until embeddings.b64.json loads */
 const activeAlgoRows=cat=>CATALGOS[cat].filter(([id])=>(id!=='emb'||EMB_BUF)&&(id!=='vibemb'||VIBE_BUF)&&(id!=='lineage'||EDGE_ADJ));
@@ -428,11 +444,18 @@ const activeAlgoRows=cat=>CATALGOS[cat].filter(([id])=>(id!=='emb'||EMB_BUF)&&(i
    non-fatal way as loadEmb() — 404/malformed just means "keep the defaults", never a hard error.
    Only overrides a category when the fetched weights cover EXACTLY the same algo ids as the
    current row (refit.mjs only ever re-weights, never adds/removes signals) — a mismatched or
-   corrupted file leaves that category's scoring untouched rather than risking a broken lookup. */
+   corrupted file leaves that category's scoring untouched rather than risking a broken lookup.
+   v3 §E8: weights are now applied to RANK-NORMALIZED signals (see pctNormalize), a different
+   objective from the old raw-value weighted sum, so a pre-§E8 weights.json (learned for raw
+   values) would be actively wrong here. Gate on __schema: only WEIGHTS_SCHEMA files are honored;
+   anything older/unstamped is ignored and the §E8 defaults stand. refit.mjs stamps the schema. */
+const WEIGHTS_SCHEMA=2;
 async function loadWeights(url='weights.json'){
   const j=await (await fetch(url)).json();
   if(!j||typeof j!=='object') return;
+  if(j.__schema!==WEIGHTS_SCHEMA) return;   // stale/unstamped weights: keep the §E8 defaults
   for(const cat of Object.keys(j)){
+    if(cat==='__schema') continue;
     if(!CATALGOS[cat]) continue;
     const arr=j[cat];
     if(!Array.isArray(arr)||!arr.length) continue;
@@ -511,6 +534,36 @@ function score(a,b,cat){
     num+=clamp01(v)*w; den+=w; presentDen+=w; }
   const total=den>0?num/den:0, coverage=wtot>0?presentDen/wtot:0;
   return { parts, total, coverage, eligible:coverage>=MIN_COVERAGE, pct:Math.min(99,Math.round(100*Math.pow(total,0.8))) };
+}
+/* v3 §E8: rank-normalize a scored candidate pool, then re-blend.
+   score() sums RAW signal values, but they sit on wildly different scales: across a real movie
+   pool an emb cosine spans ~0.49-0.63 (std .07) while era spans 0-1 (std .34). In a weighted sum
+   the influence of a signal is weight x SPREAD — so era decided the order while emb, the signal
+   that actually encodes meaning, was inert (dropping it changed only 0.9 of every 10 results).
+   Converting each signal to its percentile WITHIN THIS QUERY'S POOL puts them all on one scale,
+   so the CATALGOS weights mean what they say. Ties share the mid-rank; a null stays null and
+   simply doesn't vote (never an implicit zero). Mutates s.total in place — display % is derived
+   from it via pctWithinPool, so the badge stays a within-pool percentile either way. */
+function pctNormalize(scored,cat){
+  const rows=CATALGOS[cat], n=scored.length; if(!n) return scored;
+  for(const [id] of rows){
+    const idx=[];
+    for(let i=0;i<n;i++){ const v=scored[i].s.parts[id]; if(v!=null) idx.push([v,i]); }
+    idx.sort((p,q)=>p[0]-q[0]);
+    const m=idx.length;
+    for(let i=0;i<m;){
+      let j=i; while(j+1<m&&idx[j+1][0]===idx[i][0]) j++;
+      const p=m>1?((i+j)/2)/(m-1):.5;
+      for(let k=i;k<=j;k++){ const t=scored[idx[k][1]]; (t._np||(t._np={}))[id]=p; }
+      i=j+1;
+    }
+  }
+  for(const t of scored){
+    let num=0,den=0;
+    for(const [id,w] of rows){ const p=t._np&&t._np[id]; if(p==null) continue; num+=p*w; den+=w; }
+    t.s.total=den>0?num/den:0;
+  }
+  return scored;
 }
 /* v2 §7.2: embedding-dominant, audience removed; skip-and-renormalize; falls back to dna+theme if no embeddings. */
 /* v2 §7.5: returns the RAW [0,1] blend — round only at display. The old version rounded to an
@@ -828,6 +881,10 @@ function renderResults(){
     let scored=pool0.map(it=>({it,s:score(src,it,cat)}));
     let elig=scored.filter(x=>x.s.eligible);            // v2: coverage gate
     if(elig.length<5) elig=scored;                       // safety: never strand the user on an over-aggressive gate
+    // v3 §E8: normalize ACROSS the pool we're actually going to rank — AFTER the coverage gate and
+    // its fallback, so whichever pool wins is the one the percentiles are computed over. This is
+    // what makes the weights meaningful; it must run before any sort by total.
+    pctNormalize(elig,cat);
     // v2 §B4: a match the user explicitly downvoted for THIS source never reappears in the same
     // slot — the 30-item shortlist comfortably absorbs losing a few candidates, so no safety floor.
     const downvoted=new Set(loadRatings().filter(x=>x.src===src.id&&x.r===-1).map(x=>x.match));
@@ -892,7 +949,12 @@ function renderBlend(){
   const downA=new Set(loadRatings().filter(x=>x.src===a.id&&x.r===-1).map(x=>x.match));
   const downB=new Set(loadRatings().filter(x=>x.src===b.id&&x.r===-1).map(x=>x.match));
   const pool=(D[cat]||[]).filter(x=>x.id!==a.id&&x.id!==b.id&&!downA.has(x.id)&&!downB.has(x.id));
-  const scored=pool.map(it=>{ const sA=score(a,it,cat).total, sB=score(b,it,cat).total; return {it,sA,sB,blend:harmonicMean(sA,sB)}; })
+  // v3 §E8: normalize each anchor's scores across the pool BEFORE the harmonic mean — the two
+  // anchors' raw totals otherwise sit on different scales (a niche anchor scores everything lower),
+  // which quietly let the more "generous" anchor dominate the blend.
+  const rowsA=pool.map(it=>({it,s:score(a,it,cat)})), rowsB=pool.map(it=>({it,s:score(b,it,cat)}));
+  pctNormalize(rowsA,cat); pctNormalize(rowsB,cat);
+  const scored=pool.map((it,i)=>{ const sA=rowsA[i].s.total, sB=rowsB[i].s.total; return {it,sA,sB,blend:harmonicMean(sA,sB)}; })
     .sort((x,y)=>y.blend-x.blend);
   const top=scored.slice(0,10);
   const shortlistTotals=scored.slice(0,30).map(x=>x.blend).sort((x,y)=>x-y);
