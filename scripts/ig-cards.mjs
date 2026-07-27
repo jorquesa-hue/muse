@@ -19,6 +19,7 @@
 import { chromium } from 'playwright';
 import { writeFile, readFile, mkdir } from 'node:fs/promises';
 import { loadEngine } from './engine-port.mjs';
+import { buildCaptions } from './ig-caption.mjs';   // trilingual EN/ES/PT captions (shared with ig-recaption.mjs)
 
 const OUT = process.env.OUT_DIR || new URL('../ig-out', import.meta.url).pathname;
 const PER_CAT = +(process.env.PER_CAT || 6);
@@ -211,37 +212,30 @@ if (posts.length) {
 }
 await ctx.close(); await browser.close();
 
-// captions
-const EMO = { movies:'🎬', tv:'📺', books:'📚', music:'🎵', games:'🎮', anime:'🌸', food:'🍜', travel:'✈️' };
-const HOOKS = [ a=>`You love ${a}. Here's your entire universe. 🌌`, a=>`Loved ${a}? Muse mapped its echo across every medium. 🧭`,
-  a=>`If ${a} is your thing — read this, play this, taste this, go here. 👇`, a=>`${a} fans: your next obsession isn't another movie. It's all of these. ✨`,
-  a=>`One love in, a universe out. Today: ${a}. 🌍`, a=>`We asked Muse what ${a} feels like in every other medium 👇` ];
-const HASH = { movies:['#movierecommendations','#whattowatch','#filmtok'], tv:['#tvshowrecommendations','#whattowatch','#bingewatch'],
-  books:['#bookrecommendations','#booktok','#whattoread'], music:['#musicrecommendations','#musicdiscovery','#newmusic'],
-  games:['#gamerecommendations','#gamingcommunity','#whattoplay'], anime:['#animerecommendations','#anitok','#animecommunity'],
-  food:['#foodie','#whattoeat','#foodlover'], travel:['#travelinspo','#wheretogo','#bucketlist'] };
-const GEN = ['#muse','#tasteengine','#ifyoulike','#recommendations','#foryou','#discovery','#crossmedia'];
-const uniq = a => [...new Set(a)];
-function captionText(p, k){
-  const a = p.anchor, shown = p.matches.slice(0,5);
-  const chain = shown.map(m => `${EMO[m.cat]} ${m.t}`).join('  ·  ');
-  const cats = uniq(shown.map(m => m.cat));
-  const tags = uniq([...(HASH[a.cat]||[]), ...cats.flatMap(c => (HASH[c]||[]).slice(0,1)), ...GEN]).slice(0,14);
-  return `${HOOKS[k % HOOKS.length](a.t)}\n\n${chain}\n\nMuse finds the echo of what you love in every other medium — one in, a universe out.\n\nTry it free 👉 muse-find.com (link in bio)\n\n${tags.join(' ')}`;
-}
-let md = `# Muse — recommendation cards (real covers)\n\nEvery match is a real muse-find.com result. Bio link: muse-find.com\n\n---\n\n`;
-posts.forEach((p,k)=>{ md += `## ${k+1}. ${p.anchor.t}  \`posts/${idx[k].slug}.jpg\`\n\n> ${captionText(p,k).replace(/\n/g,'\n> ')}\n\n---\n\n`; });
+// captions — trilingual EN/ES/PT via the shared builder (scripts/ig-caption.mjs), also used by
+// ig-recaption.mjs to retrofit an existing queue. `caption` is the trilingual paste-ready text;
+// `captions` carries the per-language versions for language-specific posting.
+const capsFor = (p, k) => buildCaptions({ anchorTitle: p.anchor.t, anchorCat: p.anchor.cat, matches: p.matches.slice(0, 5), index: k });
+let md = `# Muse — Instagram captions (trilingual EN / ES / PT)\n\nEvery match is a real muse-find.com result. Bio link: **muse-find.com**\n\n---\n\n`;
+posts.forEach((p, k) => {
+  const c = capsFor(p, k);
+  md += `## ${k + 1}. ${p.anchor.t}  \`posts/${idx[k].slug}.jpg\`\n\n**Trilingual (paste this):**\n\n> ${c.combined.replace(/\n/g, '\n> ')}\n\n`;
+  for (const [lang, label] of [['en', '🇬🇧 English'], ['es', '🇪🇸 Español'], ['pt', '🇧🇷 Português']])
+    md += `<details><summary>${label}</summary>\n\n> ${c[lang].replace(/\n/g, '\n> ')}\n\n</details>\n\n`;
+  md += `---\n\n`;
+});
 await writeFile(OUT + '/captions.md', md);
 await writeFile(OUT + '/index.json', JSON.stringify(idx, null, 2));
 
-// queue.json — the auto-poster's worklist. Preserve `posted` state (keyed by anchor id) across
-// rebuilds so a re-run of the queue builder never re-posts something already published.
+// queue.json — the poster's worklist. Preserve `posted` state (keyed by anchor id) across rebuilds
+// so a re-run never re-posts something already published.
 let prevPosted = {};
 try { const old = JSON.parse(await readFile(OUT + '/queue.json', 'utf8')); for (const e of (old.posts||[])) if (e.posted) prevPosted[e.key] = e; } catch { /* first build */ }
 const queue = { generated: posts.length, posts: posts.map((p,k) => {
-  const key = p.anchor.id, prev = prevPosted[key];
+  const key = p.anchor.id, prev = prevPosted[key], c = capsFor(p, k);
   return { key, n:k+1, img:`posts/${idx[k].slug}.jpg`, anchor:p.anchor.t, cat:p.anchor.cat,
-    caption: captionText(p,k), posted: prev ? true : false, ...(prev && prev.posted_id ? { posted_id: prev.posted_id } : {}) };
+    caption: c.combined, captions: { en: c.en, es: c.es, pt: c.pt },
+    posted: prev ? true : false, ...(prev && prev.posted_id ? { posted_id: prev.posted_id } : {}) };
 }) };
 await writeFile(OUT + '/queue.json', JSON.stringify(queue, null, 2));
 const already = queue.posts.filter(p=>p.posted).length;
