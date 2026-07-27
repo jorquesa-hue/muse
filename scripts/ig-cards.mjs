@@ -17,7 +17,7 @@
  * (local: pretend every cover loaded, for render smoke tests). Node 20+. Dev dep: playwright (workflow only).
  */
 import { chromium } from 'playwright';
-import { writeFile, readFile, mkdir } from 'node:fs/promises';
+import { writeFile, readFile, mkdir, rm } from 'node:fs/promises';
 import { loadEngine } from './engine-port.mjs';
 import { buildCaptions } from './ig-caption.mjs';   // trilingual EN/ES/PT captions (shared with ig-recaption.mjs)
 
@@ -44,12 +44,16 @@ const nrm = s => String(s||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(
 const STOP = new Set(['the','a','an','of','and','to','in','on','original','motion','picture','soundtrack','deluxe','edition','vol','part','story','my','no']);
 const toks = s => new Set(nrm(s).split(' ').filter(w => w.length > 2 && !STOP.has(w)));
 const shareWord = (a,b) => { const tb = toks(b.t); for (const w of toks(a.t)) if (tb.has(w)) return true; return false; };
+// franchise key: first two significant words (articles/series words stripped) so one saga -> one
+// anchor. "The Lord of the Rings: Fellowship" and "…: Two Towers" collapse to "lord rings"; "Star
+// Wars" and "Star Trek" stay distinct. Falls back to a title prefix when a title has <2 real words.
+const franchiseKey = t => { const w = [...toks(t)]; return w.length ? w.slice(0,2).join(' ') : nrm(t).slice(0,6); };
 
 const anchors = [];
 for (const cat of CAT_ORDER) {
   const pool = (D[cat]||[]).filter(it => it && it.t && typeof it.pop === 'number' && it.img).sort((a,b)=>b.pop-a.pop);
   const picked = [], seen = new Set();
-  for (const it of pool) { const k = it.t.toLowerCase().slice(0,6); if (seen.has(k)) continue; seen.add(k); picked.push(it); if (picked.length>=PER_CAT) break; }
+  for (const it of pool) { const k = franchiseKey(it.t); if (seen.has(k)) continue; seen.add(k); picked.push(it); if (picked.length>=PER_CAT) break; }
   anchors.push(...picked);
 }
 const draft = [];
@@ -140,6 +144,9 @@ const CSS = `
   .cta{font-family:var(--mono);font-size:23px;letter-spacing:.02em;color:var(--acc);font-weight:700}`;
 
 /* ---------------- browser: probe covers, then render ---------------- */
+// clear stale card files first: slugs are numbered by final rank, so a different card count renumbers
+// everything — without this, a smaller previous batch would leave orphaned NN-*.jpg behind.
+await rm(OUT + '/posts', { recursive: true, force: true });
 await mkdir(OUT + '/posts', { recursive: true });
 const browser = await chromium.launch({ headless: true, executablePath: EXE });
 const ctx = await browser.newContext({ viewport:{width:1080,height:1350}, deviceScaleFactor:2, userAgent:

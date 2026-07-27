@@ -12,7 +12,7 @@ on:
       per_cat:
         description: 'Anchors per category (8 categories × this = card count)'
         required: false
-        default: '5'
+        default: '8'
 
 permissions:
   contents: read

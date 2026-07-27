@@ -2,8 +2,6 @@
 
 Every match is a real muse-find.com result. Bio link: **muse-find.com**
 
-Each post below has the ready-to-paste **trilingual** caption, then the individual EN / ES / PT versions if you prefer to post one language at a time.
-
 ---
 
 ## 1. Star Wars  `posts/01-star-wars.jpg`
@@ -14,7 +12,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > Amas Star Wars. Aquí tienes tu universo entero. 🌌
 > Você ama Star Wars. Aqui está o seu universo inteiro. 🌌
 > 
-> 📚 The Hitch Hiker's Guide to the Galaxy  ·  🎵 Moana (Original Motion Picture Soundtrack/Deluxe Edition)  ·  🎮 Forza Horizon 5  ·  📺 My Hero Academia  ·  ✈️ Banff National Park
+> 📚 The Hitch Hiker's Guide to the Galaxy  ·  🎵 Moana (Original Motion Picture Soundtrack/Deluxe Edition)  ·  🎮 Forza Horizon 5  ·  🌸 Naruto  ·  📺 The Avengers
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -22,19 +20,19 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #movierecommendations #whattowatch #filmtok #bookrecommendations #musicrecommendations #gamerecommendations #tvshowrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #movierecommendations #whattowatch #filmtok #bookrecommendations #musicrecommendations #gamerecommendations #animerecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
 > You love Star Wars. Here's your whole universe. 🌌
 > 
-> 📚 The Hitch Hiker's Guide to the Galaxy  ·  🎵 Moana (Original Motion Picture Soundtrack/Deluxe Edition)  ·  🎮 Forza Horizon 5  ·  📺 My Hero Academia  ·  ✈️ Banff National Park
+> 📚 The Hitch Hiker's Guide to the Galaxy  ·  🎵 Moana (Original Motion Picture Soundtrack/Deluxe Edition)  ·  🎮 Forza Horizon 5  ·  🌸 Naruto  ·  📺 The Avengers
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #movierecommendations #whattowatch #filmtok #bookrecommendations #musicrecommendations #gamerecommendations #tvshowrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #movierecommendations #whattowatch #filmtok #bookrecommendations #musicrecommendations #gamerecommendations #animerecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
@@ -42,13 +40,13 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Amas Star Wars. Aquí tienes tu universo entero. 🌌
 > 
-> 📚 The Hitch Hiker's Guide to the Galaxy  ·  🎵 Moana (Original Motion Picture Soundtrack/Deluxe Edition)  ·  🎮 Forza Horizon 5  ·  📺 My Hero Academia  ·  ✈️ Banff National Park
+> 📚 The Hitch Hiker's Guide to the Galaxy  ·  🎵 Moana (Original Motion Picture Soundtrack/Deluxe Edition)  ·  🎮 Forza Horizon 5  ·  🌸 Naruto  ·  📺 The Avengers
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #movierecommendations #whattowatch #filmtok #bookrecommendations #musicrecommendations #gamerecommendations #tvshowrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #movierecommendations #whattowatch #filmtok #bookrecommendations #musicrecommendations #gamerecommendations #animerecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
@@ -56,13 +54,13 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Você ama Star Wars. Aqui está o seu universo inteiro. 🌌
 > 
-> 📚 The Hitch Hiker's Guide to the Galaxy  ·  🎵 Moana (Original Motion Picture Soundtrack/Deluxe Edition)  ·  🎮 Forza Horizon 5  ·  📺 My Hero Academia  ·  ✈️ Banff National Park
+> 📚 The Hitch Hiker's Guide to the Galaxy  ·  🎵 Moana (Original Motion Picture Soundtrack/Deluxe Edition)  ·  🎮 Forza Horizon 5  ·  🌸 Naruto  ·  📺 The Avengers
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #movierecommendations #whattowatch #filmtok #bookrecommendations #musicrecommendations #gamerecommendations #tvshowrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #movierecommendations #whattowatch #filmtok #bookrecommendations #musicrecommendations #gamerecommendations #animerecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
@@ -76,7 +74,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > ¿Te encantó Titanic? Aquí está su eco en todos los demás medios. 🧭
 > Curtiu Titanic? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 📚 Gone with the Wind  ·  ✈️ Agra  ·  🎮 The Legend of Zelda: Ocarina of Time  ·  🎵 Burn The Ships  ·  📺 Gilmore Girls
+> 📚 Gone with the Wind  ·  ✈️ Agra  ·  🎮 The Legend of Zelda: Ocarina of Time  ·  🎵 Burn The Ships  ·  📺 The Undeclared War
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -90,7 +88,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Loved Titanic? Here's its echo in every other medium. 🧭
 > 
-> 📚 Gone with the Wind  ·  ✈️ Agra  ·  🎮 The Legend of Zelda: Ocarina of Time  ·  🎵 Burn The Ships  ·  📺 Gilmore Girls
+> 📚 Gone with the Wind  ·  ✈️ Agra  ·  🎮 The Legend of Zelda: Ocarina of Time  ·  🎵 Burn The Ships  ·  📺 The Undeclared War
 > 
 > Muse finds the echo of what you love across every medium.
 > 
@@ -104,7 +102,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > ¿Te encantó Titanic? Aquí está su eco en todos los demás medios. 🧭
 > 
-> 📚 Gone with the Wind  ·  ✈️ Agra  ·  🎮 The Legend of Zelda: Ocarina of Time  ·  🎵 Burn The Ships  ·  📺 Gilmore Girls
+> 📚 Gone with the Wind  ·  ✈️ Agra  ·  🎮 The Legend of Zelda: Ocarina of Time  ·  🎵 Burn The Ships  ·  📺 The Undeclared War
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
@@ -118,7 +116,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Curtiu Titanic? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 📚 Gone with the Wind  ·  ✈️ Agra  ·  🎮 The Legend of Zelda: Ocarina of Time  ·  🎵 Burn The Ships  ·  📺 Gilmore Girls
+> 📚 Gone with the Wind  ·  ✈️ Agra  ·  🎮 The Legend of Zelda: Ocarina of Time  ·  🎵 Burn The Ships  ·  📺 The Undeclared War
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
@@ -316,13 +314,137 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 6. Game of Thrones  `posts/06-game-of-thrones.jpg`
+## 6. The Dark Knight  `posts/06-the-dark-knight.jpg`
 
 **Trilingual (paste this):**
 
-> Loved Game of Thrones? Here's its echo in every other medium. 🧭
-> ¿Te encantó Game of Thrones? Aquí está su eco en todos los demás medios. 🧭
-> Curtiu Game of Thrones? Aqui está o eco dele em todas as outras mídias. 🧭
+> Loved The Dark Knight? Here's its echo in every other medium. 🧭
+> ¿Te encantó The Dark Knight? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu The Dark Knight? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> 📺 The Shield  ·  🎵 Master of Puppets  ·  📚 Under the Dome  ·  🌸 Death Note  ·  🎮 Call of Duty: Infinite Warfare
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #movierecommendations #whattowatch #filmtok #tvshowrecommendations #musicrecommendations #bookrecommendations #animerecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Loved The Dark Knight? Here's its echo in every other medium. 🧭
+> 
+> 📺 The Shield  ·  🎵 Master of Puppets  ·  📚 Under the Dome  ·  🌸 Death Note  ·  🎮 Call of Duty: Infinite Warfare
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #movierecommendations #whattowatch #filmtok #tvshowrecommendations #musicrecommendations #bookrecommendations #animerecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> ¿Te encantó The Dark Knight? Aquí está su eco en todos los demás medios. 🧭
+> 
+> 📺 The Shield  ·  🎵 Master of Puppets  ·  📚 Under the Dome  ·  🌸 Death Note  ·  🎮 Call of Duty: Infinite Warfare
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #movierecommendations #whattowatch #filmtok #tvshowrecommendations #musicrecommendations #bookrecommendations #animerecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Curtiu The Dark Knight? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> 📺 The Shield  ·  🎵 Master of Puppets  ·  📚 Under the Dome  ·  🌸 Death Note  ·  🎮 Call of Duty: Infinite Warfare
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #movierecommendations #whattowatch #filmtok #tvshowrecommendations #musicrecommendations #bookrecommendations #animerecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 7. Back to the Future  `posts/07-back-to-the-future.jpg`
+
+**Trilingual (paste this):**
+
+> Back to the Future fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de Back to the Future: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de Back to the Future: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 📺 One Piece  ·  🌸 Spy x Family  ·  🎵 Discovery  ·  📚 The Hobbit  ·  🎮 Super Mario 3D Land
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #movierecommendations #whattowatch #filmtok #tvshowrecommendations #animerecommendations #musicrecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Back to the Future fans — your next obsession isn't more of the same. It's all of these. ✨
+> 
+> 📺 One Piece  ·  🌸 Spy x Family  ·  🎵 Discovery  ·  📚 The Hobbit  ·  🎮 Super Mario 3D Land
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #movierecommendations #whattowatch #filmtok #tvshowrecommendations #animerecommendations #musicrecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> Fans de Back to the Future: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> 
+> 📺 One Piece  ·  🌸 Spy x Family  ·  🎵 Discovery  ·  📚 The Hobbit  ·  🎮 Super Mario 3D Land
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #movierecommendations #whattowatch #filmtok #tvshowrecommendations #animerecommendations #musicrecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Fãs de Back to the Future: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 📺 One Piece  ·  🌸 Spy x Family  ·  🎵 Discovery  ·  📚 The Hobbit  ·  🎮 Super Mario 3D Land
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #movierecommendations #whattowatch #filmtok #tvshowrecommendations #animerecommendations #musicrecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 8. Game of Thrones  `posts/08-game-of-thrones.jpg`
+
+**Trilingual (paste this):**
+
+> One love in, a universe out. Today: Game of Thrones. 🌍
+> Un amor entra, un universo sale. Hoy: Game of Thrones. 🌍
+> Um amor entra, um universo sai. Hoje: Game of Thrones. 🌍
 > 
 > 📚 A Game of Thrones  ·  🌸 Attack on Titan  ·  🎬 The Good, the Bad and the Ugly  ·  🎮 Tom Clancy's The Division  ·  🎵 Master of Puppets
 > 
@@ -336,7 +458,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> Loved Game of Thrones? Here's its echo in every other medium. 🧭
+> One love in, a universe out. Today: Game of Thrones. 🌍
 > 
 > 📚 A Game of Thrones  ·  🌸 Attack on Titan  ·  🎬 The Good, the Bad and the Ugly  ·  🎮 Tom Clancy's The Division  ·  🎵 Master of Puppets
 > 
@@ -350,7 +472,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> ¿Te encantó Game of Thrones? Aquí está su eco en todos los demás medios. 🧭
+> Un amor entra, un universo sale. Hoy: Game of Thrones. 🌍
 > 
 > 📚 A Game of Thrones  ·  🌸 Attack on Titan  ·  🎬 The Good, the Bad and the Ugly  ·  🎮 Tom Clancy's The Division  ·  🎵 Master of Puppets
 > 
@@ -364,7 +486,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Curtiu Game of Thrones? Aqui está o eco dele em todas as outras mídias. 🧭
+> Um amor entra, um universo sai. Hoje: Game of Thrones. 🌍
 > 
 > 📚 A Game of Thrones  ·  🌸 Attack on Titan  ·  🎬 The Good, the Bad and the Ugly  ·  🎮 Tom Clancy's The Division  ·  🎵 Master of Puppets
 > 
@@ -378,13 +500,13 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 7. The Simpsons  `posts/07-the-simpsons.jpg`
+## 9. The Simpsons  `posts/09-the-simpsons.jpg`
 
 **Trilingual (paste this):**
 
-> The Simpsons fans — your next obsession isn't more of the same. It's all of these. ✨
-> Fans de The Simpsons: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
-> Fãs de The Simpsons: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> You love The Simpsons. Here's your whole universe. 🌌
+> Amas The Simpsons. Aquí tienes tu universo entero. 🌌
+> Você ama The Simpsons. Aqui está o seu universo inteiro. 🌌
 > 
 > 🎬 How the Grinch Stole Christmas  ·  🎮 Bad Piggies  ·  🌸 Ouran High School Host Club  ·  🎵 Marcy Playground  ·  🍜 Cola
 > 
@@ -398,7 +520,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> The Simpsons fans — your next obsession isn't more of the same. It's all of these. ✨
+> You love The Simpsons. Here's your whole universe. 🌌
 > 
 > 🎬 How the Grinch Stole Christmas  ·  🎮 Bad Piggies  ·  🌸 Ouran High School Host Club  ·  🎵 Marcy Playground  ·  🍜 Cola
 > 
@@ -412,7 +534,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> Fans de The Simpsons: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Amas The Simpsons. Aquí tienes tu universo entero. 🌌
 > 
 > 🎬 How the Grinch Stole Christmas  ·  🎮 Bad Piggies  ·  🌸 Ouran High School Host Club  ·  🎵 Marcy Playground  ·  🍜 Cola
 > 
@@ -426,7 +548,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Fãs de The Simpsons: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> Você ama The Simpsons. Aqui está o seu universo inteiro. 🌌
 > 
 > 🎬 How the Grinch Stole Christmas  ·  🎮 Bad Piggies  ·  🌸 Ouran High School Host Club  ·  🎵 Marcy Playground  ·  🍜 Cola
 > 
@@ -440,13 +562,13 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 8. Breaking Bad  `posts/08-breaking-bad.jpg`
+## 10. Breaking Bad  `posts/10-breaking-bad.jpg`
 
 **Trilingual (paste this):**
 
-> One love in, a universe out. Today: Breaking Bad. 🌍
-> Un amor entra, un universo sale. Hoy: Breaking Bad. 🌍
-> Um amor entra, um universo sai. Hoje: Breaking Bad. 🌍
+> Loved Breaking Bad? Here's its echo in every other medium. 🧭
+> ¿Te encantó Breaking Bad? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu Breaking Bad? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
 > 🎬 Goodfellas  ·  🌸 Death Note  ·  📚 Crime and Punishment  ·  🎵 Enter the Wu-Tang (36 Chambers)  ·  🎮 The Last of Us Part II
 > 
@@ -460,7 +582,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> One love in, a universe out. Today: Breaking Bad. 🌍
+> Loved Breaking Bad? Here's its echo in every other medium. 🧭
 > 
 > 🎬 Goodfellas  ·  🌸 Death Note  ·  📚 Crime and Punishment  ·  🎵 Enter the Wu-Tang (36 Chambers)  ·  🎮 The Last of Us Part II
 > 
@@ -474,7 +596,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> Un amor entra, un universo sale. Hoy: Breaking Bad. 🌍
+> ¿Te encantó Breaking Bad? Aquí está su eco en todos los demás medios. 🧭
 > 
 > 🎬 Goodfellas  ·  🌸 Death Note  ·  📚 Crime and Punishment  ·  🎵 Enter the Wu-Tang (36 Chambers)  ·  🎮 The Last of Us Part II
 > 
@@ -488,7 +610,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Um amor entra, um universo sai. Hoje: Breaking Bad. 🌍
+> Curtiu Breaking Bad? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
 > 🎬 Goodfellas  ·  🌸 Death Note  ·  📚 Crime and Punishment  ·  🎵 Enter the Wu-Tang (36 Chambers)  ·  🎮 The Last of Us Part II
 > 
@@ -502,13 +624,13 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 9. Squid Game  `posts/09-squid-game.jpg`
+## 11. Squid Game  `posts/11-squid-game.jpg`
 
 **Trilingual (paste this):**
 
-> You love Squid Game. Here's your whole universe. 🌌
-> Amas Squid Game. Aquí tienes tu universo entero. 🌌
-> Você ama Squid Game. Aqui está o seu universo inteiro. 🌌
+> Squid Game fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de Squid Game: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de Squid Game: seu próximo vício não é mais do mesmo. São todos estes. ✨
 > 
 > 🎮 Five Nights at Freddy's  ·  📚 Under the Dome  ·  🎬 Underworld  ·  🎵 Paranoid  ·  🌸 Attack on Titan
 > 
@@ -522,7 +644,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> You love Squid Game. Here's your whole universe. 🌌
+> Squid Game fans — your next obsession isn't more of the same. It's all of these. ✨
 > 
 > 🎮 Five Nights at Freddy's  ·  📚 Under the Dome  ·  🎬 Underworld  ·  🎵 Paranoid  ·  🌸 Attack on Titan
 > 
@@ -536,7 +658,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> Amas Squid Game. Aquí tienes tu universo entero. 🌌
+> Fans de Squid Game: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
 > 
 > 🎮 Five Nights at Freddy's  ·  📚 Under the Dome  ·  🎬 Underworld  ·  🎵 Paranoid  ·  🌸 Attack on Titan
 > 
@@ -550,7 +672,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Você ama Squid Game. Aqui está o seu universo inteiro. 🌌
+> Fãs de Squid Game: seu próximo vício não é mais do mesmo. São todos estes. ✨
 > 
 > 🎮 Five Nights at Freddy's  ·  📚 Under the Dome  ·  🎬 Underworld  ·  🎵 Paranoid  ·  🌸 Attack on Titan
 > 
@@ -564,15 +686,15 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 10. Stranger Things  `posts/10-stranger-things.jpg`
+## 12. Stranger Things  `posts/12-stranger-things.jpg`
 
 **Trilingual (paste this):**
 
-> Loved Stranger Things? Here's its echo in every other medium. 🧭
-> ¿Te encantó Stranger Things? Aquí está su eco en todos los demás medios. 🧭
-> Curtiu Stranger Things? Aqui está o eco dele em todas as outras mídias. 🧭
+> One love in, a universe out. Today: Stranger Things. 🌍
+> Un amor entra, un universo sale. Hoy: Stranger Things. 🌍
+> Um amor entra, um universo sai. Hoje: Stranger Things. 🌍
 > 
-> 🎬 It Chapter Two  ·  📚 The Witches  ·  🌸 My Hero Academia  ·  🎵 Thriller  ·  🎮 Uncharted 4: A Thief's End
+> 🎬 It Chapter Two  ·  📚 The Witches  ·  🌸 My Hero Academia  ·  🎵 Discovery  ·  🎮 Uncharted 4: A Thief's End
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -584,9 +706,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> Loved Stranger Things? Here's its echo in every other medium. 🧭
+> One love in, a universe out. Today: Stranger Things. 🌍
 > 
-> 🎬 It Chapter Two  ·  📚 The Witches  ·  🌸 My Hero Academia  ·  🎵 Thriller  ·  🎮 Uncharted 4: A Thief's End
+> 🎬 It Chapter Two  ·  📚 The Witches  ·  🌸 My Hero Academia  ·  🎵 Discovery  ·  🎮 Uncharted 4: A Thief's End
 > 
 > Muse finds the echo of what you love across every medium.
 > 
@@ -598,9 +720,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> ¿Te encantó Stranger Things? Aquí está su eco en todos los demás medios. 🧭
+> Un amor entra, un universo sale. Hoy: Stranger Things. 🌍
 > 
-> 🎬 It Chapter Two  ·  📚 The Witches  ·  🌸 My Hero Academia  ·  🎵 Thriller  ·  🎮 Uncharted 4: A Thief's End
+> 🎬 It Chapter Two  ·  📚 The Witches  ·  🌸 My Hero Academia  ·  🎵 Discovery  ·  🎮 Uncharted 4: A Thief's End
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
@@ -612,9 +734,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Curtiu Stranger Things? Aqui está o eco dele em todas as outras mídias. 🧭
+> Um amor entra, um universo sai. Hoje: Stranger Things. 🌍
 > 
-> 🎬 It Chapter Two  ·  📚 The Witches  ·  🌸 My Hero Academia  ·  🎵 Thriller  ·  🎮 Uncharted 4: A Thief's End
+> 🎬 It Chapter Two  ·  📚 The Witches  ·  🌸 My Hero Academia  ·  🎵 Discovery  ·  🎮 Uncharted 4: A Thief's End
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
@@ -626,15 +748,15 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 11. Silo  `posts/11-silo.jpg`
+## 13. Silo  `posts/13-silo.jpg`
 
 **Trilingual (paste this):**
 
-> Silo fans — your next obsession isn't more of the same. It's all of these. ✨
-> Fans de Silo: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
-> Fãs de Silo: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> You love Silo. Here's your whole universe. 🌌
+> Amas Silo. Aquí tienes tu universo entero. 🌌
+> Você ama Silo. Aqui está o seu universo inteiro. 🌌
 > 
-> 📚 DEV1AT3  ·  🌸 Martian Successor Nadesico  ·  🎬 Disclosure Day  ·  🎮 Half-Life 2  ·  🎵 Violator (Deluxe)
+> 📚 DEV1AT3  ·  🎬 War of the Worlds  ·  🌸 Martian Successor Nadesico  ·  🎮 Half-Life 2  ·  🎵 Violator (Deluxe)
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -642,53 +764,177 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #tvshowrecommendations #whattowatch #bingewatch #bookrecommendations #animerecommendations #movierecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #tvshowrecommendations #whattowatch #bingewatch #bookrecommendations #movierecommendations #animerecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> Silo fans — your next obsession isn't more of the same. It's all of these. ✨
+> You love Silo. Here's your whole universe. 🌌
 > 
-> 📚 DEV1AT3  ·  🌸 Martian Successor Nadesico  ·  🎬 Disclosure Day  ·  🎮 Half-Life 2  ·  🎵 Violator (Deluxe)
+> 📚 DEV1AT3  ·  🎬 War of the Worlds  ·  🌸 Martian Successor Nadesico  ·  🎮 Half-Life 2  ·  🎵 Violator (Deluxe)
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #tvshowrecommendations #whattowatch #bingewatch #bookrecommendations #animerecommendations #movierecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #tvshowrecommendations #whattowatch #bingewatch #bookrecommendations #movierecommendations #animerecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> Fans de Silo: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Amas Silo. Aquí tienes tu universo entero. 🌌
 > 
-> 📚 DEV1AT3  ·  🌸 Martian Successor Nadesico  ·  🎬 Disclosure Day  ·  🎮 Half-Life 2  ·  🎵 Violator (Deluxe)
+> 📚 DEV1AT3  ·  🎬 War of the Worlds  ·  🌸 Martian Successor Nadesico  ·  🎮 Half-Life 2  ·  🎵 Violator (Deluxe)
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #tvshowrecommendations #whattowatch #bingewatch #bookrecommendations #animerecommendations #movierecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #tvshowrecommendations #whattowatch #bingewatch #bookrecommendations #movierecommendations #animerecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Fãs de Silo: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> Você ama Silo. Aqui está o seu universo inteiro. 🌌
 > 
-> 📚 DEV1AT3  ·  🌸 Martian Successor Nadesico  ·  🎬 Disclosure Day  ·  🎮 Half-Life 2  ·  🎵 Violator (Deluxe)
+> 📚 DEV1AT3  ·  🎬 War of the Worlds  ·  🌸 Martian Successor Nadesico  ·  🎮 Half-Life 2  ·  🎵 Violator (Deluxe)
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #tvshowrecommendations #whattowatch #bingewatch #bookrecommendations #animerecommendations #movierecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #tvshowrecommendations #whattowatch #bingewatch #bookrecommendations #movierecommendations #animerecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 12. Harry Potter and the Philosopher's Stone  `posts/12-harry-potter-and-the-philoso.jpg`
+## 14. Agent Kim Reactivated  `posts/14-agent-kim-reactivated.jpg`
+
+**Trilingual (paste this):**
+
+> Loved Agent Kim Reactivated? Here's its echo in every other medium. 🧭
+> ¿Te encantó Agent Kim Reactivated? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu Agent Kim Reactivated? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> 🎮 Among Us  ·  🎬 Citizen Vigilante  ·  📚 The Collectors  ·  🌸 Kiki's Delivery Service  ·  🎵 The Massacre
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #tvshowrecommendations #whattowatch #bingewatch #gamerecommendations #movierecommendations #bookrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Loved Agent Kim Reactivated? Here's its echo in every other medium. 🧭
+> 
+> 🎮 Among Us  ·  🎬 Citizen Vigilante  ·  📚 The Collectors  ·  🌸 Kiki's Delivery Service  ·  🎵 The Massacre
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #tvshowrecommendations #whattowatch #bingewatch #gamerecommendations #movierecommendations #bookrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> ¿Te encantó Agent Kim Reactivated? Aquí está su eco en todos los demás medios. 🧭
+> 
+> 🎮 Among Us  ·  🎬 Citizen Vigilante  ·  📚 The Collectors  ·  🌸 Kiki's Delivery Service  ·  🎵 The Massacre
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #tvshowrecommendations #whattowatch #bingewatch #gamerecommendations #movierecommendations #bookrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Curtiu Agent Kim Reactivated? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> 🎮 Among Us  ·  🎬 Citizen Vigilante  ·  📚 The Collectors  ·  🌸 Kiki's Delivery Service  ·  🎵 The Massacre
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #tvshowrecommendations #whattowatch #bingewatch #gamerecommendations #movierecommendations #bookrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 15. Mushoku Tensei: Jobless Reincarnation  `posts/15-mushoku-tensei-jobless-reinc.jpg`
+
+**Trilingual (paste this):**
+
+> Mushoku Tensei: Jobless Reincarnation fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de Mushoku Tensei: Jobless Reincarnation: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de Mushoku Tensei: Jobless Reincarnation: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 🌸 Zenshu  ·  🎬 Four Souls of Coyote  ·  🎮 Chrono Trigger  ·  🎵 The Nu Nation Project  ·  ✈️ Ladakh
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #tvshowrecommendations #whattowatch #bingewatch #animerecommendations #movierecommendations #gamerecommendations #musicrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Mushoku Tensei: Jobless Reincarnation fans — your next obsession isn't more of the same. It's all of these. ✨
+> 
+> 🌸 Zenshu  ·  🎬 Four Souls of Coyote  ·  🎮 Chrono Trigger  ·  🎵 The Nu Nation Project  ·  ✈️ Ladakh
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #tvshowrecommendations #whattowatch #bingewatch #animerecommendations #movierecommendations #gamerecommendations #musicrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> Fans de Mushoku Tensei: Jobless Reincarnation: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> 
+> 🌸 Zenshu  ·  🎬 Four Souls of Coyote  ·  🎮 Chrono Trigger  ·  🎵 The Nu Nation Project  ·  ✈️ Ladakh
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #tvshowrecommendations #whattowatch #bingewatch #animerecommendations #movierecommendations #gamerecommendations #musicrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Fãs de Mushoku Tensei: Jobless Reincarnation: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 🌸 Zenshu  ·  🎬 Four Souls of Coyote  ·  🎮 Chrono Trigger  ·  🎵 The Nu Nation Project  ·  ✈️ Ladakh
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #tvshowrecommendations #whattowatch #bingewatch #animerecommendations #movierecommendations #gamerecommendations #musicrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 16. Harry Potter and the Philosopher's Stone  `posts/16-harry-potter-and-the-philoso.jpg`
 
 **Trilingual (paste this):**
 
@@ -750,7 +996,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 13. 1984  `posts/13-1984.jpg`
+## 17. 1984  `posts/17-1984.jpg`
 
 **Trilingual (paste this):**
 
@@ -758,7 +1004,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > Amas 1984. Aquí tienes tu universo entero. 🌌
 > Você ama 1984. Aqui está o seu universo inteiro. 🌌
 > 
-> 📺 The Handmaid's Tale  ·  🎬 The Bay  ·  🌸 Death Note  ·  🎮 BioShock  ·  🎵 Paranoid
+> 📺 The Handmaid's Tale  ·  🎬 Cruel Hands  ·  🌸 Death Note  ·  🎮 BioShock  ·  🎵 Paranoid
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -772,7 +1018,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > You love 1984. Here's your whole universe. 🌌
 > 
-> 📺 The Handmaid's Tale  ·  🎬 The Bay  ·  🌸 Death Note  ·  🎮 BioShock  ·  🎵 Paranoid
+> 📺 The Handmaid's Tale  ·  🎬 Cruel Hands  ·  🌸 Death Note  ·  🎮 BioShock  ·  🎵 Paranoid
 > 
 > Muse finds the echo of what you love across every medium.
 > 
@@ -786,7 +1032,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Amas 1984. Aquí tienes tu universo entero. 🌌
 > 
-> 📺 The Handmaid's Tale  ·  🎬 The Bay  ·  🌸 Death Note  ·  🎮 BioShock  ·  🎵 Paranoid
+> 📺 The Handmaid's Tale  ·  🎬 Cruel Hands  ·  🌸 Death Note  ·  🎮 BioShock  ·  🎵 Paranoid
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
@@ -800,7 +1046,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Você ama 1984. Aqui está o seu universo inteiro. 🌌
 > 
-> 📺 The Handmaid's Tale  ·  🎬 The Bay  ·  🌸 Death Note  ·  🎮 BioShock  ·  🎵 Paranoid
+> 📺 The Handmaid's Tale  ·  🎬 Cruel Hands  ·  🌸 Death Note  ·  🎮 BioShock  ·  🎵 Paranoid
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
@@ -812,7 +1058,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 14. The Fellowship of the Ring  `posts/14-the-fellowship-of-the-ring.jpg`
+## 18. The Fellowship of the Ring  `posts/18-the-fellowship-of-the-ring.jpg`
 
 **Trilingual (paste this):**
 
@@ -820,7 +1066,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > ¿Te encantó The Fellowship of the Ring? Aquí está su eco en todos los demás medios. 🧭
 > Curtiu The Fellowship of the Ring? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 🎬 The Lord of the Rings: The Fellowship of the Ring  ·  🎮 World of Warcraft  ·  📺 The Wheel of Time  ·  🌸 The Boy and the Beast  ·  🎵 Led Zeppelin IV
+> 🎬 The Lord of the Rings: The Fellowship of the Ring  ·  🎮 World of Warcraft  ·  📺 The Wheel of Time  ·  🌸 The Boy and the Beast  ·  ✈️ Picos de Europa
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -828,19 +1074,19 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #bookrecommendations #booktok #whattoread #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
 > Loved The Fellowship of the Ring? Here's its echo in every other medium. 🧭
 > 
-> 🎬 The Lord of the Rings: The Fellowship of the Ring  ·  🎮 World of Warcraft  ·  📺 The Wheel of Time  ·  🌸 The Boy and the Beast  ·  🎵 Led Zeppelin IV
+> 🎬 The Lord of the Rings: The Fellowship of the Ring  ·  🎮 World of Warcraft  ·  📺 The Wheel of Time  ·  🌸 The Boy and the Beast  ·  ✈️ Picos de Europa
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #bookrecommendations #booktok #whattoread #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
@@ -848,13 +1094,13 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > ¿Te encantó The Fellowship of the Ring? Aquí está su eco en todos los demás medios. 🧭
 > 
-> 🎬 The Lord of the Rings: The Fellowship of the Ring  ·  🎮 World of Warcraft  ·  📺 The Wheel of Time  ·  🌸 The Boy and the Beast  ·  🎵 Led Zeppelin IV
+> 🎬 The Lord of the Rings: The Fellowship of the Ring  ·  🎮 World of Warcraft  ·  📺 The Wheel of Time  ·  🌸 The Boy and the Beast  ·  ✈️ Picos de Europa
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #bookrecommendations #booktok #whattoread #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
@@ -862,19 +1108,19 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Curtiu The Fellowship of the Ring? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 🎬 The Lord of the Rings: The Fellowship of the Ring  ·  🎮 World of Warcraft  ·  📺 The Wheel of Time  ·  🌸 The Boy and the Beast  ·  🎵 Led Zeppelin IV
+> 🎬 The Lord of the Rings: The Fellowship of the Ring  ·  🎮 World of Warcraft  ·  📺 The Wheel of Time  ·  🌸 The Boy and the Beast  ·  ✈️ Picos de Europa
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #bookrecommendations #booktok #whattoread #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 15. The Hobbit  `posts/15-the-hobbit.jpg`
+## 19. The Hobbit  `posts/19-the-hobbit.jpg`
 
 **Trilingual (paste this):**
 
@@ -936,7 +1182,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 16. Dune  `posts/16-dune.jpg`
+## 20. Dune  `posts/20-dune.jpg`
 
 **Trilingual (paste this):**
 
@@ -998,7 +1244,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 17. A Game of Thrones  `posts/17-a-game-of-thrones.jpg`
+## 21. A Game of Thrones  `posts/21-a-game-of-thrones.jpg`
 
 **Trilingual (paste this):**
 
@@ -1060,15 +1306,15 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 18. Thriller  `posts/18-thriller.jpg`
+## 22. The Little Prince  `posts/22-the-little-prince.jpg`
 
 **Trilingual (paste this):**
 
-> Loved Thriller? Here's its echo in every other medium. 🧭
-> ¿Te encantó Thriller? Aquí está su eco en todos los demás medios. 🧭
-> Curtiu Thriller? Aqui está o eco dele em todas as outras mídias. 🧭
+> Loved The Little Prince? Here's its echo in every other medium. 🧭
+> ¿Te encantó The Little Prince? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu The Little Prince? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 🎬 SHIBOYUGI: Juegos mortales para ganarse el pan. 44:CLOUDY BEACH  ·  ✈️ Seoul  ·  📚 Harry Potter and the Chamber of Secrets  ·  🌸 Big Order  ·  🍜 Seafood boil
+> 🎬 Amélie  ·  📺 Ascendance of a Bookworm  ·  🌸 Frieren: Beyond Journey's End  ·  ✈️ Oaxaca  ·  🎵 Pet Sounds
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1076,61 +1322,61 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #travelinspo #bookrecommendations #animerecommendations #foodie #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #movierecommendations #tvshowrecommendations #animerecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> Loved Thriller? Here's its echo in every other medium. 🧭
+> Loved The Little Prince? Here's its echo in every other medium. 🧭
 > 
-> 🎬 SHIBOYUGI: Juegos mortales para ganarse el pan. 44:CLOUDY BEACH  ·  ✈️ Seoul  ·  📚 Harry Potter and the Chamber of Secrets  ·  🌸 Big Order  ·  🍜 Seafood boil
+> 🎬 Amélie  ·  📺 Ascendance of a Bookworm  ·  🌸 Frieren: Beyond Journey's End  ·  ✈️ Oaxaca  ·  🎵 Pet Sounds
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #travelinspo #bookrecommendations #animerecommendations #foodie #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #movierecommendations #tvshowrecommendations #animerecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> ¿Te encantó Thriller? Aquí está su eco en todos los demás medios. 🧭
+> ¿Te encantó The Little Prince? Aquí está su eco en todos los demás medios. 🧭
 > 
-> 🎬 SHIBOYUGI: Juegos mortales para ganarse el pan. 44:CLOUDY BEACH  ·  ✈️ Seoul  ·  📚 Harry Potter and the Chamber of Secrets  ·  🌸 Big Order  ·  🍜 Seafood boil
+> 🎬 Amélie  ·  📺 Ascendance of a Bookworm  ·  🌸 Frieren: Beyond Journey's End  ·  ✈️ Oaxaca  ·  🎵 Pet Sounds
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #travelinspo #bookrecommendations #animerecommendations #foodie #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #movierecommendations #tvshowrecommendations #animerecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Curtiu Thriller? Aqui está o eco dele em todas as outras mídias. 🧭
+> Curtiu The Little Prince? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 🎬 SHIBOYUGI: Juegos mortales para ganarse el pan. 44:CLOUDY BEACH  ·  ✈️ Seoul  ·  📚 Harry Potter and the Chamber of Secrets  ·  🌸 Big Order  ·  🍜 Seafood boil
+> 🎬 Amélie  ·  📺 Ascendance of a Bookworm  ·  🌸 Frieren: Beyond Journey's End  ·  ✈️ Oaxaca  ·  🎵 Pet Sounds
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #travelinspo #bookrecommendations #animerecommendations #foodie #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #movierecommendations #tvshowrecommendations #animerecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 19. Abbey Road  `posts/19-abbey-road.jpg`
+## 23. The Adventures of Sherlock Holmes (1892)  `posts/23-the-adventures-of-sherlock-h.jpg`
 
 **Trilingual (paste this):**
 
-> Abbey Road fans — your next obsession isn't more of the same. It's all of these. ✨
-> Fans de Abbey Road: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
-> Fãs de Abbey Road: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> The Adventures of Sherlock Holmes (1892) fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de The Adventures of Sherlock Holmes (1892): tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de The Adventures of Sherlock Holmes (1892): seu próximo vício não é mais do mesmo. São todos estes. ✨
 > 
-> ✈️ Cádiz  ·  🍜 Ma'amoul  ·  🎬 Alvin and the Chipmunks: The Road Chip  ·  📚 The Name of the Wind  ·  📺 Anime AzurLane: Slow Ahead!
+> 📺 Sherlock  ·  🎬 The Batman: Part II  ·  🎮 Dishonored  ·  🎵 Siembra  ·  ✈️ Oxford
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1138,61 +1384,61 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #bookrecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #tvshowrecommendations #movierecommendations #gamerecommendations #musicrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> Abbey Road fans — your next obsession isn't more of the same. It's all of these. ✨
+> The Adventures of Sherlock Holmes (1892) fans — your next obsession isn't more of the same. It's all of these. ✨
 > 
-> ✈️ Cádiz  ·  🍜 Ma'amoul  ·  🎬 Alvin and the Chipmunks: The Road Chip  ·  📚 The Name of the Wind  ·  📺 Anime AzurLane: Slow Ahead!
+> 📺 Sherlock  ·  🎬 The Batman: Part II  ·  🎮 Dishonored  ·  🎵 Siembra  ·  ✈️ Oxford
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #bookrecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #tvshowrecommendations #movierecommendations #gamerecommendations #musicrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> Fans de Abbey Road: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fans de The Adventures of Sherlock Holmes (1892): tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
 > 
-> ✈️ Cádiz  ·  🍜 Ma'amoul  ·  🎬 Alvin and the Chipmunks: The Road Chip  ·  📚 The Name of the Wind  ·  📺 Anime AzurLane: Slow Ahead!
+> 📺 Sherlock  ·  🎬 The Batman: Part II  ·  🎮 Dishonored  ·  🎵 Siembra  ·  ✈️ Oxford
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #bookrecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #tvshowrecommendations #movierecommendations #gamerecommendations #musicrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Fãs de Abbey Road: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> Fãs de The Adventures of Sherlock Holmes (1892): seu próximo vício não é mais do mesmo. São todos estes. ✨
 > 
-> ✈️ Cádiz  ·  🍜 Ma'amoul  ·  🎬 Alvin and the Chipmunks: The Road Chip  ·  📚 The Name of the Wind  ·  📺 Anime AzurLane: Slow Ahead!
+> 📺 Sherlock  ·  🎬 The Batman: Part II  ·  🎮 Dishonored  ·  🎵 Siembra  ·  ✈️ Oxford
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #bookrecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #bookrecommendations #booktok #whattoread #tvshowrecommendations #movierecommendations #gamerecommendations #musicrecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 20. The Dark Side of the Moon  `posts/20-the-dark-side-of-the-moon.jpg`
+## 24. Thriller  `posts/24-thriller.jpg`
 
 **Trilingual (paste this):**
 
-> One love in, a universe out. Today: The Dark Side of the Moon. 🌍
-> Un amor entra, un universo sale. Hoy: The Dark Side of the Moon. 🌍
-> Um amor entra, um universo sai. Hoje: The Dark Side of the Moon. 🌍
+> One love in, a universe out. Today: Thriller. 🌍
+> Un amor entra, un universo sale. Hoy: Thriller. 🌍
+> Um amor entra, um universo sai. Hoje: Thriller. 🌍
 > 
-> 🎬 Inception  ·  📚 Dune  ·  📺 Westworld  ·  🎮 Shadow of the Colossus  ·  🌸 Steins;Gate
+> ✈️ Seoul  ·  🎬 Jurassic Park  ·  📚 Harry Potter and the Chamber of Secrets  ·  🌸 Big Order  ·  🍜 Seafood boil
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1200,61 +1446,61 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #bookrecommendations #tvshowrecommendations #gamerecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #movierecommendations #bookrecommendations #animerecommendations #foodie #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> One love in, a universe out. Today: The Dark Side of the Moon. 🌍
+> One love in, a universe out. Today: Thriller. 🌍
 > 
-> 🎬 Inception  ·  📚 Dune  ·  📺 Westworld  ·  🎮 Shadow of the Colossus  ·  🌸 Steins;Gate
+> ✈️ Seoul  ·  🎬 Jurassic Park  ·  📚 Harry Potter and the Chamber of Secrets  ·  🌸 Big Order  ·  🍜 Seafood boil
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #bookrecommendations #tvshowrecommendations #gamerecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #movierecommendations #bookrecommendations #animerecommendations #foodie #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> Un amor entra, un universo sale. Hoy: The Dark Side of the Moon. 🌍
+> Un amor entra, un universo sale. Hoy: Thriller. 🌍
 > 
-> 🎬 Inception  ·  📚 Dune  ·  📺 Westworld  ·  🎮 Shadow of the Colossus  ·  🌸 Steins;Gate
+> ✈️ Seoul  ·  🎬 Jurassic Park  ·  📚 Harry Potter and the Chamber of Secrets  ·  🌸 Big Order  ·  🍜 Seafood boil
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #bookrecommendations #tvshowrecommendations #gamerecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #movierecommendations #bookrecommendations #animerecommendations #foodie #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Um amor entra, um universo sai. Hoje: The Dark Side of the Moon. 🌍
+> Um amor entra, um universo sai. Hoje: Thriller. 🌍
 > 
-> 🎬 Inception  ·  📚 Dune  ·  📺 Westworld  ·  🎮 Shadow of the Colossus  ·  🌸 Steins;Gate
+> ✈️ Seoul  ·  🎬 Jurassic Park  ·  📚 Harry Potter and the Chamber of Secrets  ·  🌸 Big Order  ·  🍜 Seafood boil
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #bookrecommendations #tvshowrecommendations #gamerecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #movierecommendations #bookrecommendations #animerecommendations #foodie #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 21. Nevermind  `posts/21-nevermind.jpg`
+## 25. Abbey Road  `posts/25-abbey-road.jpg`
 
 **Trilingual (paste this):**
 
-> You love Nevermind. Here's your whole universe. 🌌
-> Amas Nevermind. Aquí tienes tu universo entero. 🌌
-> Você ama Nevermind. Aqui está o seu universo inteiro. 🌌
+> You love Abbey Road. Here's your whole universe. 🌌
+> Amas Abbey Road. Aquí tienes tu universo entero. 🌌
+> Você ama Abbey Road. Aqui está o seu universo inteiro. 🌌
 > 
-> 🎬 Resident Evil  ·  🎮 Doom 3  ·  📚 Everything's Eventual. 14 Dark Tales  ·  📺 3%  ·  🌸 RahXephon
+> ✈️ Cádiz  ·  🍜 Ma'amoul  ·  🎬 Alvin and the Chipmunks: The Road Chip  ·  📚 The Name of the Wind  ·  🌸 Your Name
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1262,61 +1508,185 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #gamerecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #bookrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> You love Nevermind. Here's your whole universe. 🌌
+> You love Abbey Road. Here's your whole universe. 🌌
 > 
-> 🎬 Resident Evil  ·  🎮 Doom 3  ·  📚 Everything's Eventual. 14 Dark Tales  ·  📺 3%  ·  🌸 RahXephon
+> ✈️ Cádiz  ·  🍜 Ma'amoul  ·  🎬 Alvin and the Chipmunks: The Road Chip  ·  📚 The Name of the Wind  ·  🌸 Your Name
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #gamerecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #bookrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> Amas Nevermind. Aquí tienes tu universo entero. 🌌
+> Amas Abbey Road. Aquí tienes tu universo entero. 🌌
 > 
-> 🎬 Resident Evil  ·  🎮 Doom 3  ·  📚 Everything's Eventual. 14 Dark Tales  ·  📺 3%  ·  🌸 RahXephon
+> ✈️ Cádiz  ·  🍜 Ma'amoul  ·  🎬 Alvin and the Chipmunks: The Road Chip  ·  📚 The Name of the Wind  ·  🌸 Your Name
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #gamerecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #bookrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Você ama Nevermind. Aqui está o seu universo inteiro. 🌌
+> Você ama Abbey Road. Aqui está o seu universo inteiro. 🌌
 > 
-> 🎬 Resident Evil  ·  🎮 Doom 3  ·  📚 Everything's Eventual. 14 Dark Tales  ·  📺 3%  ·  🌸 RahXephon
+> ✈️ Cádiz  ·  🍜 Ma'amoul  ·  🎬 Alvin and the Chipmunks: The Road Chip  ·  📚 The Name of the Wind  ·  🌸 Your Name
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #gamerecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #bookrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 22. Rumours  `posts/22-rumours.jpg`
+## 26. The Dark Side of the Moon  `posts/26-the-dark-side-of-the-moon.jpg`
 
 **Trilingual (paste this):**
 
-> Loved Rumours? Here's its echo in every other medium. 🧭
-> ¿Te encantó Rumours? Aquí está su eco en todos los demás medios. 🧭
-> Curtiu Rumours? Aqui está o eco dele em todas as outras mídias. 🧭
+> Loved The Dark Side of the Moon? Here's its echo in every other medium. 🧭
+> ¿Te encantó The Dark Side of the Moon? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu The Dark Side of the Moon? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 🎬 The Sparrow's Fluttering  ·  📚 The Seven Husbands of Evelyn Hugo  ·  📺 Itaewon Class  ·  🌸 Violet Evergarden  ·  🍜 Bissara
+> 🎬 Inception  ·  📚 Dune  ·  📺 Westworld  ·  🎮 Shadow of the Colossus  ·  ✈️ Meteora
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #bookrecommendations #tvshowrecommendations #gamerecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Loved The Dark Side of the Moon? Here's its echo in every other medium. 🧭
+> 
+> 🎬 Inception  ·  📚 Dune  ·  📺 Westworld  ·  🎮 Shadow of the Colossus  ·  ✈️ Meteora
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #bookrecommendations #tvshowrecommendations #gamerecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> ¿Te encantó The Dark Side of the Moon? Aquí está su eco en todos los demás medios. 🧭
+> 
+> 🎬 Inception  ·  📚 Dune  ·  📺 Westworld  ·  🎮 Shadow of the Colossus  ·  ✈️ Meteora
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #bookrecommendations #tvshowrecommendations #gamerecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Curtiu The Dark Side of the Moon? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> 🎬 Inception  ·  📚 Dune  ·  📺 Westworld  ·  🎮 Shadow of the Colossus  ·  ✈️ Meteora
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #movierecommendations #bookrecommendations #tvshowrecommendations #gamerecommendations #travelinspo #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 27. Nevermind  `posts/27-nevermind.jpg`
+
+**Trilingual (paste this):**
+
+> Nevermind fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de Nevermind: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de Nevermind: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 🎮 Doom 3  ·  🎬 Michael Jackson's Thriller  ·  📚 Everything's Eventual. 14 Dark Tales  ·  📺 3%  ·  🌸 RahXephon
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #gamerecommendations #movierecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Nevermind fans — your next obsession isn't more of the same. It's all of these. ✨
+> 
+> 🎮 Doom 3  ·  🎬 Michael Jackson's Thriller  ·  📚 Everything's Eventual. 14 Dark Tales  ·  📺 3%  ·  🌸 RahXephon
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #gamerecommendations #movierecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> Fans de Nevermind: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> 
+> 🎮 Doom 3  ·  🎬 Michael Jackson's Thriller  ·  📚 Everything's Eventual. 14 Dark Tales  ·  📺 3%  ·  🌸 RahXephon
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #gamerecommendations #movierecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Fãs de Nevermind: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 🎮 Doom 3  ·  🎬 Michael Jackson's Thriller  ·  📚 Everything's Eventual. 14 Dark Tales  ·  📺 3%  ·  🌸 RahXephon
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #gamerecommendations #movierecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 28. Rumours  `posts/28-rumours.jpg`
+
+**Trilingual (paste this):**
+
+> One love in, a universe out. Today: Rumours. 🌍
+> Un amor entra, un universo sale. Hoy: Rumours. 🌍
+> Um amor entra, um universo sai. Hoje: Rumours. 🌍
+> 
+> 🎬 Bohemian Rhapsody  ·  📚 The Seven Husbands of Evelyn Hugo  ·  📺 Itaewon Class  ·  🌸 Violet Evergarden  ·  🍜 Caldeirada
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1328,9 +1698,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> Loved Rumours? Here's its echo in every other medium. 🧭
+> One love in, a universe out. Today: Rumours. 🌍
 > 
-> 🎬 The Sparrow's Fluttering  ·  📚 The Seven Husbands of Evelyn Hugo  ·  📺 Itaewon Class  ·  🌸 Violet Evergarden  ·  🍜 Bissara
+> 🎬 Bohemian Rhapsody  ·  📚 The Seven Husbands of Evelyn Hugo  ·  📺 Itaewon Class  ·  🌸 Violet Evergarden  ·  🍜 Caldeirada
 > 
 > Muse finds the echo of what you love across every medium.
 > 
@@ -1342,9 +1712,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> ¿Te encantó Rumours? Aquí está su eco en todos los demás medios. 🧭
+> Un amor entra, un universo sale. Hoy: Rumours. 🌍
 > 
-> 🎬 The Sparrow's Fluttering  ·  📚 The Seven Husbands of Evelyn Hugo  ·  📺 Itaewon Class  ·  🌸 Violet Evergarden  ·  🍜 Bissara
+> 🎬 Bohemian Rhapsody  ·  📚 The Seven Husbands of Evelyn Hugo  ·  📺 Itaewon Class  ·  🌸 Violet Evergarden  ·  🍜 Caldeirada
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
@@ -1356,9 +1726,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Curtiu Rumours? Aqui está o eco dele em todas as outras mídias. 🧭
+> Um amor entra, um universo sai. Hoje: Rumours. 🌍
 > 
-> 🎬 The Sparrow's Fluttering  ·  📚 The Seven Husbands of Evelyn Hugo  ·  📺 Itaewon Class  ·  🌸 Violet Evergarden  ·  🍜 Bissara
+> 🎬 Bohemian Rhapsody  ·  📚 The Seven Husbands of Evelyn Hugo  ·  📺 Itaewon Class  ·  🌸 Violet Evergarden  ·  🍜 Caldeirada
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
@@ -1370,15 +1740,15 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 23. Led Zeppelin IV  `posts/23-led-zeppelin-iv.jpg`
+## 29. Led Zeppelin IV  `posts/29-led-zeppelin-iv.jpg`
 
 **Trilingual (paste this):**
 
-> Led Zeppelin IV fans — your next obsession isn't more of the same. It's all of these. ✨
-> Fans de Led Zeppelin IV: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
-> Fãs de Led Zeppelin IV: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> You love Led Zeppelin IV. Here's your whole universe. 🌌
+> Amas Led Zeppelin IV. Aquí tienes tu universo entero. 🌌
+> Você ama Led Zeppelin IV. Aqui está o seu universo inteiro. 🌌
 > 
-> 🌸 Princess Mononoke  ·  🎬 War of the Worlds  ·  📺 The Witcher  ·  🎮 Final Fantasy IV  ·  📚 The Two Towers (1954)
+> 🌸 Princess Mononoke  ·  📺 The Witcher  ·  🎬 Fantastic Four  ·  📚 The Two Towers (1954)  ·  🎮 Final Fantasy IV
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1386,53 +1756,177 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #animerecommendations #movierecommendations #tvshowrecommendations #gamerecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #animerecommendations #tvshowrecommendations #movierecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> Led Zeppelin IV fans — your next obsession isn't more of the same. It's all of these. ✨
+> You love Led Zeppelin IV. Here's your whole universe. 🌌
 > 
-> 🌸 Princess Mononoke  ·  🎬 War of the Worlds  ·  📺 The Witcher  ·  🎮 Final Fantasy IV  ·  📚 The Two Towers (1954)
+> 🌸 Princess Mononoke  ·  📺 The Witcher  ·  🎬 Fantastic Four  ·  📚 The Two Towers (1954)  ·  🎮 Final Fantasy IV
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #animerecommendations #movierecommendations #tvshowrecommendations #gamerecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #animerecommendations #tvshowrecommendations #movierecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> Fans de Led Zeppelin IV: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Amas Led Zeppelin IV. Aquí tienes tu universo entero. 🌌
 > 
-> 🌸 Princess Mononoke  ·  🎬 War of the Worlds  ·  📺 The Witcher  ·  🎮 Final Fantasy IV  ·  📚 The Two Towers (1954)
+> 🌸 Princess Mononoke  ·  📺 The Witcher  ·  🎬 Fantastic Four  ·  📚 The Two Towers (1954)  ·  🎮 Final Fantasy IV
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #animerecommendations #movierecommendations #tvshowrecommendations #gamerecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #animerecommendations #tvshowrecommendations #movierecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Fãs de Led Zeppelin IV: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> Você ama Led Zeppelin IV. Aqui está o seu universo inteiro. 🌌
 > 
-> 🌸 Princess Mononoke  ·  🎬 War of the Worlds  ·  📺 The Witcher  ·  🎮 Final Fantasy IV  ·  📚 The Two Towers (1954)
+> 🌸 Princess Mononoke  ·  📺 The Witcher  ·  🎬 Fantastic Four  ·  📚 The Two Towers (1954)  ·  🎮 Final Fantasy IV
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #musicrecommendations #musicdiscovery #newmusic #animerecommendations #movierecommendations #tvshowrecommendations #gamerecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #musicrecommendations #musicdiscovery #newmusic #animerecommendations #tvshowrecommendations #movierecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 24. Super Mario Bros.  `posts/24-super-mario-bros.jpg`
+## 30. When We All Fall Asleep, Where Do We Go?  `posts/30-when-we-all-fall-asleep-wher.jpg`
+
+**Trilingual (paste this):**
+
+> Loved When We All Fall Asleep, Where Do We Go?? Here's its echo in every other medium. 🧭
+> ¿Te encantó When We All Fall Asleep, Where Do We Go?? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu When We All Fall Asleep, Where Do We Go?? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> 📚 The Damned  ·  🎬 Fight Club  ·  🎮 Hollow Knight  ·  📺 The X-Files  ·  🌸 Perfect Blue
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #bookrecommendations #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Loved When We All Fall Asleep, Where Do We Go?? Here's its echo in every other medium. 🧭
+> 
+> 📚 The Damned  ·  🎬 Fight Club  ·  🎮 Hollow Knight  ·  📺 The X-Files  ·  🌸 Perfect Blue
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #bookrecommendations #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> ¿Te encantó When We All Fall Asleep, Where Do We Go?? Aquí está su eco en todos los demás medios. 🧭
+> 
+> 📚 The Damned  ·  🎬 Fight Club  ·  🎮 Hollow Knight  ·  📺 The X-Files  ·  🌸 Perfect Blue
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #bookrecommendations #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Curtiu When We All Fall Asleep, Where Do We Go?? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> 📚 The Damned  ·  🎬 Fight Club  ·  🎮 Hollow Knight  ·  📺 The X-Files  ·  🌸 Perfect Blue
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #bookrecommendations #movierecommendations #gamerecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 31. Un Verano Sin Ti  `posts/31-un-verano-sin-ti.jpg`
+
+**Trilingual (paste this):**
+
+> Un Verano Sin Ti fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de Un Verano Sin Ti: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de Un Verano Sin Ti: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> ✈️ Cancún  ·  🍜 Speculoos  ·  🎬 All That Jazz  ·  🎮 Donkey Kong  ·  📺 ICarly
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #gamerecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Un Verano Sin Ti fans — your next obsession isn't more of the same. It's all of these. ✨
+> 
+> ✈️ Cancún  ·  🍜 Speculoos  ·  🎬 All That Jazz  ·  🎮 Donkey Kong  ·  📺 ICarly
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #gamerecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> Fans de Un Verano Sin Ti: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> 
+> ✈️ Cancún  ·  🍜 Speculoos  ·  🎬 All That Jazz  ·  🎮 Donkey Kong  ·  📺 ICarly
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #gamerecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Fãs de Un Verano Sin Ti: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> ✈️ Cancún  ·  🍜 Speculoos  ·  🎬 All That Jazz  ·  🎮 Donkey Kong  ·  📺 ICarly
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #musicrecommendations #musicdiscovery #newmusic #travelinspo #foodie #movierecommendations #gamerecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 32. Super Mario Bros.  `posts/32-super-mario-bros.jpg`
 
 **Trilingual (paste this):**
 
@@ -1440,7 +1934,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > Un amor entra, un universo sale. Hoy: Super Mario Bros.. 🌍
 > Um amor entra, um universo sai. Hoje: Super Mario Bros.. 🌍
 > 
-> 📺 Draw This, Then Die!  ·  🍜 Churros  ·  🎬 Beach House  ·  ✈️ Máncora  ·  🎵 Discovery
+> 🍜 Churros  ·  ✈️ Máncora  ·  📺 Pokémon  ·  🎬 Sonic the Hedgehog 3  ·  🎵 Discovery
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1448,19 +1942,19 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #gamerecommendations #gamingcommunity #whattoplay #tvshowrecommendations #foodie #movierecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #gamerecommendations #gamingcommunity #whattoplay #foodie #travelinspo #tvshowrecommendations #movierecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
 > One love in, a universe out. Today: Super Mario Bros.. 🌍
 > 
-> 📺 Draw This, Then Die!  ·  🍜 Churros  ·  🎬 Beach House  ·  ✈️ Máncora  ·  🎵 Discovery
+> 🍜 Churros  ·  ✈️ Máncora  ·  📺 Pokémon  ·  🎬 Sonic the Hedgehog 3  ·  🎵 Discovery
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #gamerecommendations #gamingcommunity #whattoplay #tvshowrecommendations #foodie #movierecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #gamerecommendations #gamingcommunity #whattoplay #foodie #travelinspo #tvshowrecommendations #movierecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
@@ -1468,13 +1962,13 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Un amor entra, un universo sale. Hoy: Super Mario Bros.. 🌍
 > 
-> 📺 Draw This, Then Die!  ·  🍜 Churros  ·  🎬 Beach House  ·  ✈️ Máncora  ·  🎵 Discovery
+> 🍜 Churros  ·  ✈️ Máncora  ·  📺 Pokémon  ·  🎬 Sonic the Hedgehog 3  ·  🎵 Discovery
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #gamerecommendations #gamingcommunity #whattoplay #tvshowrecommendations #foodie #movierecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #gamerecommendations #gamingcommunity #whattoplay #foodie #travelinspo #tvshowrecommendations #movierecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
@@ -1482,19 +1976,19 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Um amor entra, um universo sai. Hoje: Super Mario Bros.. 🌍
 > 
-> 📺 Draw This, Then Die!  ·  🍜 Churros  ·  🎬 Beach House  ·  ✈️ Máncora  ·  🎵 Discovery
+> 🍜 Churros  ·  ✈️ Máncora  ·  📺 Pokémon  ·  🎬 Sonic the Hedgehog 3  ·  🎵 Discovery
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #gamerecommendations #gamingcommunity #whattoplay #tvshowrecommendations #foodie #movierecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #gamerecommendations #gamingcommunity #whattoplay #foodie #travelinspo #tvshowrecommendations #movierecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 25. Grand Theft Auto V  `posts/25-grand-theft-auto-v.jpg`
+## 33. Grand Theft Auto V  `posts/33-grand-theft-auto-v.jpg`
 
 **Trilingual (paste this):**
 
@@ -1556,7 +2050,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 26. Pac-Man  `posts/26-pac-man.jpg`
+## 34. Pac-Man  `posts/34-pac-man.jpg`
 
 **Trilingual (paste this):**
 
@@ -1564,7 +2058,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > ¿Te encantó Pac-Man? Aquí está su eco en todos los demás medios. 🧭
 > Curtiu Pac-Man? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 🍜 Pebre  ·  ✈️ Máncora  ·  🎵 Ramones  ·  📺 Good Mythical Morning  ·  🎬 Ace Ventura: Pet Detective
+> 🍜 Pebre  ·  ✈️ Máncora  ·  🎵 Ramones  ·  📺 Top of the Pops  ·  🎬 Ace Ventura: Pet Detective
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1578,7 +2072,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Loved Pac-Man? Here's its echo in every other medium. 🧭
 > 
-> 🍜 Pebre  ·  ✈️ Máncora  ·  🎵 Ramones  ·  📺 Good Mythical Morning  ·  🎬 Ace Ventura: Pet Detective
+> 🍜 Pebre  ·  ✈️ Máncora  ·  🎵 Ramones  ·  📺 Top of the Pops  ·  🎬 Ace Ventura: Pet Detective
 > 
 > Muse finds the echo of what you love across every medium.
 > 
@@ -1592,7 +2086,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > ¿Te encantó Pac-Man? Aquí está su eco en todos los demás medios. 🧭
 > 
-> 🍜 Pebre  ·  ✈️ Máncora  ·  🎵 Ramones  ·  📺 Good Mythical Morning  ·  🎬 Ace Ventura: Pet Detective
+> 🍜 Pebre  ·  ✈️ Máncora  ·  🎵 Ramones  ·  📺 Top of the Pops  ·  🎬 Ace Ventura: Pet Detective
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
@@ -1606,7 +2100,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Curtiu Pac-Man? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 🍜 Pebre  ·  ✈️ Máncora  ·  🎵 Ramones  ·  📺 Good Mythical Morning  ·  🎬 Ace Ventura: Pet Detective
+> 🍜 Pebre  ·  ✈️ Máncora  ·  🎵 Ramones  ·  📺 Top of the Pops  ·  🎬 Ace Ventura: Pet Detective
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
@@ -1618,7 +2112,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 27. Pokémon Red and Blue  `posts/27-pok-mon-red-and-blue.jpg`
+## 35. Pokémon Red and Blue  `posts/35-pok-mon-red-and-blue.jpg`
 
 **Trilingual (paste this):**
 
@@ -1680,7 +2174,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 28. The Elder Scrolls V: Skyrim  `posts/28-the-elder-scrolls-v-skyrim.jpg`
+## 36. The Elder Scrolls V: Skyrim  `posts/36-the-elder-scrolls-v-skyrim.jpg`
 
 **Trilingual (paste this):**
 
@@ -1688,7 +2182,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > Un amor entra, un universo sale. Hoy: The Elder Scrolls V: Skyrim. 🌍
 > Um amor entra, um universo sai. Hoje: The Elder Scrolls V: Skyrim. 🌍
 > 
-> 🌸 Suzume  ·  🎬 The Lord of the Rings: The Fellowship of the Ring  ·  ✈️ Kilimanjaro  ·  📚 The Fellowship of the Ring  ·  📺 Avatar: The Last Airbender
+> 🌸 Suzume  ·  🎬 The Lord of the Rings: The Fellowship of the Ring  ·  ✈️ Kilimanjaro  ·  📚 The Fellowship of the Ring  ·  📺 Extraordinary You
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1702,7 +2196,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > One love in, a universe out. Today: The Elder Scrolls V: Skyrim. 🌍
 > 
-> 🌸 Suzume  ·  🎬 The Lord of the Rings: The Fellowship of the Ring  ·  ✈️ Kilimanjaro  ·  📚 The Fellowship of the Ring  ·  📺 Avatar: The Last Airbender
+> 🌸 Suzume  ·  🎬 The Lord of the Rings: The Fellowship of the Ring  ·  ✈️ Kilimanjaro  ·  📚 The Fellowship of the Ring  ·  📺 Extraordinary You
 > 
 > Muse finds the echo of what you love across every medium.
 > 
@@ -1716,7 +2210,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Un amor entra, un universo sale. Hoy: The Elder Scrolls V: Skyrim. 🌍
 > 
-> 🌸 Suzume  ·  🎬 The Lord of the Rings: The Fellowship of the Ring  ·  ✈️ Kilimanjaro  ·  📚 The Fellowship of the Ring  ·  📺 Avatar: The Last Airbender
+> 🌸 Suzume  ·  🎬 The Lord of the Rings: The Fellowship of the Ring  ·  ✈️ Kilimanjaro  ·  📚 The Fellowship of the Ring  ·  📺 Extraordinary You
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
@@ -1730,7 +2224,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 > Um amor entra, um universo sai. Hoje: The Elder Scrolls V: Skyrim. 🌍
 > 
-> 🌸 Suzume  ·  🎬 The Lord of the Rings: The Fellowship of the Ring  ·  ✈️ Kilimanjaro  ·  📚 The Fellowship of the Ring  ·  📺 Avatar: The Last Airbender
+> 🌸 Suzume  ·  🎬 The Lord of the Rings: The Fellowship of the Ring  ·  ✈️ Kilimanjaro  ·  📚 The Fellowship of the Ring  ·  📺 Extraordinary You
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
@@ -1742,15 +2236,15 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 29. One Piece  `posts/29-one-piece.jpg`
+## 37. Red Dead Redemption 2  `posts/37-red-dead-redemption-2.jpg`
 
 **Trilingual (paste this):**
 
-> You love One Piece. Here's your whole universe. 🌌
-> Amas One Piece. Aquí tienes tu universo entero. 🌌
-> Você ama One Piece. Aqui está o seu universo inteiro. 🌌
+> You love Red Dead Redemption 2. Here's your whole universe. 🌌
+> Amas Red Dead Redemption 2. Aquí tienes tu universo entero. 🌌
+> Você ama Red Dead Redemption 2. Aqui está o seu universo inteiro. 🌌
 > 
-> 🎬 A Giant Adventure  ·  📚 The Lost Hero  ·  ✈️ Palau  ·  📺 Mr. Queen  ·  🎵 Moana (Original Motion Picture Soundtrack)
+> 📚 East of Eden (1952)  ·  🎬 Casino  ·  📺 The Undeclared War  ·  ✈️ Grand Canyon  ·  🎵 Above
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1758,59 +2252,245 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #animerecommendations #anitok #animecommunity #movierecommendations #bookrecommendations #travelinspo #tvshowrecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #gamerecommendations #gamingcommunity #whattoplay #bookrecommendations #movierecommendations #tvshowrecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> You love One Piece. Here's your whole universe. 🌌
+> You love Red Dead Redemption 2. Here's your whole universe. 🌌
 > 
-> 🎬 A Giant Adventure  ·  📚 The Lost Hero  ·  ✈️ Palau  ·  📺 Mr. Queen  ·  🎵 Moana (Original Motion Picture Soundtrack)
+> 📚 East of Eden (1952)  ·  🎬 Casino  ·  📺 The Undeclared War  ·  ✈️ Grand Canyon  ·  🎵 Above
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #animerecommendations #anitok #animecommunity #movierecommendations #bookrecommendations #travelinspo #tvshowrecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #gamerecommendations #gamingcommunity #whattoplay #bookrecommendations #movierecommendations #tvshowrecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> Amas One Piece. Aquí tienes tu universo entero. 🌌
+> Amas Red Dead Redemption 2. Aquí tienes tu universo entero. 🌌
 > 
-> 🎬 A Giant Adventure  ·  📚 The Lost Hero  ·  ✈️ Palau  ·  📺 Mr. Queen  ·  🎵 Moana (Original Motion Picture Soundtrack)
+> 📚 East of Eden (1952)  ·  🎬 Casino  ·  📺 The Undeclared War  ·  ✈️ Grand Canyon  ·  🎵 Above
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #animerecommendations #anitok #animecommunity #movierecommendations #bookrecommendations #travelinspo #tvshowrecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #gamerecommendations #gamingcommunity #whattoplay #bookrecommendations #movierecommendations #tvshowrecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Você ama One Piece. Aqui está o seu universo inteiro. 🌌
+> Você ama Red Dead Redemption 2. Aqui está o seu universo inteiro. 🌌
 > 
-> 🎬 A Giant Adventure  ·  📚 The Lost Hero  ·  ✈️ Palau  ·  📺 Mr. Queen  ·  🎵 Moana (Original Motion Picture Soundtrack)
+> 📚 East of Eden (1952)  ·  🎬 Casino  ·  📺 The Undeclared War  ·  ✈️ Grand Canyon  ·  🎵 Above
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #animerecommendations #anitok #animecommunity #movierecommendations #bookrecommendations #travelinspo #tvshowrecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #gamerecommendations #gamingcommunity #whattoplay #bookrecommendations #movierecommendations #tvshowrecommendations #travelinspo #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 30. Attack on Titan  `posts/30-attack-on-titan.jpg`
+## 38. The Legend of Zelda: Breath of the Wild  `posts/38-the-legend-of-zelda-breath-o.jpg`
 
 **Trilingual (paste this):**
 
-> Loved Attack on Titan? Here's its echo in every other medium. 🧭
-> ¿Te encantó Attack on Titan? Aquí está su eco en todos los demás medios. 🧭
-> Curtiu Attack on Titan? Aqui está o eco dele em todas as outras mídias. 🧭
+> Loved The Legend of Zelda: Breath of the Wild? Here's its echo in every other medium. 🧭
+> ¿Te encantó The Legend of Zelda: Breath of the Wild? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu The Legend of Zelda: Breath of the Wild? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> ✈️ Grand Canyon  ·  📺 Extraordinary You  ·  📚 Twenty Thousand Leagues Under the Sea (1870)  ·  🌸 Dororo  ·  🎬 Howl's Moving Castle
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #gamerecommendations #gamingcommunity #whattoplay #travelinspo #tvshowrecommendations #bookrecommendations #animerecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Loved The Legend of Zelda: Breath of the Wild? Here's its echo in every other medium. 🧭
+> 
+> ✈️ Grand Canyon  ·  📺 Extraordinary You  ·  📚 Twenty Thousand Leagues Under the Sea (1870)  ·  🌸 Dororo  ·  🎬 Howl's Moving Castle
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #gamerecommendations #gamingcommunity #whattoplay #travelinspo #tvshowrecommendations #bookrecommendations #animerecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> ¿Te encantó The Legend of Zelda: Breath of the Wild? Aquí está su eco en todos los demás medios. 🧭
+> 
+> ✈️ Grand Canyon  ·  📺 Extraordinary You  ·  📚 Twenty Thousand Leagues Under the Sea (1870)  ·  🌸 Dororo  ·  🎬 Howl's Moving Castle
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #gamerecommendations #gamingcommunity #whattoplay #travelinspo #tvshowrecommendations #bookrecommendations #animerecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Curtiu The Legend of Zelda: Breath of the Wild? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> ✈️ Grand Canyon  ·  📺 Extraordinary You  ·  📚 Twenty Thousand Leagues Under the Sea (1870)  ·  🌸 Dororo  ·  🎬 Howl's Moving Castle
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #gamerecommendations #gamingcommunity #whattoplay #travelinspo #tvshowrecommendations #bookrecommendations #animerecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 39. Naruto  `posts/39-naruto.jpg`
+
+**Trilingual (paste this):**
+
+> Naruto fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de Naruto: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de Naruto: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 📺 My Hero Academia  ·  📚 A Wizard of Earthsea  ·  🎬 Ghatothkach  ·  🎮 Chrono Trigger  ·  🎵 Wicked: For Good – The Soundtrack
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #bookrecommendations #movierecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Naruto fans — your next obsession isn't more of the same. It's all of these. ✨
+> 
+> 📺 My Hero Academia  ·  📚 A Wizard of Earthsea  ·  🎬 Ghatothkach  ·  🎮 Chrono Trigger  ·  🎵 Wicked: For Good – The Soundtrack
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #bookrecommendations #movierecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> Fans de Naruto: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> 
+> 📺 My Hero Academia  ·  📚 A Wizard of Earthsea  ·  🎬 Ghatothkach  ·  🎮 Chrono Trigger  ·  🎵 Wicked: For Good – The Soundtrack
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #bookrecommendations #movierecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Fãs de Naruto: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 📺 My Hero Academia  ·  📚 A Wizard of Earthsea  ·  🎬 Ghatothkach  ·  🎮 Chrono Trigger  ·  🎵 Wicked: For Good – The Soundtrack
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #bookrecommendations #movierecommendations #gamerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 40. One Piece  `posts/40-one-piece.jpg`
+
+**Trilingual (paste this):**
+
+> One love in, a universe out. Today: One Piece. 🌍
+> Un amor entra, un universo sale. Hoy: One Piece. 🌍
+> Um amor entra, um universo sai. Hoje: One Piece. 🌍
+> 
+> ✈️ Krabi  ·  🎬 A Giant Adventure  ·  📚 The Lost Hero  ·  📺 Mr. Queen  ·  🎵 Moana (Original Motion Picture Soundtrack)
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #animerecommendations #anitok #animecommunity #travelinspo #movierecommendations #bookrecommendations #tvshowrecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> One love in, a universe out. Today: One Piece. 🌍
+> 
+> ✈️ Krabi  ·  🎬 A Giant Adventure  ·  📚 The Lost Hero  ·  📺 Mr. Queen  ·  🎵 Moana (Original Motion Picture Soundtrack)
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #animerecommendations #anitok #animecommunity #travelinspo #movierecommendations #bookrecommendations #tvshowrecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> Un amor entra, un universo sale. Hoy: One Piece. 🌍
+> 
+> ✈️ Krabi  ·  🎬 A Giant Adventure  ·  📚 The Lost Hero  ·  📺 Mr. Queen  ·  🎵 Moana (Original Motion Picture Soundtrack)
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #animerecommendations #anitok #animecommunity #travelinspo #movierecommendations #bookrecommendations #tvshowrecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Um amor entra, um universo sai. Hoje: One Piece. 🌍
+> 
+> ✈️ Krabi  ·  🎬 A Giant Adventure  ·  📚 The Lost Hero  ·  📺 Mr. Queen  ·  🎵 Moana (Original Motion Picture Soundtrack)
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #animerecommendations #anitok #animecommunity #travelinspo #movierecommendations #bookrecommendations #tvshowrecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 41. Attack on Titan  `posts/41-attack-on-titan.jpg`
+
+**Trilingual (paste this):**
+
+> You love Attack on Titan. Here's your whole universe. 🌌
+> Amas Attack on Titan. Aquí tienes tu universo entero. 🌌
+> Você ama Attack on Titan. Aqui está o seu universo inteiro. 🌌
 > 
 > 🎵 Master of Puppets  ·  📺 Game of Thrones  ·  🎮 Sekiro: Shadows Die Twice  ·  📚 A Game of Thrones  ·  🎬 The Dark Knight
 > 
@@ -1824,7 +2504,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> Loved Attack on Titan? Here's its echo in every other medium. 🧭
+> You love Attack on Titan. Here's your whole universe. 🌌
 > 
 > 🎵 Master of Puppets  ·  📺 Game of Thrones  ·  🎮 Sekiro: Shadows Die Twice  ·  📚 A Game of Thrones  ·  🎬 The Dark Knight
 > 
@@ -1838,7 +2518,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> ¿Te encantó Attack on Titan? Aquí está su eco en todos los demás medios. 🧭
+> Amas Attack on Titan. Aquí tienes tu universo entero. 🌌
 > 
 > 🎵 Master of Puppets  ·  📺 Game of Thrones  ·  🎮 Sekiro: Shadows Die Twice  ·  📚 A Game of Thrones  ·  🎬 The Dark Knight
 > 
@@ -1852,7 +2532,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Curtiu Attack on Titan? Aqui está o eco dele em todas as outras mídias. 🧭
+> Você ama Attack on Titan. Aqui está o seu universo inteiro. 🌌
 > 
 > 🎵 Master of Puppets  ·  📺 Game of Thrones  ·  🎮 Sekiro: Shadows Die Twice  ·  📚 A Game of Thrones  ·  🎬 The Dark Knight
 > 
@@ -1866,15 +2546,15 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 31. Spirited Away  `posts/31-spirited-away.jpg`
+## 42. Spirited Away  `posts/42-spirited-away.jpg`
 
 **Trilingual (paste this):**
 
-> Spirited Away fans — your next obsession isn't more of the same. It's all of these. ✨
-> Fans de Spirited Away: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
-> Fãs de Spirited Away: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> Loved Spirited Away? Here's its echo in every other medium. 🧭
+> ¿Te encantó Spirited Away? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu Spirited Away? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 🎬 Spirited Away  ·  ✈️ Kyushu  ·  📺 Mushoku Tensei: Jobless Reincarnation  ·  📚 The Name of the Wind  ·  🎮 The Legend of Zelda: Ocarina of Time
+> 🎬 Spirited Away  ·  ✈️ Jiuzhaigou  ·  📺 Mushoku Tensei: Jobless Reincarnation  ·  📚 The Name of the Wind  ·  🎮 The Legend of Zelda: Ocarina of Time
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1886,9 +2566,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> Spirited Away fans — your next obsession isn't more of the same. It's all of these. ✨
+> Loved Spirited Away? Here's its echo in every other medium. 🧭
 > 
-> 🎬 Spirited Away  ·  ✈️ Kyushu  ·  📺 Mushoku Tensei: Jobless Reincarnation  ·  📚 The Name of the Wind  ·  🎮 The Legend of Zelda: Ocarina of Time
+> 🎬 Spirited Away  ·  ✈️ Jiuzhaigou  ·  📺 Mushoku Tensei: Jobless Reincarnation  ·  📚 The Name of the Wind  ·  🎮 The Legend of Zelda: Ocarina of Time
 > 
 > Muse finds the echo of what you love across every medium.
 > 
@@ -1900,9 +2580,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> Fans de Spirited Away: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> ¿Te encantó Spirited Away? Aquí está su eco en todos los demás medios. 🧭
 > 
-> 🎬 Spirited Away  ·  ✈️ Kyushu  ·  📺 Mushoku Tensei: Jobless Reincarnation  ·  📚 The Name of the Wind  ·  🎮 The Legend of Zelda: Ocarina of Time
+> 🎬 Spirited Away  ·  ✈️ Jiuzhaigou  ·  📺 Mushoku Tensei: Jobless Reincarnation  ·  📚 The Name of the Wind  ·  🎮 The Legend of Zelda: Ocarina of Time
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
@@ -1914,9 +2594,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Fãs de Spirited Away: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> Curtiu Spirited Away? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 🎬 Spirited Away  ·  ✈️ Kyushu  ·  📺 Mushoku Tensei: Jobless Reincarnation  ·  📚 The Name of the Wind  ·  🎮 The Legend of Zelda: Ocarina of Time
+> 🎬 Spirited Away  ·  ✈️ Jiuzhaigou  ·  📺 Mushoku Tensei: Jobless Reincarnation  ·  📚 The Name of the Wind  ·  🎮 The Legend of Zelda: Ocarina of Time
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
@@ -1928,15 +2608,15 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 32. Death Note  `posts/32-death-note.jpg`
+## 43. Death Note  `posts/43-death-note.jpg`
 
 **Trilingual (paste this):**
 
-> One love in, a universe out. Today: Death Note. 🌍
-> Un amor entra, un universo sale. Hoy: Death Note. 🌍
-> Um amor entra, um universo sai. Hoje: Death Note. 🌍
+> Death Note fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de Death Note: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de Death Note: seu próximo vício não é mais do mesmo. São todos estes. ✨
 > 
-> 🎬 The Girl with the Dragon Tattoo  ·  📺 Tomorrow Is Ours  ·  📚 Crime and Punishment  ·  🎵 Houdini  ·  🎮 BioShock
+> 🎬 The Girl with the Dragon Tattoo  ·  📺 The Agency  ·  📚 Crime and Punishment  ·  🎵 Houdini  ·  🎮 BioShock
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -1948,9 +2628,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> One love in, a universe out. Today: Death Note. 🌍
+> Death Note fans — your next obsession isn't more of the same. It's all of these. ✨
 > 
-> 🎬 The Girl with the Dragon Tattoo  ·  📺 Tomorrow Is Ours  ·  📚 Crime and Punishment  ·  🎵 Houdini  ·  🎮 BioShock
+> 🎬 The Girl with the Dragon Tattoo  ·  📺 The Agency  ·  📚 Crime and Punishment  ·  🎵 Houdini  ·  🎮 BioShock
 > 
 > Muse finds the echo of what you love across every medium.
 > 
@@ -1962,9 +2642,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> Un amor entra, un universo sale. Hoy: Death Note. 🌍
+> Fans de Death Note: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
 > 
-> 🎬 The Girl with the Dragon Tattoo  ·  📺 Tomorrow Is Ours  ·  📚 Crime and Punishment  ·  🎵 Houdini  ·  🎮 BioShock
+> 🎬 The Girl with the Dragon Tattoo  ·  📺 The Agency  ·  📚 Crime and Punishment  ·  🎵 Houdini  ·  🎮 BioShock
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
@@ -1976,9 +2656,9 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Um amor entra, um universo sai. Hoje: Death Note. 🌍
+> Fãs de Death Note: seu próximo vício não é mais do mesmo. São todos estes. ✨
 > 
-> 🎬 The Girl with the Dragon Tattoo  ·  📺 Tomorrow Is Ours  ·  📚 Crime and Punishment  ·  🎵 Houdini  ·  🎮 BioShock
+> 🎬 The Girl with the Dragon Tattoo  ·  📺 The Agency  ·  📚 Crime and Punishment  ·  🎵 Houdini  ·  🎮 BioShock
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
@@ -1990,15 +2670,15 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 33. My Neighbor Totoro  `posts/33-my-neighbor-totoro.jpg`
+## 44. My Neighbor Totoro  `posts/44-my-neighbor-totoro.jpg`
 
 **Trilingual (paste this):**
 
-> You love My Neighbor Totoro. Here's your whole universe. 🌌
-> Amas My Neighbor Totoro. Aquí tienes tu universo entero. 🌌
-> Você ama My Neighbor Totoro. Aqui está o seu universo inteiro. 🌌
+> One love in, a universe out. Today: My Neighbor Totoro. 🌍
+> Un amor entra, un universo sale. Hoy: My Neighbor Totoro. 🌍
+> Um amor entra, um universo sai. Hoje: My Neighbor Totoro. 🌍
 > 
-> 🎮 Stardew Valley  ·  🎬 My Neighbor Totoro  ·  🍜 Puttu  ·  ✈️ Carinthia  ·  📚 The Little Prince
+> 🎮 Stardew Valley  ·  ✈️ Kerala backwaters  ·  🎬 My Neighbor Totoro  ·  🍜 Puttu  ·  📚 The Little Prince
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -2006,61 +2686,61 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #animerecommendations #anitok #animecommunity #gamerecommendations #movierecommendations #foodie #travelinspo #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #gamerecommendations #travelinspo #movierecommendations #foodie #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> You love My Neighbor Totoro. Here's your whole universe. 🌌
+> One love in, a universe out. Today: My Neighbor Totoro. 🌍
 > 
-> 🎮 Stardew Valley  ·  🎬 My Neighbor Totoro  ·  🍜 Puttu  ·  ✈️ Carinthia  ·  📚 The Little Prince
+> 🎮 Stardew Valley  ·  ✈️ Kerala backwaters  ·  🎬 My Neighbor Totoro  ·  🍜 Puttu  ·  📚 The Little Prince
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #animerecommendations #anitok #animecommunity #gamerecommendations #movierecommendations #foodie #travelinspo #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #gamerecommendations #travelinspo #movierecommendations #foodie #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> Amas My Neighbor Totoro. Aquí tienes tu universo entero. 🌌
+> Un amor entra, un universo sale. Hoy: My Neighbor Totoro. 🌍
 > 
-> 🎮 Stardew Valley  ·  🎬 My Neighbor Totoro  ·  🍜 Puttu  ·  ✈️ Carinthia  ·  📚 The Little Prince
+> 🎮 Stardew Valley  ·  ✈️ Kerala backwaters  ·  🎬 My Neighbor Totoro  ·  🍜 Puttu  ·  📚 The Little Prince
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #animerecommendations #anitok #animecommunity #gamerecommendations #movierecommendations #foodie #travelinspo #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #gamerecommendations #travelinspo #movierecommendations #foodie #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Você ama My Neighbor Totoro. Aqui está o seu universo inteiro. 🌌
+> Um amor entra, um universo sai. Hoje: My Neighbor Totoro. 🌍
 > 
-> 🎮 Stardew Valley  ·  🎬 My Neighbor Totoro  ·  🍜 Puttu  ·  ✈️ Carinthia  ·  📚 The Little Prince
+> 🎮 Stardew Valley  ·  ✈️ Kerala backwaters  ·  🎬 My Neighbor Totoro  ·  🍜 Puttu  ·  📚 The Little Prince
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #animerecommendations #anitok #animecommunity #gamerecommendations #movierecommendations #foodie #travelinspo #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #gamerecommendations #travelinspo #movierecommendations #foodie #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 34. Cheeseburger  `posts/34-cheeseburger.jpg`
+## 45. Demon Slayer: Kimetsu no Yaiba  `posts/45-demon-slayer-kimetsu-no-yaib.jpg`
 
 **Trilingual (paste this):**
 
-> Loved Cheeseburger? Here's its echo in every other medium. 🧭
-> ¿Te encantó Cheeseburger? Aquí está su eco en todos los demás medios. 🧭
-> Curtiu Cheeseburger? Aqui está o eco dele em todas as outras mídias. 🧭
+> You love Demon Slayer: Kimetsu no Yaiba. Here's your whole universe. 🌌
+> Amas Demon Slayer: Kimetsu no Yaiba. Aquí tienes tu universo entero. 🌌
+> Você ama Demon Slayer: Kimetsu no Yaiba. Aqui está o seu universo inteiro. 🌌
 > 
-> 🎮 Super Mario Bros.  ·  ✈️ Cancún  ·  🎵 Harry Styles  ·  📺 Top of the Pops  ·  🎬 Toy Story
+> 📺 The Witcher  ·  🎬 Demon Slayer: Kimetsu no Yaiba Infinity Castle  ·  🎵 Purple Rain  ·  📚 Wolves of the Calla  ·  🎮 Nier: Automata
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -2068,61 +2748,61 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #gamerecommendations #travelinspo #musicrecommendations #tvshowrecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #movierecommendations #musicrecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> Loved Cheeseburger? Here's its echo in every other medium. 🧭
+> You love Demon Slayer: Kimetsu no Yaiba. Here's your whole universe. 🌌
 > 
-> 🎮 Super Mario Bros.  ·  ✈️ Cancún  ·  🎵 Harry Styles  ·  📺 Top of the Pops  ·  🎬 Toy Story
+> 📺 The Witcher  ·  🎬 Demon Slayer: Kimetsu no Yaiba Infinity Castle  ·  🎵 Purple Rain  ·  📚 Wolves of the Calla  ·  🎮 Nier: Automata
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #gamerecommendations #travelinspo #musicrecommendations #tvshowrecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #movierecommendations #musicrecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> ¿Te encantó Cheeseburger? Aquí está su eco en todos los demás medios. 🧭
+> Amas Demon Slayer: Kimetsu no Yaiba. Aquí tienes tu universo entero. 🌌
 > 
-> 🎮 Super Mario Bros.  ·  ✈️ Cancún  ·  🎵 Harry Styles  ·  📺 Top of the Pops  ·  🎬 Toy Story
+> 📺 The Witcher  ·  🎬 Demon Slayer: Kimetsu no Yaiba Infinity Castle  ·  🎵 Purple Rain  ·  📚 Wolves of the Calla  ·  🎮 Nier: Automata
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #gamerecommendations #travelinspo #musicrecommendations #tvshowrecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #movierecommendations #musicrecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Curtiu Cheeseburger? Aqui está o eco dele em todas as outras mídias. 🧭
+> Você ama Demon Slayer: Kimetsu no Yaiba. Aqui está o seu universo inteiro. 🌌
 > 
-> 🎮 Super Mario Bros.  ·  ✈️ Cancún  ·  🎵 Harry Styles  ·  📺 Top of the Pops  ·  🎬 Toy Story
+> 📺 The Witcher  ·  🎬 Demon Slayer: Kimetsu no Yaiba Infinity Castle  ·  🎵 Purple Rain  ·  📚 Wolves of the Calla  ·  🎮 Nier: Automata
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #gamerecommendations #travelinspo #musicrecommendations #tvshowrecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #movierecommendations #musicrecommendations #bookrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 35. Pizza Margherita  `posts/35-pizza-margherita.jpg`
+## 46. Jujutsu Kaisen  `posts/46-jujutsu-kaisen.jpg`
 
 **Trilingual (paste this):**
 
-> Pizza Margherita fans — your next obsession isn't more of the same. It's all of these. ✨
-> Fans de Pizza Margherita: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
-> Fãs de Pizza Margherita: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> Loved Jujutsu Kaisen? Here's its echo in every other medium. 🧭
+> ¿Te encantó Jujutsu Kaisen? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu Jujutsu Kaisen? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 🎬 Turbulencia en la oficina  ·  📺 Matrimonio Con Hijos  ·  🎵 Harry Styles  ·  ✈️ Guadalajara  ·  🌸 Scott Pilgrim Takes Off
+> 📺 JUJUTSU KAISEN  ·  🎬 Blade II  ·  🎮 Metal Gear Rising: Revengeance  ·  🎵 Enter the Wu-Tang (36 Chambers)  ·  📚 Under the Dome
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -2130,59 +2810,183 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #movierecommendations #tvshowrecommendations #musicrecommendations #travelinspo #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #movierecommendations #gamerecommendations #musicrecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> Pizza Margherita fans — your next obsession isn't more of the same. It's all of these. ✨
+> Loved Jujutsu Kaisen? Here's its echo in every other medium. 🧭
 > 
-> 🎬 Turbulencia en la oficina  ·  📺 Matrimonio Con Hijos  ·  🎵 Harry Styles  ·  ✈️ Guadalajara  ·  🌸 Scott Pilgrim Takes Off
+> 📺 JUJUTSU KAISEN  ·  🎬 Blade II  ·  🎮 Metal Gear Rising: Revengeance  ·  🎵 Enter the Wu-Tang (36 Chambers)  ·  📚 Under the Dome
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #movierecommendations #tvshowrecommendations #musicrecommendations #travelinspo #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #movierecommendations #gamerecommendations #musicrecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> Fans de Pizza Margherita: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> ¿Te encantó Jujutsu Kaisen? Aquí está su eco en todos los demás medios. 🧭
 > 
-> 🎬 Turbulencia en la oficina  ·  📺 Matrimonio Con Hijos  ·  🎵 Harry Styles  ·  ✈️ Guadalajara  ·  🌸 Scott Pilgrim Takes Off
+> 📺 JUJUTSU KAISEN  ·  🎬 Blade II  ·  🎮 Metal Gear Rising: Revengeance  ·  🎵 Enter the Wu-Tang (36 Chambers)  ·  📚 Under the Dome
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #movierecommendations #tvshowrecommendations #musicrecommendations #travelinspo #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #movierecommendations #gamerecommendations #musicrecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Fãs de Pizza Margherita: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> Curtiu Jujutsu Kaisen? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> 🎬 Turbulencia en la oficina  ·  📺 Matrimonio Con Hijos  ·  🎵 Harry Styles  ·  ✈️ Guadalajara  ·  🌸 Scott Pilgrim Takes Off
+> 📺 JUJUTSU KAISEN  ·  🎬 Blade II  ·  🎮 Metal Gear Rising: Revengeance  ·  🎵 Enter the Wu-Tang (36 Chambers)  ·  📚 Under the Dome
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #movierecommendations #tvshowrecommendations #musicrecommendations #travelinspo #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #animerecommendations #anitok #animecommunity #tvshowrecommendations #movierecommendations #gamerecommendations #musicrecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 36. Hot Dog  `posts/36-hot-dog.jpg`
+## 47. Cheeseburger  `posts/47-cheeseburger.jpg`
 
 **Trilingual (paste this):**
 
-> One love in, a universe out. Today: Hot Dog. 🌍
-> Un amor entra, un universo sale. Hoy: Hot Dog. 🌍
-> Um amor entra, um universo sai. Hoje: Hot Dog. 🌍
+> Cheeseburger fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de Cheeseburger: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de Cheeseburger: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 🎮 Super Mario Bros.  ·  ✈️ Cancún  ·  📺 Top of the Pops  ·  🎵 Harry Styles  ·  🎬 Toy Story
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #gamerecommendations #travelinspo #tvshowrecommendations #musicrecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Cheeseburger fans — your next obsession isn't more of the same. It's all of these. ✨
+> 
+> 🎮 Super Mario Bros.  ·  ✈️ Cancún  ·  📺 Top of the Pops  ·  🎵 Harry Styles  ·  🎬 Toy Story
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #gamerecommendations #travelinspo #tvshowrecommendations #musicrecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> Fans de Cheeseburger: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> 
+> 🎮 Super Mario Bros.  ·  ✈️ Cancún  ·  📺 Top of the Pops  ·  🎵 Harry Styles  ·  🎬 Toy Story
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #gamerecommendations #travelinspo #tvshowrecommendations #musicrecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Fãs de Cheeseburger: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 🎮 Super Mario Bros.  ·  ✈️ Cancún  ·  📺 Top of the Pops  ·  🎵 Harry Styles  ·  🎬 Toy Story
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #gamerecommendations #travelinspo #tvshowrecommendations #musicrecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 48. Pizza Margherita  `posts/48-pizza-margherita.jpg`
+
+**Trilingual (paste this):**
+
+> One love in, a universe out. Today: Pizza Margherita. 🌍
+> Un amor entra, un universo sale. Hoy: Pizza Margherita. 🌍
+> Um amor entra, um universo sai. Hoje: Pizza Margherita. 🌍
+> 
+> 🎵 Harry Styles  ·  ✈️ Guadalajara  ·  📺 Jamai Raja  ·  🎬 Turbulencia en la oficina  ·  📚 Le rouge et le noir
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #musicrecommendations #travelinspo #tvshowrecommendations #movierecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> One love in, a universe out. Today: Pizza Margherita. 🌍
+> 
+> 🎵 Harry Styles  ·  ✈️ Guadalajara  ·  📺 Jamai Raja  ·  🎬 Turbulencia en la oficina  ·  📚 Le rouge et le noir
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #musicrecommendations #travelinspo #tvshowrecommendations #movierecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> Un amor entra, un universo sale. Hoy: Pizza Margherita. 🌍
+> 
+> 🎵 Harry Styles  ·  ✈️ Guadalajara  ·  📺 Jamai Raja  ·  🎬 Turbulencia en la oficina  ·  📚 Le rouge et le noir
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #musicrecommendations #travelinspo #tvshowrecommendations #movierecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Um amor entra, um universo sai. Hoje: Pizza Margherita. 🌍
+> 
+> 🎵 Harry Styles  ·  ✈️ Guadalajara  ·  📺 Jamai Raja  ·  🎬 Turbulencia en la oficina  ·  📚 Le rouge et le noir
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #musicrecommendations #travelinspo #tvshowrecommendations #movierecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 49. Hot Dog  `posts/49-hot-dog.jpg`
+
+**Trilingual (paste this):**
+
+> You love Hot Dog. Here's your whole universe. 🌌
+> Amas Hot Dog. Aquí tienes tu universo entero. 🌌
+> Você ama Hot Dog. Aqui está o seu universo inteiro. 🌌
 > 
 > 📺 Top of the Pops  ·  🎮 Tux Racer  ·  ✈️ Máncora  ·  🎬 Tummy Tom and the Lost Teddy Bear  ·  🎵 Harry Styles
 > 
@@ -2196,7 +3000,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> One love in, a universe out. Today: Hot Dog. 🌍
+> You love Hot Dog. Here's your whole universe. 🌌
 > 
 > 📺 Top of the Pops  ·  🎮 Tux Racer  ·  ✈️ Máncora  ·  🎬 Tummy Tom and the Lost Teddy Bear  ·  🎵 Harry Styles
 > 
@@ -2210,7 +3014,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> Un amor entra, un universo sale. Hoy: Hot Dog. 🌍
+> Amas Hot Dog. Aquí tienes tu universo entero. 🌌
 > 
 > 📺 Top of the Pops  ·  🎮 Tux Racer  ·  ✈️ Máncora  ·  🎬 Tummy Tom and the Lost Teddy Bear  ·  🎵 Harry Styles
 > 
@@ -2224,7 +3028,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Um amor entra, um universo sai. Hoje: Hot Dog. 🌍
+> Você ama Hot Dog. Aqui está o seu universo inteiro. 🌌
 > 
 > 📺 Top of the Pops  ·  🎮 Tux Racer  ·  ✈️ Máncora  ·  🎬 Tummy Tom and the Lost Teddy Bear  ·  🎵 Harry Styles
 > 
@@ -2238,15 +3042,15 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 37. Sushi  `posts/37-sushi.jpg`
+## 50. Sushi  `posts/50-sushi.jpg`
 
 **Trilingual (paste this):**
 
-> You love Sushi. Here's your whole universe. 🌌
-> Amas Sushi. Aquí tienes tu universo entero. 🌌
-> Você ama Sushi. Aqui está o seu universo inteiro. 🌌
+> Loved Sushi? Here's its echo in every other medium. 🧭
+> ¿Te encantó Sushi? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu Sushi? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> ✈️ Kyoto  ·  📺 Shipindao: The Foodie's Tao  ·  🎬 Food, Inc.  ·  🎵 Essential Yo-Yo Ma  ·  🎮 Angry Birds
+> ✈️ Kyoto  ·  🎬 Food, Inc.  ·  🎵 Essential Yo-Yo Ma  ·  📺 Eat the poor Taoist  ·  🎮 Angry Birds
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -2254,59 +3058,59 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #travelinspo #tvshowrecommendations #movierecommendations #musicrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #foodie #whattoeat #foodlover #travelinspo #movierecommendations #musicrecommendations #tvshowrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> You love Sushi. Here's your whole universe. 🌌
+> Loved Sushi? Here's its echo in every other medium. 🧭
 > 
-> ✈️ Kyoto  ·  📺 Shipindao: The Foodie's Tao  ·  🎬 Food, Inc.  ·  🎵 Essential Yo-Yo Ma  ·  🎮 Angry Birds
+> ✈️ Kyoto  ·  🎬 Food, Inc.  ·  🎵 Essential Yo-Yo Ma  ·  📺 Eat the poor Taoist  ·  🎮 Angry Birds
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #travelinspo #tvshowrecommendations #movierecommendations #musicrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #foodie #whattoeat #foodlover #travelinspo #movierecommendations #musicrecommendations #tvshowrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> Amas Sushi. Aquí tienes tu universo entero. 🌌
+> ¿Te encantó Sushi? Aquí está su eco en todos los demás medios. 🧭
 > 
-> ✈️ Kyoto  ·  📺 Shipindao: The Foodie's Tao  ·  🎬 Food, Inc.  ·  🎵 Essential Yo-Yo Ma  ·  🎮 Angry Birds
+> ✈️ Kyoto  ·  🎬 Food, Inc.  ·  🎵 Essential Yo-Yo Ma  ·  📺 Eat the poor Taoist  ·  🎮 Angry Birds
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #travelinspo #tvshowrecommendations #movierecommendations #musicrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #foodie #whattoeat #foodlover #travelinspo #movierecommendations #musicrecommendations #tvshowrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Você ama Sushi. Aqui está o seu universo inteiro. 🌌
+> Curtiu Sushi? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
-> ✈️ Kyoto  ·  📺 Shipindao: The Foodie's Tao  ·  🎬 Food, Inc.  ·  🎵 Essential Yo-Yo Ma  ·  🎮 Angry Birds
+> ✈️ Kyoto  ·  🎬 Food, Inc.  ·  🎵 Essential Yo-Yo Ma  ·  📺 Eat the poor Taoist  ·  🎮 Angry Birds
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #foodie #whattoeat #foodlover #travelinspo #tvshowrecommendations #movierecommendations #musicrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #foodie #whattoeat #foodlover #travelinspo #movierecommendations #musicrecommendations #tvshowrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 38. Croissant  `posts/38-croissant.jpg`
+## 51. Croissant  `posts/51-croissant.jpg`
 
 **Trilingual (paste this):**
 
-> Loved Croissant? Here's its echo in every other medium. 🧭
-> ¿Te encantó Croissant? Aquí está su eco en todos los demás medios. 🧭
-> Curtiu Croissant? Aqui está o eco dele em todas as outras mídias. 🧭
+> Croissant fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de Croissant: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de Croissant: seu próximo vício não é mais do mesmo. São todos estes. ✨
 > 
 > ✈️ Tuscany  ·  📚 The Psychology of Money  ·  🎵 Bossa Nova!! (Remastered)  ·  🎬 The Perks of Being a Wallflower
 > 
@@ -2320,7 +3124,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> Loved Croissant? Here's its echo in every other medium. 🧭
+> Croissant fans — your next obsession isn't more of the same. It's all of these. ✨
 > 
 > ✈️ Tuscany  ·  📚 The Psychology of Money  ·  🎵 Bossa Nova!! (Remastered)  ·  🎬 The Perks of Being a Wallflower
 > 
@@ -2334,7 +3138,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> ¿Te encantó Croissant? Aquí está su eco en todos los demás medios. 🧭
+> Fans de Croissant: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
 > 
 > ✈️ Tuscany  ·  📚 The Psychology of Money  ·  🎵 Bossa Nova!! (Remastered)  ·  🎬 The Perks of Being a Wallflower
 > 
@@ -2348,7 +3152,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Curtiu Croissant? Aqui está o eco dele em todas as outras mídias. 🧭
+> Fãs de Croissant: seu próximo vício não é mais do mesmo. São todos estes. ✨
 > 
 > ✈️ Tuscany  ·  📚 The Psychology of Money  ·  🎵 Bossa Nova!! (Remastered)  ·  🎬 The Perks of Being a Wallflower
 > 
@@ -2362,13 +3166,13 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 39. Pancakes  `posts/39-pancakes.jpg`
+## 52. Pancakes  `posts/52-pancakes.jpg`
 
 **Trilingual (paste this):**
 
-> Pancakes fans — your next obsession isn't more of the same. It's all of these. ✨
-> Fans de Pancakes: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
-> Fãs de Pancakes: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> One love in, a universe out. Today: Pancakes. 🌍
+> Un amor entra, un universo sale. Hoy: Pancakes. 🌍
+> Um amor entra, um universo sai. Hoje: Pancakes. 🌍
 > 
 > 🌸 K-On!  ·  🎮 Stardew Valley  ·  🎵 Christmas Album  ·  🎬 Tummy Tom and the Lost Teddy Bear  ·  ✈️ Máncora
 > 
@@ -2382,7 +3186,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> Pancakes fans — your next obsession isn't more of the same. It's all of these. ✨
+> One love in, a universe out. Today: Pancakes. 🌍
 > 
 > 🌸 K-On!  ·  🎮 Stardew Valley  ·  🎵 Christmas Album  ·  🎬 Tummy Tom and the Lost Teddy Bear  ·  ✈️ Máncora
 > 
@@ -2396,7 +3200,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> Fans de Pancakes: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Un amor entra, un universo sale. Hoy: Pancakes. 🌍
 > 
 > 🌸 K-On!  ·  🎮 Stardew Valley  ·  🎵 Christmas Album  ·  🎬 Tummy Tom and the Lost Teddy Bear  ·  ✈️ Máncora
 > 
@@ -2410,7 +3214,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Fãs de Pancakes: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> Um amor entra, um universo sai. Hoje: Pancakes. 🌍
 > 
 > 🌸 K-On!  ·  🎮 Stardew Valley  ·  🎵 Christmas Album  ·  🎬 Tummy Tom and the Lost Teddy Bear  ·  ✈️ Máncora
 > 
@@ -2424,15 +3228,15 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 40. Paris  `posts/40-paris.jpg`
+## 53. Pad Thai  `posts/53-pad-thai.jpg`
 
 **Trilingual (paste this):**
 
-> One love in, a universe out. Today: Paris. 🌍
-> Un amor entra, un universo sale. Hoy: Paris. 🌍
-> Um amor entra, um universo sai. Hoje: Paris. 🌍
+> You love Pad Thai. Here's your whole universe. 🌌
+> Amas Pad Thai. Aquí tienes tu universo entero. 🌌
+> Você ama Pad Thai. Aqui está o seu universo inteiro. 🌌
 > 
-> 🍜 Champagne  ·  🎬 Boulevard  ·  📺 The Colbert Report  ·  🌸 Cute High Earth Defense Club Love!  ·  🎵 Relaxing Jazz
+> ✈️ Osaka  ·  📺 Downtown no Gaki no Tsukai ya Arahende!!  ·  🎵 Energía  ·  🎮 Tux Racer  ·  🎬 The Secret Life of Pets
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -2440,59 +3244,183 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #travelinspo #wheretogo #bucketlist #foodie #movierecommendations #tvshowrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #foodie #whattoeat #foodlover #travelinspo #tvshowrecommendations #musicrecommendations #gamerecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> One love in, a universe out. Today: Paris. 🌍
+> You love Pad Thai. Here's your whole universe. 🌌
 > 
-> 🍜 Champagne  ·  🎬 Boulevard  ·  📺 The Colbert Report  ·  🌸 Cute High Earth Defense Club Love!  ·  🎵 Relaxing Jazz
+> ✈️ Osaka  ·  📺 Downtown no Gaki no Tsukai ya Arahende!!  ·  🎵 Energía  ·  🎮 Tux Racer  ·  🎬 The Secret Life of Pets
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #travelinspo #wheretogo #bucketlist #foodie #movierecommendations #tvshowrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #foodie #whattoeat #foodlover #travelinspo #tvshowrecommendations #musicrecommendations #gamerecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> Un amor entra, un universo sale. Hoy: Paris. 🌍
+> Amas Pad Thai. Aquí tienes tu universo entero. 🌌
 > 
-> 🍜 Champagne  ·  🎬 Boulevard  ·  📺 The Colbert Report  ·  🌸 Cute High Earth Defense Club Love!  ·  🎵 Relaxing Jazz
+> ✈️ Osaka  ·  📺 Downtown no Gaki no Tsukai ya Arahende!!  ·  🎵 Energía  ·  🎮 Tux Racer  ·  🎬 The Secret Life of Pets
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #travelinspo #wheretogo #bucketlist #foodie #movierecommendations #tvshowrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #foodie #whattoeat #foodlover #travelinspo #tvshowrecommendations #musicrecommendations #gamerecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Um amor entra, um universo sai. Hoje: Paris. 🌍
+> Você ama Pad Thai. Aqui está o seu universo inteiro. 🌌
 > 
-> 🍜 Champagne  ·  🎬 Boulevard  ·  📺 The Colbert Report  ·  🌸 Cute High Earth Defense Club Love!  ·  🎵 Relaxing Jazz
+> ✈️ Osaka  ·  📺 Downtown no Gaki no Tsukai ya Arahende!!  ·  🎵 Energía  ·  🎮 Tux Racer  ·  🎬 The Secret Life of Pets
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #travelinspo #wheretogo #bucketlist #foodie #movierecommendations #tvshowrecommendations #animerecommendations #musicrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #foodie #whattoeat #foodlover #travelinspo #tvshowrecommendations #musicrecommendations #gamerecommendations #movierecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 ---
 
-## 41. New York City  `posts/41-new-york-city.jpg`
+## 54. Spaghetti Carbonara  `posts/54-spaghetti-carbonara.jpg`
 
 **Trilingual (paste this):**
 
-> You love New York City. Here's your whole universe. 🌌
-> Amas New York City. Aquí tienes tu universo entero. 🌌
-> Você ama New York City. Aqui está o seu universo inteiro. 🌌
+> Loved Spaghetti Carbonara? Here's its echo in every other medium. 🧭
+> ¿Te encantó Spaghetti Carbonara? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu Spaghetti Carbonara? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> ✈️ San Sebastián  ·  🌸 Domestic Girlfriend  ·  📚 Comus  ·  🎬 Malèna  ·  📺 Downton Abbey
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #travelinspo #animerecommendations #bookrecommendations #movierecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Loved Spaghetti Carbonara? Here's its echo in every other medium. 🧭
+> 
+> ✈️ San Sebastián  ·  🌸 Domestic Girlfriend  ·  📚 Comus  ·  🎬 Malèna  ·  📺 Downton Abbey
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #travelinspo #animerecommendations #bookrecommendations #movierecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> ¿Te encantó Spaghetti Carbonara? Aquí está su eco en todos los demás medios. 🧭
+> 
+> ✈️ San Sebastián  ·  🌸 Domestic Girlfriend  ·  📚 Comus  ·  🎬 Malèna  ·  📺 Downton Abbey
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #travelinspo #animerecommendations #bookrecommendations #movierecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Curtiu Spaghetti Carbonara? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> ✈️ San Sebastián  ·  🌸 Domestic Girlfriend  ·  📚 Comus  ·  🎬 Malèna  ·  📺 Downton Abbey
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #foodie #whattoeat #foodlover #travelinspo #animerecommendations #bookrecommendations #movierecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 55. Paris  `posts/55-paris.jpg`
+
+**Trilingual (paste this):**
+
+> Paris fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de Paris: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de Paris: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 🍜 Champagne  ·  🎬 Boulevard  ·  🌸 Cute High Earth Defense Club Love!  ·  🎵 Relaxing Jazz  ·  📚 The Great Gatsby
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #foodie #movierecommendations #animerecommendations #musicrecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Paris fans — your next obsession isn't more of the same. It's all of these. ✨
+> 
+> 🍜 Champagne  ·  🎬 Boulevard  ·  🌸 Cute High Earth Defense Club Love!  ·  🎵 Relaxing Jazz  ·  📚 The Great Gatsby
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #foodie #movierecommendations #animerecommendations #musicrecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> Fans de Paris: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> 
+> 🍜 Champagne  ·  🎬 Boulevard  ·  🌸 Cute High Earth Defense Club Love!  ·  🎵 Relaxing Jazz  ·  📚 The Great Gatsby
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #foodie #movierecommendations #animerecommendations #musicrecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Fãs de Paris: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> 
+> 🍜 Champagne  ·  🎬 Boulevard  ·  🌸 Cute High Earth Defense Club Love!  ·  🎵 Relaxing Jazz  ·  📚 The Great Gatsby
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #foodie #movierecommendations #animerecommendations #musicrecommendations #bookrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 56. New York City  `posts/56-new-york-city.jpg`
+
+**Trilingual (paste this):**
+
+> One love in, a universe out. Today: New York City. 🌍
+> Un amor entra, un universo sale. Hoy: New York City. 🌍
+> Um amor entra, um universo sai. Hoje: New York City. 🌍
 > 
 > 🌸 Case Closed: The Time Bombed Skyscraper  ·  🎬 Goodfellas  ·  🎵 A Night at the Opera (Deluxe Edition)  ·  🎮 Cities: Skylines  ·  📺 The Exiled Heavy Knight Knows How to Game the System
 > 
@@ -2506,7 +3434,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> You love New York City. Here's your whole universe. 🌌
+> One love in, a universe out. Today: New York City. 🌍
 > 
 > 🌸 Case Closed: The Time Bombed Skyscraper  ·  🎬 Goodfellas  ·  🎵 A Night at the Opera (Deluxe Edition)  ·  🎮 Cities: Skylines  ·  📺 The Exiled Heavy Knight Knows How to Game the System
 > 
@@ -2520,7 +3448,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> Amas New York City. Aquí tienes tu universo entero. 🌌
+> Un amor entra, un universo sale. Hoy: New York City. 🌍
 > 
 > 🌸 Case Closed: The Time Bombed Skyscraper  ·  🎬 Goodfellas  ·  🎵 A Night at the Opera (Deluxe Edition)  ·  🎮 Cities: Skylines  ·  📺 The Exiled Heavy Knight Knows How to Game the System
 > 
@@ -2534,7 +3462,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Você ama New York City. Aqui está o seu universo inteiro. 🌌
+> Um amor entra, um universo sai. Hoje: New York City. 🌍
 > 
 > 🌸 Case Closed: The Time Bombed Skyscraper  ·  🎬 Goodfellas  ·  🎵 A Night at the Opera (Deluxe Edition)  ·  🎮 Cities: Skylines  ·  📺 The Exiled Heavy Knight Knows How to Game the System
 > 
@@ -2548,13 +3476,13 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 42. London  `posts/42-london.jpg`
+## 57. London  `posts/57-london.jpg`
 
 **Trilingual (paste this):**
 
-> Loved London? Here's its echo in every other medium. 🧭
-> ¿Te encantó London? Aquí está su eco en todos los demás medios. 🧭
-> Curtiu London? Aqui está o eco dele em todas as outras mídias. 🧭
+> You love London. Here's your whole universe. 🌌
+> Amas London. Aquí tienes tu universo entero. 🌌
+> Você ama London. Aqui está o seu universo inteiro. 🌌
 > 
 > 🎵 London Calling  ·  📚 On the Road (1957)  ·  🎬 The Lord of the Rings: The Return of the King  ·  🌸 The Mysterious Cities of Gold  ·  📺 Blossoms of Power
 > 
@@ -2568,7 +3496,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> Loved London? Here's its echo in every other medium. 🧭
+> You love London. Here's your whole universe. 🌌
 > 
 > 🎵 London Calling  ·  📚 On the Road (1957)  ·  🎬 The Lord of the Rings: The Return of the King  ·  🌸 The Mysterious Cities of Gold  ·  📺 Blossoms of Power
 > 
@@ -2582,7 +3510,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> ¿Te encantó London? Aquí está su eco en todos los demás medios. 🧭
+> Amas London. Aquí tienes tu universo entero. 🌌
 > 
 > 🎵 London Calling  ·  📚 On the Road (1957)  ·  🎬 The Lord of the Rings: The Return of the King  ·  🌸 The Mysterious Cities of Gold  ·  📺 Blossoms of Power
 > 
@@ -2596,7 +3524,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Curtiu London? Aqui está o eco dele em todas as outras mídias. 🧭
+> Você ama London. Aqui está o seu universo inteiro. 🌌
 > 
 > 🎵 London Calling  ·  📚 On the Road (1957)  ·  🎬 The Lord of the Rings: The Return of the King  ·  🌸 The Mysterious Cities of Gold  ·  📺 Blossoms of Power
 > 
@@ -2610,13 +3538,13 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 43. Rome  `posts/43-rome.jpg`
+## 58. Rome  `posts/58-rome.jpg`
 
 **Trilingual (paste this):**
 
-> Rome fans — your next obsession isn't more of the same. It's all of these. ✨
-> Fans de Rome: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
-> Fãs de Rome: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> Loved Rome? Here's its echo in every other medium. 🧭
+> ¿Te encantó Rome? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu Rome? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
 > 🎵 Abbey Road  ·  📚 War and Peace (1869)  ·  📺 Babylon 5  ·  🍜 Egg coffee  ·  🎮 Age of Empires II: The Age of Kings
 > 
@@ -2630,7 +3558,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> Rome fans — your next obsession isn't more of the same. It's all of these. ✨
+> Loved Rome? Here's its echo in every other medium. 🧭
 > 
 > 🎵 Abbey Road  ·  📚 War and Peace (1869)  ·  📺 Babylon 5  ·  🍜 Egg coffee  ·  🎮 Age of Empires II: The Age of Kings
 > 
@@ -2644,7 +3572,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> Fans de Rome: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> ¿Te encantó Rome? Aquí está su eco en todos los demás medios. 🧭
 > 
 > 🎵 Abbey Road  ·  📚 War and Peace (1869)  ·  📺 Babylon 5  ·  🍜 Egg coffee  ·  🎮 Age of Empires II: The Age of Kings
 > 
@@ -2658,7 +3586,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Fãs de Rome: seu próximo vício não é mais do mesmo. São todos estes. ✨
+> Curtiu Rome? Aqui está o eco dele em todas as outras mídias. 🧭
 > 
 > 🎵 Abbey Road  ·  📚 War and Peace (1869)  ·  📺 Babylon 5  ·  🍜 Egg coffee  ·  🎮 Age of Empires II: The Age of Kings
 > 
@@ -2672,13 +3600,13 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 44. Machu Picchu  `posts/44-machu-picchu.jpg`
+## 59. Machu Picchu  `posts/59-machu-picchu.jpg`
 
 **Trilingual (paste this):**
 
-> One love in, a universe out. Today: Machu Picchu. 🌍
-> Un amor entra, un universo sale. Hoy: Machu Picchu. 🌍
-> Um amor entra, um universo sai. Hoje: Machu Picchu. 🌍
+> Machu Picchu fans — your next obsession isn't more of the same. It's all of these. ✨
+> Fans de Machu Picchu: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
+> Fãs de Machu Picchu: seu próximo vício não é mais do mesmo. São todos estes. ✨
 > 
 > 🎵 Close to the Edge  ·  🎮 The Legend of Zelda: Breath of the Wild  ·  🎬 El paraíso  ·  🌸 Princess Mononoke  ·  🍜 Peking Duck
 > 
@@ -2692,7 +3620,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇬🇧 English</summary>
 
-> One love in, a universe out. Today: Machu Picchu. 🌍
+> Machu Picchu fans — your next obsession isn't more of the same. It's all of these. ✨
 > 
 > 🎵 Close to the Edge  ·  🎮 The Legend of Zelda: Breath of the Wild  ·  🎬 El paraíso  ·  🌸 Princess Mononoke  ·  🍜 Peking Duck
 > 
@@ -2706,7 +3634,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇪🇸 Español</summary>
 
-> Un amor entra, un universo sale. Hoy: Machu Picchu. 🌍
+> Fans de Machu Picchu: tu próxima obsesión no es más de lo mismo. Son todas estas. ✨
 > 
 > 🎵 Close to the Edge  ·  🎮 The Legend of Zelda: Breath of the Wild  ·  🎬 El paraíso  ·  🌸 Princess Mononoke  ·  🍜 Peking Duck
 > 
@@ -2720,7 +3648,7 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 <details><summary>🇧🇷 Português</summary>
 
-> Um amor entra, um universo sai. Hoje: Machu Picchu. 🌍
+> Fãs de Machu Picchu: seu próximo vício não é mais do mesmo. São todos estes. ✨
 > 
 > 🎵 Close to the Edge  ·  🎮 The Legend of Zelda: Breath of the Wild  ·  🎬 El paraíso  ·  🌸 Princess Mononoke  ·  🍜 Peking Duck
 > 
@@ -2734,15 +3662,15 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 
 ---
 
-## 45. Barcelona  `posts/45-barcelona.jpg`
+## 60. Barcelona  `posts/60-barcelona.jpg`
 
 **Trilingual (paste this):**
 
-> You love Barcelona. Here's your whole universe. 🌌
-> Amas Barcelona. Aquí tienes tu universo entero. 🌌
-> Você ama Barcelona. Aqui está o seu universo inteiro. 🌌
+> One love in, a universe out. Today: Barcelona. 🌍
+> Un amor entra, un universo sale. Hoy: Barcelona. 🌍
+> Um amor entra, um universo sai. Hoje: Barcelona. 🌍
 > 
-> 📺 Grow Up Show  ·  🎵 Re  ·  🍜 Margarita  ·  🎬 Taylor Swift: Reputation Stadium Tour  ·  🎮 Persona 5
+> 🎵 Re  ·  🍜 Margarita  ·  🎬 Movida Celestial  ·  📺 Hotel del Luna  ·  🎮 Persona 5
 > 
 > 🇬🇧 Muse finds the echo of what you love across every medium.
 > 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
@@ -2750,47 +3678,171 @@ Each post below has the ready-to-paste **trilingual** caption, then the individu
 > 
 > ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #travelinspo #wheretogo #bucketlist #tvshowrecommendations #musicrecommendations #foodie #movierecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #travelinspo #wheretogo #bucketlist #musicrecommendations #foodie #movierecommendations #tvshowrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 <details><summary>🇬🇧 English</summary>
 
-> You love Barcelona. Here's your whole universe. 🌌
+> One love in, a universe out. Today: Barcelona. 🌍
 > 
-> 📺 Grow Up Show  ·  🎵 Re  ·  🍜 Margarita  ·  🎬 Taylor Swift: Reputation Stadium Tour  ·  🎮 Persona 5
+> 🎵 Re  ·  🍜 Margarita  ·  🎬 Movida Celestial  ·  📺 Hotel del Luna  ·  🎮 Persona 5
 > 
 > Muse finds the echo of what you love across every medium.
 > 
 > Try it free 👉 muse-find.com (link in bio)
 > 
-> #travelinspo #wheretogo #bucketlist #tvshowrecommendations #musicrecommendations #foodie #movierecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #travelinspo #wheretogo #bucketlist #musicrecommendations #foodie #movierecommendations #tvshowrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇪🇸 Español</summary>
 
-> Amas Barcelona. Aquí tienes tu universo entero. 🌌
+> Un amor entra, un universo sale. Hoy: Barcelona. 🌍
 > 
-> 📺 Grow Up Show  ·  🎵 Re  ·  🍜 Margarita  ·  🎬 Taylor Swift: Reputation Stadium Tour  ·  🎮 Persona 5
+> 🎵 Re  ·  🍜 Margarita  ·  🎬 Movida Celestial  ·  📺 Hotel del Luna  ·  🎮 Persona 5
 > 
 > Muse encuentra el eco de lo que amas en cada medio.
 > 
 > Pruébalo gratis 👉 muse-find.com (link in bio)
 > 
-> #travelinspo #wheretogo #bucketlist #tvshowrecommendations #musicrecommendations #foodie #movierecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #travelinspo #wheretogo #bucketlist #musicrecommendations #foodie #movierecommendations #tvshowrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 
 <details><summary>🇧🇷 Português</summary>
 
-> Você ama Barcelona. Aqui está o seu universo inteiro. 🌌
+> Um amor entra, um universo sai. Hoje: Barcelona. 🌍
 > 
-> 📺 Grow Up Show  ·  🎵 Re  ·  🍜 Margarita  ·  🎬 Taylor Swift: Reputation Stadium Tour  ·  🎮 Persona 5
+> 🎵 Re  ·  🍜 Margarita  ·  🎬 Movida Celestial  ·  📺 Hotel del Luna  ·  🎮 Persona 5
 > 
 > A Muse encontra o eco do que você ama em cada mídia.
 > 
 > Experimente grátis 👉 muse-find.com (link in bio)
 > 
-> #travelinspo #wheretogo #bucketlist #tvshowrecommendations #musicrecommendations #foodie #movierecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+> #travelinspo #wheretogo #bucketlist #musicrecommendations #foodie #movierecommendations #tvshowrecommendations #gamerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+---
+
+## 61. Tokyo  `posts/61-tokyo.jpg`
+
+**Trilingual (paste this):**
+
+> You love Tokyo. Here's your whole universe. 🌌
+> Amas Tokyo. Aquí tienes tu universo entero. 🌌
+> Você ama Tokyo. Aqui está o seu universo inteiro. 🌌
+> 
+> 🎵 Re  ·  📚 Project Hail Mary  ·  📺 The Exiled Heavy Knight Knows How to Game the System  ·  🌸 The Vision of Escaflowne
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #musicrecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou #discovery
+
+<details><summary>🇬🇧 English</summary>
+
+> You love Tokyo. Here's your whole universe. 🌌
+> 
+> 🎵 Re  ·  📚 Project Hail Mary  ·  📺 The Exiled Heavy Knight Knows How to Game the System  ·  🌸 The Vision of Escaflowne
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #musicrecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou #discovery
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> Amas Tokyo. Aquí tienes tu universo entero. 🌌
+> 
+> 🎵 Re  ·  📚 Project Hail Mary  ·  📺 The Exiled Heavy Knight Knows How to Game the System  ·  🌸 The Vision of Escaflowne
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #musicrecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou #discovery
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Você ama Tokyo. Aqui está o seu universo inteiro. 🌌
+> 
+> 🎵 Re  ·  📚 Project Hail Mary  ·  📺 The Exiled Heavy Knight Knows How to Game the System  ·  🌸 The Vision of Escaflowne
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #musicrecommendations #bookrecommendations #tvshowrecommendations #animerecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou #discovery
+
+</details>
+
+---
+
+## 62. Pyramids of Giza  `posts/62-pyramids-of-giza.jpg`
+
+**Trilingual (paste this):**
+
+> Loved Pyramids of Giza? Here's its echo in every other medium. 🧭
+> ¿Te encantó Pyramids of Giza? Aquí está su eco en todos los demás medios. 🧭
+> Curtiu Pyramids of Giza? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> 🎮 Final Fantasy VII  ·  🌸 Princess Mononoke  ·  🎵 Genesis (Remastered)  ·  📚 The House of the Spirits  ·  📺 The Wheel of Time
+> 
+> 🇬🇧 Muse finds the echo of what you love across every medium.
+> 🇪🇸 Muse encuentra el eco de lo que amas en cada medio.
+> 🇧🇷 A Muse encontra o eco do que você ama em cada mídia.
+> 
+> ✨ Try it free · Pruébalo gratis · Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #gamerecommendations #animerecommendations #musicrecommendations #bookrecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+<details><summary>🇬🇧 English</summary>
+
+> Loved Pyramids of Giza? Here's its echo in every other medium. 🧭
+> 
+> 🎮 Final Fantasy VII  ·  🌸 Princess Mononoke  ·  🎵 Genesis (Remastered)  ·  📚 The House of the Spirits  ·  📺 The Wheel of Time
+> 
+> Muse finds the echo of what you love across every medium.
+> 
+> Try it free 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #gamerecommendations #animerecommendations #musicrecommendations #bookrecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇪🇸 Español</summary>
+
+> ¿Te encantó Pyramids of Giza? Aquí está su eco en todos los demás medios. 🧭
+> 
+> 🎮 Final Fantasy VII  ·  🌸 Princess Mononoke  ·  🎵 Genesis (Remastered)  ·  📚 The House of the Spirits  ·  📺 The Wheel of Time
+> 
+> Muse encuentra el eco de lo que amas en cada medio.
+> 
+> Pruébalo gratis 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #gamerecommendations #animerecommendations #musicrecommendations #bookrecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
+
+</details>
+
+<details><summary>🇧🇷 Português</summary>
+
+> Curtiu Pyramids of Giza? Aqui está o eco dele em todas as outras mídias. 🧭
+> 
+> 🎮 Final Fantasy VII  ·  🌸 Princess Mononoke  ·  🎵 Genesis (Remastered)  ·  📚 The House of the Spirits  ·  📺 The Wheel of Time
+> 
+> A Muse encontra o eco do que você ama em cada mídia.
+> 
+> Experimente grátis 👉 muse-find.com (link in bio)
+> 
+> #travelinspo #wheretogo #bucketlist #gamerecommendations #animerecommendations #musicrecommendations #bookrecommendations #tvshowrecommendations #muse #tasteengine #ifyoulike #recommendations #recomendaciones #recomendações #foryou
 
 </details>
 

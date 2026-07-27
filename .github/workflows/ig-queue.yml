@@ -11,7 +11,7 @@ on:
       per_cat:
         description: 'Anchors per category (×8 = rough card count)'
         required: false
-        default: '6'
+        default: '8'
 
 permissions:
   contents: write
