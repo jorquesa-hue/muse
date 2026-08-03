@@ -1,0 +1,174 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>muse — usage &amp; health</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f6f6f4;--panel:#ffffff;--ink:#18181b;--mut:#5b5b63;--dim:#8a8a90;--acc:#db5a54;--accb:#2a78d6;--line:rgba(0,0,0,.08);
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;--serif:"Iowan Old Style",Palatino,Georgia,serif}
+body{background:radial-gradient(120% 70% at 50% -10%,#f7f0ee,#eeece7 60%);color:var(--ink);font-family:var(--sans);padding:36px 20px 80px}
+.wrap{max-width:960px;margin:0 auto}
+header{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.wm{font-size:30px;font-weight:800;letter-spacing:-.01em}
+.wm .dot{color:var(--acc)}
+.gen{font-family:var(--mono);font-size:13px;color:var(--dim)}
+h2{font-family:var(--serif);font-size:22px;font-weight:700;margin:0 0 14px}
+.section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin-bottom:20px;box-shadow:0 10px 30px -22px rgba(0,0,0,.25)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:20px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.kpi-val{font-size:28px;font-weight:800;letter-spacing:-.01em}
+.kpi-label{font-family:var(--mono);font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.kpi-sub{font-size:12px;color:var(--dim);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+.bar-row{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:14px}
+.bar-label{flex:0 0 118px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:10px;background:#eeede8;border-radius:6px;overflow:hidden}
+.bar-fill{display:block;height:100%;background:var(--acc);border-radius:6px}
+.bar-value{flex:0 0 auto;font-family:var(--mono);font-size:13px;font-weight:600;min-width:40px;text-align:right}
+.muted{color:var(--dim);font-size:14px}
+.spark{display:flex;align-items:flex-end;gap:3px;height:50px}
+.spark-col{flex:1;display:flex;align-items:flex-end;height:100%}
+.spark-bar{width:100%;background:var(--acc);border-radius:3px 3px 0 0;min-height:3px}
+.spark-bar.accent-b{background:var(--accb)}
+.spark-ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:6px}
+.gaps{list-style:none;font-size:14px}
+.gaps li{padding:7px 0;border-top:1px solid var(--line);display:flex;gap:10px;align-items:baseline}
+.gaps li:first-child{border-top:none}
+.gcat{font-family:var(--mono);font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;flex:0 0 60px}
+.ig-track{height:12px;background:#eeede8;border-radius:7px;overflow:hidden;margin:10px 0 6px}
+.ig-fill{display:block;height:100%;background:var(--acc);border-radius:7px}
+footer{font-size:12px;color:var(--dim);margin-top:30px;line-height:1.6}
+</style></head><body><div class="wrap">
+<header><div class="wm">muse<span class="dot">.</span> <span style="font-weight:400;font-size:18px;color:var(--mut)">usage &amp; health</span></div>
+<div class="gen">generated 2026-08-03T09:10:46.500Z</div></header>
+
+<div class="kpis">
+<div class="kpi"><div class="kpi-val">135</div><div class="kpi-label">Ratings</div><div class="kpi-sub">36.3% 👍</div></div>
+<div class="kpi"><div class="kpi-val">76.1%</div><div class="kpi-label">Match quality</div><div class="kpi-sub">avg of rated matches</div></div>
+<div class="kpi"><div class="kpi-val">6</div><div class="kpi-label">Tasters</div><div class="kpi-sub">unique sessions</div></div>
+<div class="kpi"><div class="kpi-val">6</div><div class="kpi-label">Searches logged</div><div class="kpi-sub">0 catalog gaps</div></div>
+<div class="kpi"><div class="kpi-val">6,548</div><div class="kpi-label">Catalog</div><div class="kpi-sub">8 categories</div></div>
+<div class="kpi"><div class="kpi-val">77.3%</div><div class="kpi-label">Engine accuracy</div><div class="kpi-sub">judge-verified, n=400</div></div>
+</div>
+
+<div class="section">
+  <h2>Ratings — last 30 days</h2>
+  <div class="spark"><div class="spark-col" title="2026-07-05: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-06: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-07: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-08: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-09: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-10: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-11: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-12: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-13: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-14: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-15: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-16: 6 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-17: 1 rating"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-18: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-19: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-20: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-21: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-22: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-23: 101 ratings"><div class="spark-bar" style="height:46px"></div></div><div class="spark-col" title="2026-07-24: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-25: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-26: 19 ratings"><div class="spark-bar" style="height:9px"></div></div><div class="spark-col" title="2026-07-27: 8 ratings"><div class="spark-bar" style="height:4px"></div></div><div class="spark-col" title="2026-07-28: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-29: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-30: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-07-31: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-08-01: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-08-02: 0 ratings"><div class="spark-bar" style="height:3px"></div></div><div class="spark-col" title="2026-08-03: 0 ratings"><div class="spark-bar" style="height:3px"></div></div></div>
+  <div class="spark-ticks"><span>2026-07-05</span><span>2026-08-03</span></div>
+</div>
+
+<div class="grid2">
+  <div class="section"><h2>Ratings by category</h2><div class="bar-row" title="33.1% thumbs-up · avg match quality 75.3%">
+    <span class="bar-label">🎬 Movies</span>
+    <span class="bar-track"><span class="bar-fill" style="width:100%"></span></span>
+    <span class="bar-value">127</span>
+  </div><div class="bar-row" title="83.3% thumbs-up · avg match quality 90.2%">
+    <span class="bar-label">📺 TV</span>
+    <span class="bar-track"><span class="bar-fill" style="width:5%"></span></span>
+    <span class="bar-value">6</span>
+  </div><div class="bar-row" title="100% thumbs-up · avg match quality 79.5%">
+    <span class="bar-label">📚 Books</span>
+    <span class="bar-track"><span class="bar-fill" style="width:2%"></span></span>
+    <span class="bar-value">2</span>
+  </div></div>
+  <div class="section"><h2>Rated in</h2><div class="bar-row">
+    <span class="bar-label">🇬🇧 English</span>
+    <span class="bar-track"><span class="bar-fill" style="width:100%"></span></span>
+    <span class="bar-value">135</span>
+  </div></div>
+</div>
+
+<div class="section">
+  <h2>Engine accuracy by category</h2>
+  <p class="muted" style="margin-bottom:12px">Judge-verified triplet accuracy (scripts/eval.mjs) · overall 77.3% · cross-media 71.3%</p>
+  <div class="bar-row" title="n=40 judged triplets">
+    <span class="bar-label">🎬 Movies</span>
+    <span class="bar-track"><span class="bar-fill" style="width:73%"></span></span>
+    <span class="bar-value">72.5%</span>
+  </div><div class="bar-row" title="n=40 judged triplets">
+    <span class="bar-label">📺 TV</span>
+    <span class="bar-track"><span class="bar-fill" style="width:80%"></span></span>
+    <span class="bar-value">80%</span>
+  </div><div class="bar-row" title="n=40 judged triplets">
+    <span class="bar-label">📚 Books</span>
+    <span class="bar-track"><span class="bar-fill" style="width:68%"></span></span>
+    <span class="bar-value">67.5%</span>
+  </div><div class="bar-row" title="n=40 judged triplets">
+    <span class="bar-label">🎵 Music</span>
+    <span class="bar-track"><span class="bar-fill" style="width:73%"></span></span>
+    <span class="bar-value">72.5%</span>
+  </div><div class="bar-row" title="n=40 judged triplets">
+    <span class="bar-label">🎮 Games</span>
+    <span class="bar-track"><span class="bar-fill" style="width:90%"></span></span>
+    <span class="bar-value">90%</span>
+  </div><div class="bar-row" title="n=40 judged triplets">
+    <span class="bar-label">🌸 Anime</span>
+    <span class="bar-track"><span class="bar-fill" style="width:65%"></span></span>
+    <span class="bar-value">65%</span>
+  </div><div class="bar-row" title="n=40 judged triplets">
+    <span class="bar-label">🍜 Food</span>
+    <span class="bar-track"><span class="bar-fill" style="width:95%"></span></span>
+    <span class="bar-value">95%</span>
+  </div><div class="bar-row" title="n=40 judged triplets">
+    <span class="bar-label">✈️ Travel</span>
+    <span class="bar-track"><span class="bar-fill" style="width:88%"></span></span>
+    <span class="bar-value">87.5%</span>
+  </div>
+  <h2 style="margin-top:22px">Accuracy trend</h2>
+  <p class="muted">Trend builds up as metrics.yml runs on more days.</p>
+</div>
+
+<div class="section">
+  <h2>Catalog size by category</h2>
+  <div class="bar-row" title="97.3% have a real cover image">
+    <span class="bar-label">🎬 Movies</span>
+    <span class="bar-track"><span class="bar-fill" style="width:100%"></span></span>
+    <span class="bar-value">1504</span>
+  </div><div class="bar-row" title="78.5% have a real cover image">
+    <span class="bar-label">📺 TV</span>
+    <span class="bar-track"><span class="bar-fill" style="width:67%"></span></span>
+    <span class="bar-value">1011</span>
+  </div><div class="bar-row" title="98% have a real cover image">
+    <span class="bar-label">📚 Books</span>
+    <span class="bar-track"><span class="bar-fill" style="width:64%"></span></span>
+    <span class="bar-value">966</span>
+  </div><div class="bar-row" title="99.4% have a real cover image">
+    <span class="bar-label">🎵 Music</span>
+    <span class="bar-track"><span class="bar-fill" style="width:52%"></span></span>
+    <span class="bar-value">789</span>
+  </div><div class="bar-row" title="95.3% have a real cover image">
+    <span class="bar-label">🎮 Games</span>
+    <span class="bar-track"><span class="bar-fill" style="width:37%"></span></span>
+    <span class="bar-value">551</span>
+  </div><div class="bar-row" title="96.3% have a real cover image">
+    <span class="bar-label">🌸 Anime</span>
+    <span class="bar-track"><span class="bar-fill" style="width:43%"></span></span>
+    <span class="bar-value">653</span>
+  </div><div class="bar-row" title="88.4% have a real cover image">
+    <span class="bar-label">🍜 Food</span>
+    <span class="bar-track"><span class="bar-fill" style="width:45%"></span></span>
+    <span class="bar-value">673</span>
+  </div><div class="bar-row" title="95.5% have a real cover image">
+    <span class="bar-label">✈️ Travel</span>
+    <span class="bar-track"><span class="bar-fill" style="width:27%"></span></span>
+    <span class="bar-value">401</span>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Recent search misses</h2>
+  <p class="muted" style="margin-bottom:10px">Searched but not (yet) an exact catalog title — candidates for scripts/ingest.mjs.</p>
+  <p class="muted">No catalog gaps in the recent search log.</p>
+</div>
+
+<div class="section">
+  <h2>Instagram distribution</h2>
+  <div class="ig-track"><span class="ig-fill" style="width:0%"></span></div>
+  <p class="muted">0 / 62 cards posted (0%)</p>
+</div>
+
+<footer>
+  Aggregate counts only — no personal data. Session ids are random, browser-local, and never shown. Sources: Supabase <code>ratings</code>/<code>searches</code> (service_role read, never exposed to the browser), <code>data.json</code>, <code>eval/report.json</code>, <code>ig/queue.json</code>. Regenerated daily by <code>.github/workflows/metrics.yml</code> — not linked from the app nav.
+</footer>
+</div></body></html>
