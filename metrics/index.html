@@ -41,12 +41,13 @@ h2{font-family:var(--serif);font-size:22px;font-weight:700;margin:0 0 14px}
 footer{font-size:12px;color:var(--dim);margin-top:30px;line-height:1.6}
 </style></head><body><div class="wrap">
 <header><div class="wm">muse<span class="dot">.</span> <span style="font-weight:400;font-size:18px;color:var(--mut)">usage &amp; health</span></div>
-<div class="gen">generated 2026-08-03T09:10:46.500Z</div></header>
+<div class="gen">generated 2026-08-03T15:39:58.287Z</div></header>
 
 <div class="kpis">
 <div class="kpi"><div class="kpi-val">135</div><div class="kpi-label">Ratings</div><div class="kpi-sub">36.3% 👍</div></div>
 <div class="kpi"><div class="kpi-val">76.1%</div><div class="kpi-label">Match quality</div><div class="kpi-sub">avg of rated matches</div></div>
-<div class="kpi"><div class="kpi-val">6</div><div class="kpi-label">Tasters</div><div class="kpi-sub">unique sessions</div></div>
+<div class="kpi"><div class="kpi-val">6</div><div class="kpi-label">Tasters</div><div class="kpi-sub">33.3% returning</div></div>
+<div class="kpi"><div class="kpi-val">—</div><div class="kpi-label">Visitors (30d)</div><div class="kpi-sub">Web Analytics not connected</div></div>
 <div class="kpi"><div class="kpi-val">6</div><div class="kpi-label">Searches logged</div><div class="kpi-sub">0 catalog gaps</div></div>
 <div class="kpi"><div class="kpi-val">6,548</div><div class="kpi-label">Catalog</div><div class="kpi-sub">8 categories</div></div>
 <div class="kpi"><div class="kpi-val">77.3%</div><div class="kpi-label">Engine accuracy</div><div class="kpi-sub">judge-verified, n=400</div></div>
@@ -77,6 +78,72 @@ footer{font-size:12px;color:var(--dim);margin-top:30px;line-height:1.6}
     <span class="bar-track"><span class="bar-fill" style="width:100%"></span></span>
     <span class="bar-value">135</span>
   </div></div>
+</div>
+
+<div class="section">
+  <h2>Where tasters are from</h2>
+  <p class="muted" style="margin-bottom:12px">Vercel Web Analytics, last 30 days — country-level only, aggregated by Vercel at the edge (no IP ever reaches Muse).</p>
+  <p class="muted">Not connected yet — enable Web Analytics for this project in the Vercel dashboard, create a Vercel Access Token, and add it as the <code>VERCEL_TOKEN</code> repo secret.</p>
+  
+</div>
+
+<div class="grid2">
+  <div class="section">
+    <h2>How long tasters stick around</h2>
+    <p class="muted" style="margin-bottom:12px">33.3% rated on more than one day · avg span 2d</p>
+    <div class="bar-row">
+    <span class="bar-label">Same day</span>
+    <span class="bar-track"><span class="bar-fill" style="width:100%"></span></span>
+    <span class="bar-value">4</span>
+  </div><div class="bar-row">
+    <span class="bar-label">2–7 days</span>
+    <span class="bar-track"><span class="bar-fill" style="width:50%"></span></span>
+    <span class="bar-value">2</span>
+  </div><div class="bar-row">
+    <span class="bar-label">8–30 days</span>
+    <span class="bar-track"><span class="bar-fill" style="width:2%"></span></span>
+    <span class="bar-value">0</span>
+  </div><div class="bar-row">
+    <span class="bar-label">30+ days</span>
+    <span class="bar-track"><span class="bar-fill" style="width:2%"></span></span>
+    <span class="bar-value">0</span>
+  </div>
+  </div>
+  <div class="section">
+    <h2>Engagement depth</h2>
+    <p class="muted" style="margin-bottom:12px">Ratings logged per taster</p>
+    <div class="bar-row">
+    <span class="bar-label">1 rating</span>
+    <span class="bar-track"><span class="bar-fill" style="width:100%"></span></span>
+    <span class="bar-value">4</span>
+  </div><div class="bar-row">
+    <span class="bar-label">2–5 ratings</span>
+    <span class="bar-track"><span class="bar-fill" style="width:25%"></span></span>
+    <span class="bar-value">1</span>
+  </div><div class="bar-row">
+    <span class="bar-label">6–15 ratings</span>
+    <span class="bar-track"><span class="bar-fill" style="width:2%"></span></span>
+    <span class="bar-value">0</span>
+  </div><div class="bar-row">
+    <span class="bar-label">16+ ratings</span>
+    <span class="bar-track"><span class="bar-fill" style="width:25%"></span></span>
+    <span class="bar-value">1</span>
+  </div>
+    <h2 style="margin-top:20px;font-size:16px">Categories explored</h2>
+    <div class="bar-row">
+    <span class="bar-label">1 category</span>
+    <span class="bar-track"><span class="bar-fill" style="width:100%"></span></span>
+    <span class="bar-value">4</span>
+  </div><div class="bar-row">
+    <span class="bar-label">2 categories</span>
+    <span class="bar-track"><span class="bar-fill" style="width:50%"></span></span>
+    <span class="bar-value">2</span>
+  </div><div class="bar-row">
+    <span class="bar-label">3+ categories</span>
+    <span class="bar-track"><span class="bar-fill" style="width:2%"></span></span>
+    <span class="bar-value">0</span>
+  </div>
+  </div>
 </div>
 
 <div class="section">
@@ -169,6 +236,6 @@ footer{font-size:12px;color:var(--dim);margin-top:30px;line-height:1.6}
 </div>
 
 <footer>
-  Aggregate counts only — no personal data. Session ids are random, browser-local, and never shown. Sources: Supabase <code>ratings</code>/<code>searches</code> (service_role read, never exposed to the browser), <code>data.json</code>, <code>eval/report.json</code>, <code>ig/queue.json</code>. Regenerated daily by <code>.github/workflows/metrics.yml</code> — not linked from the app nav.
+  Aggregate counts only — no personal data. Session ids are random, browser-local, and never shown; "tasters" and "days active" are derived from RATED matches only (browsing without rating leaves no trace here). Country/device come from Vercel Web Analytics, which never exposes a visitor-level id via its API — there is no way to cross-reference a country with a taster's ratings. Sources: Supabase <code>ratings</code>/<code>searches</code> (service_role read, never exposed to the browser), Vercel Web Analytics (server-side token, never shipped to the client), <code>data.json</code>, <code>eval/report.json</code>, <code>ig/queue.json</code>. Regenerated daily by <code>.github/workflows/metrics.yml</code> — not linked from the app nav.
 </footer>
 </div></body></html>
