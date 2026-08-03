@@ -1,9 +1,10 @@
 name: Usage metrics
 
 # Daily: regenerates the usage & health dashboard (scripts/metrics.mjs) from Supabase ratings/
-# searches (service_role — see T24), data.json, eval/report.json, and ig/queue.json. Writes
-# metrics/history.json (one snapshot/day, so trend charts build up) and metrics/index.html —
-# not linked from the app nav, reachable only by direct URL.
+# searches (service_role — see T24), Vercel Web Analytics (geography + traffic — optional, needs
+# VERCEL_TOKEN; degrades to a "not connected" placeholder without it), data.json, eval/report.json,
+# and ig/queue.json. Writes metrics/history.json (one snapshot/day, so trend charts build up) and
+# metrics/index.html — not linked from the app nav, reachable only by direct URL.
 
 on:
   schedule:
@@ -31,6 +32,7 @@ jobs:
       - name: Build metrics dashboard
         env:
           SB_SERVICE_KEY: ${{ secrets.SB_SERVICE_KEY }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: node scripts/metrics.mjs
 
       - name: Commit & push if changed
