@@ -38,7 +38,8 @@
 <link rel="stylesheet" href="style.css">
 <!-- Vercel Web Analytics — same-origin script Vercel rewrites at the edge (no external host, so
      the existing script-src/connect-src 'self' CSP already covers it); a harmless no-op request
-     until Web Analytics is turned on for this project in the Vercel dashboard. -->
+     until Web Analytics is turned on for this project in the Vercel dashboard. The window.va
+     initialization is in boot-data.js to comply with the strict CSP (no inline scripts). -->
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body><div class="device">
