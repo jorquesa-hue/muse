@@ -107,9 +107,12 @@ Wikidata), derives its features on the fly, and runs the same algorithms. See `l
   throwaway file, evals both against the same catalog, and writes `eval/model-comparison.md`. Ship
   gate: switch the default model only if the candidate's overall accuracy beats the baseline by ≥1 pt.
 - **`metrics.yml`** (daily) → `metrics.mjs`: builds the usage & health dashboard — Supabase
-  `ratings`/`searches` (service_role read, never exposed to the browser), catalog size, `eval/report.json`,
-  `ig/queue.json` — into `metrics/history.json` (one snapshot/day) + `metrics/index.html`. Not linked
-  from the app nav; reachable only by direct URL.
+  `ratings`/`searches` (service_role read, never exposed to the browser: totals, by-category/language,
+  a 30-day trend, and per-taster retention + engagement-depth buckets derived from `ratings.sid`),
+  Vercel Web Analytics (geography + traffic — optional, needs `VERCEL_TOKEN`; degrades to a "not
+  connected" placeholder without it), catalog size, `eval/report.json`, `ig/queue.json` — into
+  `metrics/history.json` (one snapshot/day) + `metrics/index.html`. Not linked from the app nav;
+  reachable only by direct URL.
 - **`bump-sw.mjs`**: helper to increment the SW version after editing app files.
 
 The catalog/automation jobs commit only when something changed, and modify `data.json`, `sw.js`,
@@ -126,6 +129,11 @@ it can't read/steal anything. Two tables:
 - Repo secret **`TMDB_KEY`** — TMDB v4 Read Access Token (used only by the weekly refresh, never shipped).
 - Repo secret **`SB_SERVICE_KEY`** — Supabase service_role key (read-only use by `refit.mjs` and
   `metrics.mjs`; never shipped).
+- Repo secret **`VERCEL_TOKEN`** (optional) — a Vercel Access Token, read-only use by `metrics.mjs`
+  to pull Web Analytics (geography + traffic) into the usage dashboard; never shipped. Requires Web
+  Analytics turned on for the project in the Vercel dashboard too (one-click, dashboard-only — no
+  API for that part). Absent either one, the dashboard's geography section shows a "not connected"
+  placeholder instead of failing.
 - Repo secret **`ANTHROPIC_API_KEY`** — Claude API key for the LLM-in-Actions jobs (`eval.mjs`, and the
   E2/E3/E6 enrichment jobs). Never shipped to the client — all LLM calls happen in Actions only.
 - Optional repo **variables**: `JUDGE_MODEL` (eval judge model, default `claude-sonnet-5`),
