@@ -5,7 +5,7 @@ love (a movie, TV series, book, album, game, anime, dish, or travel destination)
 algorithm-ranked similar picks in that category, plus a **"Beyond — same DNA, different medium"**
 cross-media section. Trilingual (EN / ES / Brazilian-PT). Runs fully client-side.
 
-**Live:** https://muse-find.com — served from this repo via GitHub Pages.
+**Live:** https://muse-find.com — served from this repo via Vercel (static, no build step).
 
 ## Structure (no build step — edit these files directly)
 
@@ -25,7 +25,7 @@ cross-media section. Trilingual (EN / ES / Brazilian-PT). Runs fully client-side
 ### Making a change to the app
 1. Edit `index.html`, `style.css`, and/or `app.js`.
 2. Bump the service worker so returning users get it: `node scripts/bump-sw.mjs`
-3. Commit to `main`. GitHub Pages redeploys in ~1 minute.
+3. Commit to `main`. Vercel redeploys in ~1 minute.
 
 ## How matching works (in `app.js`)
 Each item carries a precomputed feature set. `score(a, b, cat)` blends ~15 per-category signals
@@ -106,6 +106,10 @@ Wikidata), derives its features on the fly, and runs the same algorithms. See `l
   `model-compare.mjs`: E4 embedding-model bake-off. Builds a candidate model's embeddings into a
   throwaway file, evals both against the same catalog, and writes `eval/model-comparison.md`. Ship
   gate: switch the default model only if the candidate's overall accuracy beats the baseline by ≥1 pt.
+- **`metrics.yml`** (daily) → `metrics.mjs`: builds the usage & health dashboard — Supabase
+  `ratings`/`searches` (service_role read, never exposed to the browser), catalog size, `eval/report.json`,
+  `ig/queue.json` — into `metrics/history.json` (one snapshot/day) + `metrics/index.html`. Not linked
+  from the app nav; reachable only by direct URL.
 - **`bump-sw.mjs`**: helper to increment the SW version after editing app files.
 
 The catalog/automation jobs commit only when something changed, and modify `data.json`, `sw.js`,
@@ -120,7 +124,8 @@ it can't read/steal anything. Two tables:
 
 ## Secrets / config
 - Repo secret **`TMDB_KEY`** — TMDB v4 Read Access Token (used only by the weekly refresh, never shipped).
-- Repo secret **`SB_SERVICE_KEY`** — Supabase service_role key (read-only use by `refit.mjs`; never shipped).
+- Repo secret **`SB_SERVICE_KEY`** — Supabase service_role key (read-only use by `refit.mjs` and
+  `metrics.mjs`; never shipped).
 - Repo secret **`ANTHROPIC_API_KEY`** — Claude API key for the LLM-in-Actions jobs (`eval.mjs`, and the
   E2/E3/E6 enrichment jobs). Never shipped to the client — all LLM calls happen in Actions only.
 - Optional repo **variables**: `JUDGE_MODEL` (eval judge model, default `claude-sonnet-5`),

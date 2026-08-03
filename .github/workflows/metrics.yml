@@ -1,0 +1,70 @@
+name: Usage metrics
+
+# Daily: regenerates the usage & health dashboard (scripts/metrics.mjs) from Supabase ratings/
+# searches (service_role — see T24), data.json, eval/report.json, and ig/queue.json. Writes
+# metrics/history.json (one snapshot/day, so trend charts build up) and metrics/index.html —
+# not linked from the app nav, reachable only by direct URL.
+
+on:
+  schedule:
+    - cron: '5 7 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: catalog-writes
+  cancel-in-progress: false
+
+jobs:
+  metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build metrics dashboard
+        env:
+          SB_SERVICE_KEY: ${{ secrets.SB_SERVICE_KEY }}
+        run: node scripts/metrics.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "muse-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add metrics/history.json metrics/index.html
+          if git diff --staged --quiet; then
+            echo "No metrics changes."
+            exit 0
+          fi
+          git commit -m "chore: refresh usage metrics [skip ci]"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push; then
+              exit 0
+            fi
+            echo "push attempt $i failed, retrying after backoff..."
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 5))
+          done
+          echo "FATAL: could not push after 3 attempts." >&2
+          exit 1
+
+      - name: File an issue if this run failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `${context.workflow} failed`;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const { data: issues } = await github.rest.issues.listForRepo({ owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 50 });
+            const existing = issues.find(i => i.title === title && !i.pull_request);
+            if (existing) {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: existing.number, body: `Failed again on \`${context.sha.slice(0,7)}\`: ${runUrl}` });
+            } else {
+              await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body: `The **${context.workflow}** workflow failed on \`${context.sha.slice(0,7)}\`.\n\n${runUrl}` });
+            }

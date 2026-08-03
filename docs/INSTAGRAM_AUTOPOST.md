@@ -7,7 +7,7 @@ Instagram's ToS and get accounts banned.
 ## How it works
 
 1. **`ig-queue.yml`** (run manually) renders the cards with real covers and commits them under `ig/`.
-   GitHub Pages serves them publicly at `https://muse-find.com/ig/posts/<slug>.jpg`, and writes
+   Vercel serves them publicly at `https://muse-find.com/ig/posts/<slug>.jpg`, and writes
    `ig/queue.json` — the posting worklist (caption + a `posted` flag per card).
 2. **`ig-post.yml`** runs on a cron (**Mon / Wed / Fri, 16:10 UTC**) and publishes the **next unposted**
    card via the Graph API, then flips its `posted` flag. One post per run.
@@ -33,7 +33,7 @@ You need an Instagram **Business or Creator** account and a Meta app. Steps:
 4. **Add GitHub secrets** — repo → *Settings → Secrets and variables → Actions → New repository secret*:
    - `IG_USER_ID` = the id from step 3
    - `IG_ACCESS_TOKEN` = the long-lived token
-5. **GitHub Pages** must serve the repo at `muse-find.com` (already the case for the app).
+5. **Vercel** must serve the repo at `muse-find.com` (already the case for the app).
 
 ## Go live
 
