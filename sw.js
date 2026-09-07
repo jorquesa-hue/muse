@@ -1,6 +1,6 @@
 /* Muse — service worker (offline-first app shell) */
 /* bump this version string on every deploy so returning users get the update */
-const CACHE = 'muse-v104';
+const CACHE = 'muse-v105';
 const ASSETS = [
   './index.html',
   './style.css',
