@@ -108,6 +108,11 @@ const T = {
   stale: { pt: 'A agenda não é atualizada há alguns dias. Confirme no site do evento antes de sair.', en: "The agenda hasn't refreshed in a few days. Check the event's site before you go.", es: 'La agenda no se actualiza hace unos días. Confirma en el sitio del evento antes de salir.' },
   privacy: { pt: 'Privacidade', en: 'Privacy', es: 'Privacidad' },
   suggest: { pt: '＋ Organiza um evento? Cadastre no Muse', en: '＋ Organizing an event? List it on Muse', es: '＋ ¿Organizas un evento? Regístralo en Muse' },
+  shareApp: { pt: 'Compartilhar o Muse', en: 'Share Muse', es: 'Compartir Muse' },
+  shareAppMsg: { pt: 'Muse: passeios em família perto de você — festivais de música, gastronomia, festas e programação infantil, hoje e no fim de semana.',
+                 en: 'Muse: family day-outs near you — music festivals, food, folk festivals and kids’ shows, today and this weekend.',
+                 es: 'Muse: paseos en familia cerca de ti — festivales de música, gastronomía, fiestas y programación infantil, hoy y el fin de semana.' },
+  linkCopied: { pt: 'Link copiado!', en: 'Link copied!', es: '¡Enlace copiado!' },
   orgB: { pt: '✓ Cadastrado pelo organizador', en: '✓ Listed by the organizer', es: '✓ Registrado por el organizador' },
   labTitle: { pt: 'Como o Muse funciona', en: 'How Muse works', es: 'Cómo funciona Muse' },
   labBody: {
@@ -402,6 +407,16 @@ async function shareEvent(e, btn) {
   } catch (err) {}
 }
 
+// footer button: invite friends to the app itself (native share sheet on phones, copy link elsewhere)
+async function shareApp() {
+  const url = 'https://muse-find.com/';
+  if (navigator.share) { try { await navigator.share({ title: 'Muse', text: tr('shareAppMsg'), url }); } catch (err) {} return; }
+  try {
+    await navigator.clipboard.writeText(url);
+    $('shareAppTxt').textContent = tr('linkCopied'); setTimeout(() => { $('shareAppTxt').textContent = tr('shareApp'); }, 1800);
+  } catch (err) {}
+}
+
 /* ---------------- rendering ---------------- */
 const ICON = {
   link: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
@@ -461,6 +476,7 @@ function renderChrome() {
   $('labTitle').textContent = tr('labTitle');
   $('labBody').innerHTML = tr('labBody');
   $('suggestBtn').textContent = tr('suggest');
+  $('shareAppTxt').textContent = tr('shareApp');
   const upd = DATA && DATA.generated ? tr('updated', { d: new Intl.DateTimeFormat(LOCALE[state.lang], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(DATA.generated)) }) + ' · ' : '';
   $('foot').innerHTML = `${esc(upd)}<a href="privacy.html">${esc(tr('privacy'))}</a>`;
 }
@@ -595,6 +611,7 @@ document.addEventListener('click', (ev) => {
   // shortcut under the stats line: search right away, or show the card that explains why not
   if (t.closest('[data-search-go]')) { if (canSearch()) runSearch(); else { const c = document.querySelector('.srch'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); } return; }
   if (t.closest('[data-retry]')) { DATA = null; render(); loadEvents(); return; }
+  if (t.closest('[data-shareapp]')) { shareApp(); return; }
   if (t.closest('[data-suggest]')) { location.href = 'cadastrar.html'; return; }
   const far = t.closest('[data-far]'); if (far) { renderFar(far.dataset.far); far.remove(); return; }
   const opt = t.closest('.ac .opt'); if (opt) { const c = acItems[+opt.dataset.i]; if (c) pickCity(c); return; }

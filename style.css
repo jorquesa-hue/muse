@@ -190,7 +190,10 @@ main{padding:10px 14px 6px;display:flex;flex-direction:column;gap:14px}
 .foot{margin:14px 18px 4px;font-size:12.5px;color:var(--dim);text-align:center;font-weight:600}
 .foot a{color:var(--mut)}
 .suggest{display:block;margin:10px auto 0;padding:9px 16px;border-radius:999px;border:2px dashed var(--line2);font-weight:800;font-size:13.5px;color:var(--mut)}
-.social{display:flex;justify-content:center;padding:14px 0 20px}
+.social{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px 18px;padding:14px 0 20px}
+.shareapp{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:#fff;border:2px solid var(--line);font-weight:800;font-size:13.5px;color:var(--ink)}
+.shareapp svg{color:var(--acc)}
+.shareapp:active{transform:translateY(1px)}
 .ig{display:inline-flex;align-items:center;gap:7px;font-weight:800;text-decoration:none;color:var(--mut)}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
