@@ -477,6 +477,303 @@
      "es": "Feria de artesanía cearense todos los días, de 16:00 a 22:00, en el malecón de Beira Mar, Meireles. Entrada gratuita."
     }
    }
+  },
+  "feira-hippie-goiania": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://curtamais.com.br/goiania/wp-content/uploads/sites/2/2026/08/hippie.webp",
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     0
+    ],
+    "time": "07:00",
+    "venue": "Praça do Trabalhador, Setor Norte Ferroviário",
+    "city": "Goiânia",
+    "uf": "GO",
+    "price": "free",
+    "priceText": "Entrada gratuita",
+    "url": "https://curtamais.com.br/goiania/feira-hippie-goiania-dicas-para-garimpar/",
+    "d": {
+     "pt": "Grande feira de roupas, artesanato e comida na Praça do Trabalhador. O pico é aos domingos, a partir das 7h. A entrada é gratuita.",
+     "en": "Large fair of clothing, crafts and food at Praça do Trabalhador. The main day is Sunday, from 7am. Free entry.",
+     "es": "Gran feria de ropa, artesanía y comida en la Praça do Trabalhador. El día principal es el domingo, desde las 7h. Entrada gratuita."
+    }
+   }
+  },
+  "festival-virada-salvador": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "reveillon-fortaleza": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "femusc": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "festa-do-livro-usp": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "natal-curitiba-palacio-avenida": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "natal-holambra": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "feira-liberdade": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": null,
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     6,
+     0
+    ],
+    "time": "10:00",
+    "venue": "Praça da Liberdade (Rua Galvão Bueno / Rua dos Estudantes)",
+    "city": "São Paulo",
+    "uf": "SP",
+    "price": "free",
+    "priceText": "Entrada grátis",
+    "url": "https://www.guiadasemana.com.br/sao-paulo/turismo/evento/feira-da-liberdade-praca-da-liberdade-00-00-0000",
+    "d": {
+     "pt": "Feira semanal de comidas orientais e artesanato na Praça da Liberdade, aos sábados e domingos, em geral das 10h às 18h.",
+     "en": "Weekly fair with Asian food and crafts at Praça da Liberdade, Saturdays and Sundays, usually 10am–6pm.",
+     "es": "Feria semanal de comida oriental y artesanía en la Praça da Liberdade, sábados y domingos, normalmente de 10h a 18h."
+    }
+   }
+  },
+  "feira-da-lua-goiania": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://tribunadoplanalto.com.br/wp-content/uploads/2026/07/Feira-Hippie.jpg",
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     6
+    ],
+    "time": "15:00",
+    "venue": "Praça Tamandaré, Setor Oeste",
+    "city": "Goiânia",
+    "uf": "GO",
+    "price": "free",
+    "priceText": null,
+    "url": "https://tribunadoplanalto.com.br/feiras-e-mercados-movimentam-o-fim-de-semana-em-goiania/",
+    "d": {
+     "pt": "Feira de rua com roupas, acessórios, artesanato e gastronomia na Praça Tamandaré. Acontece aos sábados, das 15h às 22h.",
+     "en": "Street fair with clothing, accessories, crafts and food at Praça Tamandaré. Held on Saturdays, 3pm to 10pm.",
+     "es": "Feria callejera con ropa, accesorios, artesanía y gastronomía en la Praça Tamandaré. Los sábados, de 15h a 22h."
+    }
+   }
+  },
+  "feira-boa-viagem": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "feira-eduardo-ribeiro": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "feira-republica": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": null,
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     6,
+     0
+    ],
+    "time": "09:00",
+    "venue": "Praça da República",
+    "city": "São Paulo",
+    "uf": "SP",
+    "price": "free",
+    "priceText": "Entrada grátis",
+    "url": "https://prefeitura.sp.gov.br/web/se/w/noticias/14785",
+    "d": {
+     "pt": "Feira de arte e artesanato na Praça da República (Centro), aos sábados e domingos, das 9h às 17h, segundo a Prefeitura.",
+     "en": "Arts and crafts fair at Praça da República (downtown), Saturdays and Sundays, 9am–5pm per city hall.",
+     "es": "Feria de arte y artesanía en la Praça da República (centro), sábados y domingos, de 9h a 17h según la alcaldía."
+    }
+   }
+  },
+  "feira-hippie-vitoria": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": null,
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     6,
+     0
+    ],
+    "time": null,
+    "venue": "Praça dos Namorados (Artes na Praça), Praia do Canto",
+    "city": "Vitória",
+    "uf": "ES",
+    "price": "free",
+    "priceText": null,
+    "url": "https://cartadeservicos.vitoria.es.gov.br/areas/5-Trabalho-e-Renda/servicos/370-Feira-de-Artesanato-da-Praca-dos-Namorados-Artes-na-Praca/",
+    "d": {
+     "pt": "Feira de artesanato e comidas típicas com shows, nos fins de semana na Praça dos Namorados, que fica em Vitória (não em Vila Velha).",
+     "en": "Crafts and regional food fair with shows, on weekends at Praça dos Namorados, located in Vitória (not Vila Velha).",
+     "es": "Feria de artesanía y comidas típicas con shows, los fines de semana en la Praça dos Namorados, ubicada en Vitória (no en Vila Velha)."
+    }
+   }
+  },
+  "antiguidades-masp": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://sergiolongo.com.br/wp-content/uploads/2026/02/Feira-de-antiguidades-da-Av-Paulista2.webp",
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     0
+    ],
+    "time": "09:00",
+    "venue": "Avenida Paulista com Rua Pamplona (região do MASP)",
+    "city": "São Paulo",
+    "uf": "SP",
+    "price": "free",
+    "priceText": "Entrada gratuita",
+    "url": "https://sergiolongo.com.br/a-feira-de-antiguidades-do-masp-mudou-de-endereco-saiba-onde-ela-esta-agora/",
+    "d": {
+     "pt": "Feira de antiguidades aos domingos, hoje na Av. Paulista com Rua Pamplona, fora do vão livre do MASP. Horário em torno de 9h às 16h.",
+     "en": "Sunday antiques fair, now at Av. Paulista and Rua Pamplona, no longer under MASP. Roughly 9am–4pm.",
+     "es": "Feria de antigüedades los domingos, ahora en Av. Paulista con Rua Pamplona, fuera del MASP. Aprox. 9h a 16h."
+    }
+   }
+  },
+  "feira-bixiga": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": null,
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     0
+    ],
+    "time": "09:00",
+    "venue": "Praça Dom Orione, Bela Vista (Bixiga)",
+    "city": "São Paulo",
+    "uf": "SP",
+    "price": "free",
+    "priceText": null,
+    "url": "https://www.facebook.com/feiradobixigaoficial/",
+    "d": {
+     "pt": "Feira de antiguidades e culinária na Praça Dom Orione, no Bixiga, todos os domingos; horário em geral por volta das 9h às 17h.",
+     "en": "Antiques and food fair at Praça Dom Orione in Bixiga every Sunday; usually around 9am–5pm.",
+     "es": "Feria de antigüedades y gastronomía en la Praça Dom Orione, Bixiga, todos los domingos; normalmente de 9h a 17h."
+    }
+   }
+  },
+  "sonho-natal-canela": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://portaldafolha.com.br/wp-content/uploads/2026/10/image-47.png",
+   "data": {
+    "occurrences": [
+     {
+      "start": "2026-10-30",
+      "end": "2027-01-10"
+     }
+    ],
+    "weekly": null,
+    "time": null,
+    "venue": "Centro de Canela",
+    "city": "Canela",
+    "uf": "RS",
+    "price": "unknown",
+    "priceText": "Várias atrações gratuitas",
+    "url": "https://portaldafolha.com.br/2026/10/16/natal-de-canela-tera-mais-de-300-apresentacoes-e-novas-atracoes-em-2026/",
+    "d": {
+     "pt": "39ª edição do Sonho de Natal, com mais de 300 apresentações, desfiles e a descida do Papai Noel, de 30/10/2026 a 10/01/2027.",
+     "en": "39th Sonho de Natal, with 300+ performances, parades and Santa's descent, from Oct 30, 2026 to Jan 10, 2027.",
+     "es": "39.ª edición del Sonho de Natal, con más de 300 presentaciones, desfiles y descenso de Papá Noel, del 30/10/2026 al 10/01/2027."
+    }
+   }
+  },
+  "feira-hippie-campinas": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://portal-adm.campinas.sp.gov.br/sites/default/files/noticias/imagens-destaque/055420-feirahippie.JPG",
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     0,
+     6
+    ],
+    "time": "09:00",
+    "venue": "Centro de Convivência Cultural de Campinas",
+    "city": "Campinas",
+    "uf": "SP",
+    "price": "free",
+    "priceText": "Entrada gratuita",
+    "url": "https://portal-adm.campinas.sp.gov.br/node/131335",
+    "d": {
+     "pt": "Feira Hippie no Centro de Convivência de Campinas, aos sábados e domingos, das 9h às 14h, com centenas de expositores.",
+     "en": "Hippie fair at Campinas' Centro de Convivência, Saturdays and Sundays, 9am–2pm, with hundreds of exhibitors.",
+     "es": "Feria Hippie en el Centro de Convivência de Campinas, sábados y domingos, de 9h a 14h, con cientos de expositores."
+    }
+   }
+  },
+  "feira-praca-xv": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://riotrip.com.br/wp-content/uploads/2026/06/feira-de-antiguidades-praca-xv-rio.jpg",
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     6
+    ],
+    "time": "08:00",
+    "venue": "Praça XV de Novembro (ao lado do Paço Imperial)",
+    "city": "Rio de Janeiro",
+    "uf": "RJ",
+    "price": "free",
+    "priceText": null,
+    "url": "https://riotrip.com.br/feira-de-antiguidades-praca-xv",
+    "d": {
+     "pt": "Feira de antiguidades na Praça XV, ao lado do Paço Imperial, todo sábado de manhã até meados da tarde (cerca de 8h às 15h).",
+     "en": "Antiques fair at Praça XV beside the Paço Imperial, every Saturday from morning to mid-afternoon (about 8am–3pm).",
+     "es": "Feria de antigüedades en la Praça XV junto al Paço Imperial, cada sábado de mañana hasta media tarde (aprox. 8h a 15h)."
+    }
+   }
+  },
+  "natal-bh-praca-liberdade": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "natal-recife": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "natal-fortaleza": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "natal-salvador": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "natal-manaus": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "natal-campos-jordao": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "festival-verao-ubatuba": {
+   "checked": "2026-11-22",
+   "status": "none"
   }
  }
 }
