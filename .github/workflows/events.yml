@@ -9,6 +9,11 @@ on:
   schedule:
     - cron: '13 9 * * *'      # 06:13 BRT, every day
     - cron: '37 8 * * 1,4'    # 05:37 BRT, Monday + Thursday → discover
+  push:                       # seed calendar or this workflow changed → discover right away
+    branches: [main]
+    paths:
+      - 'calendar/festivals-br.json'
+      - '.github/workflows/events.yml'
   workflow_dispatch:
     inputs:
       discover:
@@ -39,7 +44,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           EVENTS_MODEL: ${{ vars.EVENTS_MODEL }}
-          DISCOVER: ${{ github.event_name == 'workflow_dispatch' && inputs.discover || github.event.schedule == '37 8 * * 1,4' }}
+          DISCOVER: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.discover) || github.event.schedule == '37 8 * * 1,4' }}
         run: |
           if [ "$DISCOVER" = "true" ]; then node scripts/events.mjs --discover; else node scripts/events.mjs; fi
 
