@@ -5,7 +5,7 @@ name: Set up e-mail (Resend)
 #   2. writes Resend's DNS records (SPF/DKIM/bounce MX) into the domain's Vercel DNS,
 #   3. asks Resend to verify the domain,
 #   4. copies RESEND_API_KEY into the Vercel project's environment.
-# Needs repo secrets RESEND_API_KEY and VERCEL_TOKEN. No value is ever printed.
+# Needs repo secrets RESEND_API_KEY (or RESEND) and VERCEL_TOKEN. No value is ever printed.
 on:
   workflow_dispatch:
 
@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Configure Resend + Vercel DNS + Vercel env
         env:
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || secrets.RESEND }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           DOMAIN: muse-find.com
           PROJECT: prj_oI8NSLUV1yNzga7SjqBrp49If3Gz
