@@ -3,7 +3,7 @@
  * events.json is NETWORK-FIRST: the agenda changes daily, so a cached copy is only a fallback for
  * when the family is offline (e.g. on the road), never what a connected visit sees.
  * Bump CACHE on every app-shell deploy (node scripts/bump-sw.mjs) so returning users get it. */
-const CACHE = 'muse-v202';
+const CACHE = 'muse-v203';
 const ASSETS = [
   './index.html',
   './style.css',
