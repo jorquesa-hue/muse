@@ -40,7 +40,7 @@ export async function searchAround(place, { km, today, acc, onBatch = () => {} }
     let list = [];
     try {
       const text = await askWithSearch(localPrompt(place, lens, today, to, km),
-        { maxSearches: 5, maxTokens: 8000, effort: LOCAL_EFFORT, speed: LOCAL_SPEED, model: LOCAL_MODEL, tag, acc });
+        { maxSearches: 7, maxTokens: 10000, effort: LOCAL_EFFORT, speed: LOCAL_SPEED, model: LOCAL_MODEL, tag, acc });
       list = extractJSON(text);
       if (!Array.isArray(list)) list = await repairJSON(text, undefined, { model: LOCAL_MODEL, acc });
       if (!Array.isArray(list)) list = [];

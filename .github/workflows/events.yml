@@ -32,7 +32,7 @@ concurrency:
 jobs:
   events:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 75
     steps:
       # Always start from the newest main, not the commit that triggered the run: a queued run
       # would otherwise rebuild from a stale events.json and conflict when it pushes.

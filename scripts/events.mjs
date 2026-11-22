@@ -56,32 +56,52 @@ export const CATS = ['music', 'food', 'festas', 'kids', 'outdoor', 'fairs'];
 // Discovery areas: small enough that a search covers the interior, not just the capital.
 // Each area is searched twice, once per LENS (stage events / family activities).
 const AREAS = [
+  // São Paulo: the capital, then the interior region by region (one big "interior" search found almost nothing outside the capital)
   { ufs: ['SP'], focus: 'cidade de São Paulo e Grande São Paulo (ABC, Guarulhos, Osasco, Mogi das Cruzes)' },
-  { ufs: ['SP'], focus: 'interior de São Paulo (Campinas, Jundiaí, Sorocaba, Ribeirão Preto, São José dos Campos, Piracicaba, Bauru, São José do Rio Preto, Holambra, Atibaia)' },
-  { ufs: ['SP'], focus: 'litoral paulista e Vale do Ribeira (Santos, Guarujá, São Vicente, Litoral Norte, Registro)' },
+  { ufs: ['SP'], focus: 'região de Campinas e Jundiaí (Campinas, Jundiaí, Americana, Piracicaba, Limeira, Atibaia, Holambra, Bragança Paulista)' },
+  { ufs: ['SP'], focus: 'Vale do Paraíba, Serra da Mantiqueira e Litoral Norte (São José dos Campos, Taubaté, Pindamonhangaba, Guaratinguetá, Aparecida, Campos do Jordão, São Luiz do Paraitinga, Ubatuba, Caraguatatuba)' },
+  { ufs: ['SP'], focus: 'Baixada Santista e Vale do Ribeira (Santos, São Vicente, Guarujá, Praia Grande, Bertioga, Registro, Iguape)' },
+  { ufs: ['SP'], focus: 'região de Sorocaba (Sorocaba, Itu, Salto, Indaiatuba, Votorantim, Tatuí, Itapetininga)' },
+  { ufs: ['SP'], focus: 'nordeste paulista (Ribeirão Preto, Franca, Araraquara, São Carlos, Barretos, Sertãozinho)' },
+  { ufs: ['SP'], focus: 'centro-oeste e oeste paulista (Bauru, Marília, Botucatu, Jaú, São José do Rio Preto, Araçatuba, Presidente Prudente)' },
+  // Rio de Janeiro and Espírito Santo
   { ufs: ['RJ'], focus: 'cidade do Rio de Janeiro e Região Metropolitana (Niterói, São Gonçalo, Baixada Fluminense)' },
-  { ufs: ['RJ', 'ES'], focus: 'interior e litoral do Rio de Janeiro (Petrópolis, Teresópolis, Região dos Lagos, Paraty, Volta Redonda) e o Espírito Santo inteiro' },
-  { ufs: ['MG'], focus: 'Belo Horizonte, região metropolitana e cidades históricas (Ouro Preto, Tiradentes, Sabará)' },
-  { ufs: ['MG'], focus: 'interior de Minas Gerais (Uberlândia, Juiz de Fora, Montes Claros, Sul de Minas, Triângulo Mineiro)' },
-  { ufs: ['PR'], focus: 'Paraná inteiro (Curitiba, Londrina, Maringá, Ponta Grossa, Foz do Iguaçu, litoral)' },
-  { ufs: ['SC'], focus: 'Santa Catarina inteira (Florianópolis, Joinville, Blumenau, Balneário Camboriú, serra catarinense, oeste)' },
-  { ufs: ['RS'], focus: 'Rio Grande do Sul inteiro (Porto Alegre e região, Serra Gaúcha com Gramado e Caxias do Sul, Pelotas, interior)' },
-  { ufs: ['BA'], focus: 'Bahia inteira (Salvador, Feira de Santana, Recôncavo, Chapada Diamantina, Sul da Bahia, Vitória da Conquista)' },
-  { ufs: ['SE', 'AL'], focus: 'Sergipe e Alagoas (Aracaju, Maceió e interior)' },
-  { ufs: ['PE'], focus: 'Pernambuco inteiro (Recife, Olinda, Caruaru, Garanhuns, Petrolina)' },
-  { ufs: ['PB', 'RN'], focus: 'Paraíba e Rio Grande do Norte (João Pessoa, Campina Grande, Natal, Mossoró)' },
-  { ufs: ['CE'], focus: 'Ceará inteiro (Fortaleza, Juazeiro do Norte, Sobral, litoral)' },
-  { ufs: ['PI', 'MA'], focus: 'Piauí e Maranhão (Teresina, São Luís, Parnaíba, Imperatriz)' },
-  { ufs: ['DF', 'GO'], focus: 'Distrito Federal e Goiás (Brasília, Goiânia, Anápolis, Pirenópolis, Caldas Novas)' },
-  { ufs: ['MT', 'MS', 'TO'], focus: 'Mato Grosso, Mato Grosso do Sul e Tocantins (Cuiabá, Campo Grande, Bonito, Palmas)' },
-  { ufs: ['PA', 'AP'], focus: 'Pará e Amapá (Belém, Santarém, Marabá, Macapá)' },
+  { ufs: ['RJ'], focus: 'Região Serrana e Sul Fluminense (Petrópolis, Teresópolis, Nova Friburgo, Volta Redonda, Resende, Penedo, Paraty, Angra dos Reis)' },
+  { ufs: ['RJ'], focus: 'Região dos Lagos e Norte Fluminense (Cabo Frio, Búzios, Arraial do Cabo, Saquarema, Macaé, Rio das Ostras, Campos dos Goytacazes)' },
+  { ufs: ['ES'], focus: 'Espírito Santo inteiro (Vitória, Vila Velha, Serra, Guarapari, Domingos Martins, Cachoeiro de Itapemirim, Linhares)' },
+  // Minas Gerais
+  { ufs: ['MG'], focus: 'Belo Horizonte, região metropolitana e cidades históricas (Ouro Preto, Mariana, Sabará, Brumadinho)' },
+  { ufs: ['MG'], focus: 'Sul de Minas (Pouso Alegre, Poços de Caldas, Varginha, Lavras, Monte Verde, São Lourenço, Itajubá)' },
+  { ufs: ['MG'], focus: 'Zona da Mata e Campo das Vertentes (Juiz de Fora, Barbacena, São João del-Rei, Tiradentes, Viçosa)' },
+  { ufs: ['MG'], focus: 'Triângulo Mineiro, Alto Paranaíba, Norte e Leste de Minas (Uberlândia, Uberaba, Patos de Minas, Montes Claros, Ipatinga, Governador Valadares, Diamantina)' },
+  // South
+  { ufs: ['PR'], focus: 'Curitiba, Campos Gerais e litoral do Paraná (Curitiba, Ponta Grossa, Castro, Morretes, Paranaguá, Guarapuava)' },
+  { ufs: ['PR'], focus: 'norte e oeste do Paraná (Londrina, Maringá, Cascavel, Foz do Iguaçu, Toledo, Apucarana)' },
+  { ufs: ['SC'], focus: 'Grande Florianópolis e litoral catarinense (Florianópolis, São José, Balneário Camboriú, Itajaí, Garopaba, Laguna)' },
+  { ufs: ['SC'], focus: 'norte, Vale do Itajaí, serra e oeste de Santa Catarina (Joinville, Blumenau, Pomerode, Jaraguá do Sul, Lages, Chapecó)' },
+  { ufs: ['RS'], focus: 'Porto Alegre e região metropolitana (Canoas, Novo Hamburgo, São Leopoldo, Gravataí)' },
+  { ufs: ['RS'], focus: 'Serra Gaúcha (Gramado, Canela, Caxias do Sul, Bento Gonçalves, Nova Petrópolis, Garibaldi)' },
+  { ufs: ['RS'], focus: 'interior e litoral gaúcho (Pelotas, Santa Maria, Passo Fundo, Santa Cruz do Sul, Torres, Capão da Canoa)' },
+  // Northeast
+  { ufs: ['BA'], focus: 'Salvador, região metropolitana e Recôncavo (Salvador, Lauro de Freitas, Camaçari, Cachoeira, Santo Amaro)' },
+  { ufs: ['BA'], focus: 'interior e litorais da Bahia (Feira de Santana, Chapada Diamantina, Vitória da Conquista, Ilhéus, Itabuna, Porto Seguro, Juazeiro)' },
+  { ufs: ['SE', 'AL'], focus: 'Sergipe e Alagoas (Aracaju, São Cristóvão, Maceió, Maragogi, Penedo, Arapiraca)' },
+  { ufs: ['PE'], focus: 'Pernambuco inteiro (Recife, Olinda, Jaboatão, Caruaru, Garanhuns, Petrolina, Gravatá)' },
+  { ufs: ['PB', 'RN'], focus: 'Paraíba e Rio Grande do Norte (João Pessoa, Campina Grande, Natal, Parnamirim, Mossoró)' },
+  { ufs: ['CE'], focus: 'Ceará inteiro (Fortaleza, Caucaia, Juazeiro do Norte, Crato, Sobral, Guaramiranga, Jericoacoara)' },
+  { ufs: ['PI', 'MA'], focus: 'Piauí e Maranhão (Teresina, Parnaíba, São Luís, Imperatriz, Barreirinhas)' },
+  // Center-West and North
+  { ufs: ['DF', 'GO'], focus: 'Distrito Federal e entorno (Brasília, Taguatinga, Águas Lindas, Luziânia)' },
+  { ufs: ['GO'], focus: 'Goiás (Goiânia, Anápolis, Aparecida de Goiânia, Pirenópolis, Caldas Novas, Rio Verde)' },
+  { ufs: ['MT', 'MS', 'TO'], focus: 'Mato Grosso, Mato Grosso do Sul e Tocantins (Cuiabá, Chapada dos Guimarães, Campo Grande, Bonito, Dourados, Palmas)' },
+  { ufs: ['PA', 'AP'], focus: 'Pará e Amapá (Belém, Ananindeua, Santarém, Marabá, Macapá)' },
   { ufs: ['AM', 'RR', 'RO', 'AC'], focus: 'Amazonas, Roraima, Rondônia e Acre (Manaus, Parintins, Boa Vista, Porto Velho, Rio Branco)' },
 ];
 export const LENSES = {
   stage: { cats: 'music, festas, food', ask: 'festivais de música e shows ao ar livre (prioridade), festas populares e tradicionais, festivais gastronômicos' },
   family: { cats: 'kids, outdoor, fairs', ask: 'programação infantil (teatro infantil, SESC, centros culturais, museus com atividades para crianças), atividades ao ar livre (parques, festivais de flores, balonismo, trilhas guiadas) e feiras culturais, de livros e de artesanato' },
 };
-const DISCOVER_PARALLEL = 3;
+const DISCOVER_PARALLEL = 4;
 
 /* ---------------- small utils ---------------- */
 const readJSON = async (p, fb) => { try { return JSON.parse(await readFile(p, 'utf8')); } catch { return fb; } };
@@ -197,7 +217,7 @@ ${ITEM_SHAPE}`;
 }
 
 // On-demand search around one family's city (api/search.mjs). A family is waiting, so the sweep is
-// split into six narrow searches that run in parallel: each answer stays short (12 events, Portuguese
+// split into six narrow searches that run in parallel: each answer stays short (up to 20 events, Portuguese
 // only — the app falls back to it in English/Spanish) and is streamed as soon as it is ready, while
 // together they cover every category thoroughly.
 export const LOCAL_LENSES = {
@@ -213,7 +233,7 @@ export function localPrompt(place, lens, today, to, km) {
   const L = LOCAL_LENSES[lens];
   return `Hoje é ${today}. Uma família de ${place.name}/${place.uf} quer um passeio. Use a busca na web para achar ${L.ask} acontecendo entre ${today} e ${to} em ${place.name} ou em cidades a até ${km} km. Categorias permitidas: ${L.cats}.
 
-Regras: só eventos com datas concretas no período e uma página-fonte que você viu (prefeitura, SESC, Sympla, site oficial ou imprensa). Nada +18, balada, corporativo ou online. Não invente; na dúvida, deixe de fora. No máximo 12 eventos. Seja rápido: poucas buscas bem escolhidas.
+Regras: só eventos com datas concretas no período e uma página-fonte que você viu (prefeitura, SESC, Sympla, site oficial ou imprensa). Nada +18, balada, corporativo ou online. Não invente; na dúvida, deixe de fora. Cubra a cidade e as vizinhas, não só a maior. Traga todos os que achar, até 20. Seja objetivo: buscas bem escolhidas.
 
 Responda APENAS com um array JSON entre <json> e </json>. Cada item:
 ${LOCAL_SHAPE}`;
