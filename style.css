@@ -158,7 +158,7 @@ main{padding:10px 14px 6px;display:flex;flex-direction:column;gap:14px}
 .card .big{font-size:40px;line-height:1}
 .card h2{font-family:var(--display);font-weight:600;font-size:21px;margin-top:8px}
 .card p{margin:6px 0 0;color:var(--mut);font-weight:600}
-.card.srch{margin-top:18px;background:var(--bg2);border-style:dashed;border-color:var(--line2)}
+.card.srch{margin:18px 0;scroll-margin-top:220px;background:var(--bg2);border-style:dashed;border-color:var(--line2)}
 .card.srch .mut{font-size:13.5px}
 .card.srch .srchmsg{color:var(--ink);font-weight:800}
 .card.srch.running{border-style:solid;border-color:var(--acc)}

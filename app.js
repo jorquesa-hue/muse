@@ -292,7 +292,7 @@ async function runSearch() {
   SEARCH.phase = 'running'; SEARCH.msg = null; SEARCH.tip = 0; SEARCH.found = 0;
   SEARCH.timer = setInterval(() => { SEARCH.tip++; const t = document.querySelector('.srch.running .tip'); if (t) t.textContent = tr('srchTips').split('|')[SEARCH.tip % 6]; }, 2500);
   render();
-  const el = document.querySelector('.srch'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const el = document.querySelector('.srch'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   let res = null;
   try {
     const r = await fetch('/api/search', { method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -482,14 +482,16 @@ function render() {
   renderStats(list);
   let html = '';
   if (DATA.generated && Date.now() - Date.parse(DATA.generated) > 4 * 86400000) html += `<div class="notice">${esc(tr('stale'))}</div>`;
-  if (!list.length) html += emptyState() + searchCard();
+  const searchTop = SEARCH.phase === 'running' || !!SEARCH.msg;
+  if (searchTop) html += searchCard();
+  if (!list.length) html += emptyState() + (searchTop ? '' : searchCard());
   else {
     const heroIdx = list.findIndex((x) => x.e.cat === 'music');
     const hero = list[heroIdx >= 0 ? heroIdx : 0];
     html += card(hero, true);
     const rest = list.filter((x) => x !== hero);
     if (rest.length) html += `<h2 class="sec">${esc(tr('more'))} <span class="pillc">${rest.length}</span></h2>` + rest.map((x) => card(x, false)).join('');
-    html += searchCard();
+    if (!searchTop) html += searchCard();
   }
   out.innerHTML = html;
   if (state.focus) {
