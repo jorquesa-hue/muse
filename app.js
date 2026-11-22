@@ -35,6 +35,7 @@ const T = {
   today: { pt: 'Hoje', en: 'Today', es: 'Hoy' },
   tomorrow: { pt: 'Amanhã', en: 'Tomorrow', es: 'Mañana' },
   weekend: { pt: 'Fim de semana', en: 'Weekend', es: 'Fin de semana' },
+  nextwk: { pt: 'Próximo fim de semana', en: 'Next weekend', es: 'Próximo fin de semana' },
   all: { pt: 'Tudo', en: 'All', es: 'Todo' },
   free: { pt: 'Grátis', en: 'Free', es: 'Gratis' },
   near: { pt: 'Perto de {c}', en: 'Near {c}', es: 'Cerca de {c}' },
@@ -86,6 +87,7 @@ const T = {
   dToday: { pt: 'hoje', en: 'today', es: 'hoy' },
   dTomorrow: { pt: 'amanhã', en: 'tomorrow', es: 'mañana' },
   dWeekend: { pt: 'no fim de semana', en: 'this weekend', es: 'este fin de semana' },
+  dNextwk: { pt: 'no próximo fim de semana', en: 'next weekend', es: 'el próximo fin de semana' },
   details: { pt: 'Detalhes', en: 'Details', es: 'Detalles' },
   directions: { pt: 'Como chegar', en: 'Directions', es: 'Cómo llegar' },
   calendar: { pt: 'Agenda', en: 'Calendar', es: 'Agenda' },
@@ -155,7 +157,7 @@ function driveText(km) {
 
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
-  state.day = ['today', 'tomorrow', 'weekend'].includes(p.get('d')) ? p.get('d') : 'today';
+  state.day = DAYS.includes(p.get('d')) ? p.get('d') : 'today';
   const c = p.get('c'); state.cat = c && CATS[c] ? c : 'all';
   state.free = p.get('f') === '1';
   state.focus = p.get('e') || null;
@@ -170,12 +172,16 @@ function writeHash() {
 }
 
 /* ---------------- dates (device-local calendar days) ---------------- */
+const DAYS = ['today', 'tomorrow', 'weekend', 'nextwk'];
 function viewDays(which) {
   const n = new Date(); const t = new Date(n.getFullYear(), n.getMonth(), n.getDate());
   const plus = (d, k) => { const x = new Date(d); x.setDate(x.getDate() + k); return x; };
   if (which === 'today') return [ymd(t)];
   if (which === 'tomorrow') return [ymd(plus(t, 1))];
   const w = t.getDay();
+  if (which === 'nextwk') { // the Saturday-Sunday after the one the "weekend" tab shows
+    const sat = plus(t, w === 6 ? 7 : w === 0 ? 6 : 13 - w); return [ymd(sat), ymd(plus(sat, 1))];
+  }
   if (w === 6) return [ymd(t), ymd(plus(t, 1))];
   if (w === 0) return [ymd(t)];
   const sat = plus(t, 6 - w); return [ymd(sat), ymd(plus(sat, 1))];
@@ -183,7 +189,11 @@ function viewDays(which) {
 const fmt = (s, opts) => new Intl.DateTimeFormat(LOCALE[state.lang], opts).format(parseYmd(s));
 function dayLabel(which) {
   const ds = viewDays(which);
-  if (ds.length > 1) return `${fmt(ds[0], { day: 'numeric' })}–${fmt(ds[1], { day: 'numeric', month: 'numeric' })}`;
+  if (ds.length > 1) { // "28–29/11", or "31/1–1/2" when the weekend crosses a month (US order in English)
+    const [, m1, d1] = ds[0].split('-').map(Number), [, m2, d2] = ds[1].split('-').map(Number);
+    if (state.lang === 'en') return m1 === m2 ? `${m1}/${d1}–${d2}` : `${m1}/${d1}–${m2}/${d2}`;
+    return m1 === m2 ? `${d1}–${d2}/${m2}` : `${d1}/${m1}–${d2}/${m2}`;
+  }
   return fmt(ds[0], { weekday: 'short', day: 'numeric', month: 'numeric' });
 }
 function whenText(e, days) {
@@ -400,7 +410,7 @@ function renderChrome() {
   $('radii').innerHTML = RADII.map((k) => `<button type="button" class="chip" data-km="${k}" aria-pressed="${state.km === k}">${k} km</button>`).join('');
   if (!$('gpsBtn').disabled) $('gpsBtn').textContent = tr('useGps');
   $('q').placeholder = tr('cityPh');
-  $('days').innerHTML = ['today', 'tomorrow', 'weekend'].map((d) =>
+  $('days').innerHTML = DAYS.map((d) =>
     `<button type="button" data-day="${d}" aria-pressed="${state.day === d}"><span class="dl">${esc(tr(d))}</span><span class="dd">${esc(dayLabel(d))}</span></button>`).join('');
   const base = visibleEvents(state.day, { ignoreCat: true });
   const count = (c) => base.filter((x) => x.e.cat === c).length;
@@ -415,7 +425,7 @@ function renderChrome() {
 }
 
 function renderStats(list) {
-  const dk = { today: 'dToday', tomorrow: 'dTomorrow', weekend: 'dWeekend' }[state.day];
+  const dk = { today: 'dToday', tomorrow: 'dTomorrow', weekend: 'dWeekend', nextwk: 'dNextwk' }[state.day];
   $('stats').innerHTML = state.loc && DATA && !LOAD_ERR && (DATA.events || []).length
     ? tr('stats', { n: list.length, w: esc(tr(list.length === 1 ? 'outing1' : 'outingN')), d: esc(tr(dk)) }) : '';
 }
@@ -455,9 +465,9 @@ function render() {
 }
 
 function emptyState() {
-  const dk = { today: 'dToday', tomorrow: 'dTomorrow', weekend: 'dWeekend' }[state.day];
+  const dk = { today: 'dToday', tomorrow: 'dTomorrow', weekend: 'dWeekend', nextwk: 'dNextwk' }[state.day];
   const alts = [];
-  for (const d of ['today', 'tomorrow', 'weekend']) {
+  for (const d of DAYS) {
     if (d === state.day) continue;
     const n = visibleEvents(d).length;
     if (n) alts.push(`<button class="btn alt" type="button" data-day="${d}">${esc(tr(d))} (${n})</button>`);

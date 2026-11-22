@@ -1,7 +1,7 @@
 # Muse
 
 A smartphone-first, installable **PWA for families in Brazil**: open it and see what you can do
-**today, tomorrow or this weekend within 100 km** (the family can switch to 50, 120 or 150 km) — music festivals first, then food festivals, popular
+**today, tomorrow, this weekend or next weekend within 100 km** (the family can switch to 50, 120 or 150 km) — music festivals first, then food festivals, popular
 festas, kids' shows, outdoor activities and fairs. Trilingual (PT-BR / EN / ES). Your location never
 leaves the device.
 

@@ -91,9 +91,9 @@ svg{display:block}
 .locnote:empty{display:none}
 
 /* day tabs */
-.days{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:4px}
-.days button{border-radius:12px;padding:7px 4px;display:flex;flex-direction:column;align-items:center;line-height:1.15}
-.days .dl{font-family:var(--display);font-weight:600;font-size:15px}
+.days{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:10px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:4px}
+.days button{border-radius:12px;padding:7px 2px;justify-content:center;display:flex;flex-direction:column;align-items:center;line-height:1.15}
+.days .dl{font-family:var(--display);font-weight:600;font-size:14px;text-wrap:balance}
 .days .dd{font-size:11.5px;font-weight:700;color:var(--dim)}
 .days button[aria-pressed="true"]{background:var(--ink);color:#fff}
 .days button[aria-pressed="true"] .dd{color:#d9d4f2}
