@@ -30,9 +30,12 @@ const STATE_FILE = ROOT + 'calendar/state.json';
 const CITIES_FILE = ROOT + 'cities.json';
 
 const API_KEY = () => process.env.ANTHROPIC_API_KEY; // read at call time (also used by the Vercel function)
-// Sonnet 5.5 + the dynamic-filtering web search finds more events and fewer wrong dates than Haiku.
+// Sonnet 5.5 finds the most events (see searchToolFor for the measurement).
 export const MODEL = process.env.EVENTS_MODEL || 'claude-sonnet-5-5';
-const searchToolFor = (m) => process.env.WEB_SEARCH_TOOL || (/haiku/.test(m) ? 'web_search_20250305' : 'web_search_20260209');
+// Classic web search for every model. Measured on 22/11 (Vale do Paraíba + Campinas, same 4 searches):
+// Sonnet 5.5 + web_search_20260209 -> 3 events (the tool kept failing and the model returned empty lists);
+// Haiku 5.5 + 20250305 -> 17; Sonnet 5.5 + 20250305 -> 21, none rejected. WEB_SEARCH_TOOL overrides it.
+const searchToolFor = () => process.env.WEB_SEARCH_TOOL || 'web_search_20250305';
 const EFFORT = process.env.EVENTS_EFFORT || 'medium';
 // USD per million tokens (input, output) + $10 per 1000 web searches. Haiku/Sonnet prices for prompts under 100K/any.
 const PRICE = { 'claude-haiku-5-5': [0.10, 0.50], 'claude-sonnet-5-5': [2, 10], 'claude-opus-5-5': [4, 20] };

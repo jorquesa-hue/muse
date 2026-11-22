@@ -8,8 +8,8 @@
  *   3. If allowed: six narrow web searches around the city run in parallel (music / festas / food / kids /
  *      outdoor / fairs). Each one's validated events are STREAMED to the app as soon as it finishes
  *      (NDJSON), so the family sees the first results in seconds instead of waiting for all six.
- *      Everything is then cached per cell. Same thorough model as the weekly sweep (Sonnet 5.5 with the
- *      dynamic-filtering web search); speed comes from splitting the work, not from a weaker model.
+ *      Everything is then cached per cell. Same thorough model as the weekly sweep (Sonnet 5.5, classic
+ *      web search); speed comes from splitting the work, not from a weaker model.
  *      LOCAL_MODEL / LOCAL_EFFORT / LOCAL_SPEED override it (LOCAL_SPEED=fast with claude-opus-5-5 = fast mode).
  *
  * Env: ANTHROPIC_API_KEY, MUSE_FN_SECRET (shared with Supabase muse_private), LOCAL_MODEL,

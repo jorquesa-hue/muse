@@ -51,7 +51,7 @@ The weekly sweep can't cover every town, so families can ask for a search around
 1 search per device per week (3 per network), and one per ~50 km cell per week — the results are cached
 in Supabase (`area_cache`) and every family in that region sees them instantly for 7 days. The function
 snaps the family to the nearest municipality, runs six short searches in parallel (music / festas / food /
-kids / outdoor / fairs) on the same thorough model as the sweep (Sonnet 5.5) and streams each one's validated events to
+kids / outdoor / fairs) on the same thorough model as the sweep (Sonnet 5.5, classic web search) and streams each one's validated events to
 the app as soon as it finishes — first results in seconds — with the same validation as the sweep, and stops for the day once `MUSE_DAILY_BUDGET` (USD, default 3)
 (set to 8 in Vercel) is spent. Limits and the cache live in `supabase/migrations/20261122010000_local_search.sql`.
 Vercel env: `ANTHROPIC_API_KEY`, `MUSE_FN_SECRET` (must match `muse_private.fn_secret` in Supabase),
@@ -69,7 +69,7 @@ organizador" badge. Contact data never leaves `event_submissions` (no anon acces
 
 ## Automation (`.github/workflows/`)
 - **`events.yml`** — the agenda (daily prune + Sunday discovery; manual run with a `discover` toggle).
-  Needs `ANTHROPIC_API_KEY`. Optional repo variable `EVENTS_MODEL` (default `claude-sonnet-5-5`, with the dynamic-filtering web search).
+  Needs `ANTHROPIC_API_KEY`. Optional repo variable `EVENTS_MODEL` (default `claude-sonnet-5-5`, classic web search — measured best).
 - **`setup-email.yml`** (manual) — registers the domain in Resend, writes its DNS records in Vercel and copies
   `RESEND_API_KEY` into Vercel. **`sync-vercel-key.yml`** (manual) — copies `ANTHROPIC_API_KEY` into Vercel.
 - **`metrics.yml`** (daily) → `metrics.mjs`: usage & agenda health dashboard at `/metrics/` (not linked
