@@ -141,6 +141,7 @@ main{padding:10px 14px 6px;display:flex;flex-direction:column;gap:14px}
 .badge{font-size:12px;font-weight:800;border-radius:999px;padding:3px 9px;background:var(--bg2);color:var(--ink);border:1.5px solid var(--line2)}
 .badge.free{background:#dcf7e3;border-color:#8fd6a3;color:#135c28}
 .badge.kids{background:#e4f6ff;border-color:#8ccff3;color:#0b4f73}
+.badge.org{background:#efe9ff;color:#4b2bc2;border-color:#d5c9ff}
 .badge.week{background:#efe9ff;border-color:#c3b3ff;color:#3d2696}
 .acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
 .act{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;border-radius:14px;background:var(--bg);border:2px solid var(--line);

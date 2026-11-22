@@ -3,6 +3,10 @@
     "api/search.mjs": {
       "maxDuration": 300,
       "includeFiles": "{cities.json,scripts/events.mjs}"
+    },
+    "api/submit.mjs": {
+      "maxDuration": 30,
+      "includeFiles": "{cities.json,scripts/events.mjs}"
     }
   }
 }

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Muse — cadastrar um evento</title>
+<meta name="description" content="Organiza um evento para famílias? Cadastre no Muse e ele aparece para as famílias da região.">
+<meta name="theme-color" content="#fff3d6">
+<link rel="icon" href="icon-192.png">
+<style>
+  @font-face{font-family:Fredoka;font-weight:600;font-display:swap;src:url(fonts/fredoka-latin-600-normal.woff2) format('woff2')}
+  @font-face{font-family:Nunito;font-weight:400;font-display:swap;src:url(fonts/nunito-latin-400-normal.woff2) format('woff2')}
+  @font-face{font-family:Nunito;font-weight:700;font-display:swap;src:url(fonts/nunito-latin-700-normal.woff2) format('woff2')}
+  @font-face{font-family:Nunito;font-weight:800;font-display:swap;src:url(fonts/nunito-latin-800-normal.woff2) format('woff2')}
+  :root{--bg:#fff8ec;--bg2:#fff3d6;--ink:#1e1640;--mut:#4f4870;--dim:#6a6488;--line:rgba(30,22,64,.14);--acc:#ff3d7f;--sun:#ffc23d;--ok:#0b7f72;--bad:#c8155a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;line-height:1.45}
+  main{max-width:600px;margin:0 auto;padding:22px 16px 60px}
+  a{color:#c8155a}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{font-family:Fredoka,sans-serif;font-size:30px;font-weight:600;color:var(--ink);text-decoration:none}
+  .brand i{color:var(--acc);font-style:normal}
+  h1{font-family:Fredoka,sans-serif;font-weight:600;font-size:26px;margin:18px 0 6px}
+  .lead{color:var(--mut);font-weight:700;margin:0 0 18px}
+  fieldset{border:2px solid var(--line);border-radius:20px;background:#fff;padding:16px;margin:0 0 16px}
+  legend{font-family:Fredoka,sans-serif;font-weight:600;font-size:17px;padding:0 6px}
+  label{display:block;font-weight:800;font-size:14px;margin:12px 0 5px}
+  label .opt{font-weight:600;color:var(--dim)}
+  input,select,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:10px 12px}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
+  textarea{min-height:84px;resize:vertical}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .row2 label{margin-top:12px}
+  .hint{font-size:12.5px;color:var(--dim);margin:4px 2px 0}
+  .check{display:flex;gap:10px;align-items:flex-start;font-weight:700;font-size:14.5px;margin-top:14px}
+  .check input{width:22px;height:22px;flex:none;margin:0;accent-color:var(--acc)}
+  .city{position:relative}
+  .ac{position:absolute;left:0;right:0;top:100%;z-index:5;background:#fff;border:2px solid var(--ink);border-radius:12px;margin-top:4px;max-height:240px;overflow:auto}
+  .ac button{display:flex;justify-content:space-between;width:100%;background:none;border:0;font:inherit;padding:10px 12px;text-align:left;cursor:pointer}
+  .ac button:hover,.ac button:focus{background:var(--bg2);outline:none}
+  .ac .uf{color:var(--dim);font-weight:800}
+  .send{width:100%;font:inherit;font-weight:800;font-size:17px;color:#fff;background:var(--acc);border:0;border-radius:16px;padding:14px;cursor:pointer}
+  .send:disabled{opacity:.6}
+  .msg{border-radius:16px;padding:14px 16px;font-weight:700;margin:0 0 16px}
+  .msg.err{background:#ffe3ec;color:var(--bad)}
+  .msg.ok{background:#dff6f1;color:var(--ok)}
+  .bad{border-color:var(--bad)!important}
+  .hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+  .small{font-size:13px;color:var(--dim);text-align:center;margin-top:14px}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><a class="brand" href="./">muse<i>.</i></a><a href="./">← Voltar ao app</a></div>
+  <h1>Cadastre seu evento no Muse</h1>
+  <p class="lead">Organiza um festival, show, feira, festa ou programação infantil? Cadastre aqui: depois de uma revisão rápida, ele aparece para as famílias da região. É gratuito.</p>
+
+  <div id="msg" role="status" aria-live="polite"></div>
+
+  <form id="f" novalidate>
+    <fieldset>
+      <legend>O evento</legend>
+      <label for="title">Nome do evento</label>
+      <input id="title" name="title" required maxlength="120" autocomplete="off">
+      <label for="cat">Categoria</label>
+      <select id="cat" name="cat" required>
+        <option value="">Escolha…</option>
+        <option value="music">🎶 Música (festival, show, apresentação)</option>
+        <option value="festas">🎉 Festa popular (Natal, padroeiro, junina…)</option>
+        <option value="food">🍲 Gastronomia (festival, feira de comida)</option>
+        <option value="kids">🧒 Infantil (teatro, cinema, oficina)</option>
+        <option value="outdoor">🌳 Ao ar livre (parque, flores, trilha…)</option>
+        <option value="fairs">🛍️ Feira (artesanato, livros, cultura)</option>
+      </select>
+      <div class="row2">
+        <div><label for="start">Data de início</label><input id="start" name="start" type="date" required></div>
+        <div><label for="end">Data de fim <span class="opt">(se durar mais de um dia)</span></label><input id="end" name="end" type="date"></div>
+      </div>
+      <label for="time">Horário de início <span class="opt">(opcional)</span></label>
+      <input id="time" name="time" type="time">
+      <label for="desc">Descrição curta</label>
+      <textarea id="desc" name="desc" required minlength="20" maxlength="220" placeholder="O que as famílias vão encontrar? Atrações, idade indicada, o que levar…"></textarea>
+      <p class="hint"><span id="descN">0</span>/220 caracteres</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Onde</legend>
+      <label for="venue">Local</label>
+      <input id="venue" name="venue" required maxlength="120" placeholder="Ex.: Parque da Cidade, Praça Matriz">
+      <label for="city">Cidade</label>
+      <div class="city">
+        <input id="city" name="city" required autocomplete="off" placeholder="Comece a digitar…" aria-autocomplete="list" aria-controls="ac">
+        <div class="ac" id="ac" hidden></div>
+      </div>
+      <p class="hint" id="cityHint">Escolha a cidade na lista.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Ingresso e link</legend>
+      <label for="price">Entrada</label>
+      <select id="price" name="price" required>
+        <option value="free">Gratuita</option>
+        <option value="paid">Paga</option>
+      </select>
+      <div id="priceTextWrap" hidden>
+        <label for="priceText">Valor <span class="opt">(ex.: R$ 40 · meia R$ 20)</span></label>
+        <input id="priceText" name="priceText" maxlength="60">
+      </div>
+      <label for="url">Link oficial do evento</label>
+      <input id="url" name="url" type="url" required placeholder="https://… (site, Instagram, Sympla, prefeitura)">
+      <p class="hint">As famílias abrem este link em “Detalhes”. Ele precisa abrir.</p>
+      <label class="check"><input id="kids" name="kids" type="checkbox" checked> É adequado para crianças</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Quem organiza</legend>
+      <label for="name">Seu nome ou da organização</label>
+      <input id="name" name="name" required maxlength="120" autocomplete="name">
+      <label for="email">E-mail</label>
+      <input id="email" name="email" type="email" required maxlength="200" autocomplete="email">
+      <p class="hint">Enviamos um link para confirmar o cadastro. Não aparece no app.</p>
+      <label for="phone">WhatsApp ou telefone <span class="opt">(opcional, só para contato do Muse)</span></label>
+      <input id="phone" name="phone" type="tel" maxlength="40" autocomplete="tel">
+      <div class="hp" aria-hidden="true"><label for="website">Site</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+      <label class="check"><input id="terms" type="checkbox" required> Confirmo que as informações são verdadeiras e que o evento é aberto a famílias (nada +18).</label>
+    </fieldset>
+
+    <button class="send" id="send" type="submit">Enviar cadastro</button>
+    <p class="small">Seus dados de contato ficam só com o Muse. Veja a <a href="privacy.html">privacidade</a>.</p>
+  </form>
+</main>
+<script src="cadastrar.js"></script>
+</body>
+</html>

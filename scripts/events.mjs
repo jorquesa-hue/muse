@@ -242,7 +242,7 @@ const urlCache = new Map();
 const STOP = new Set(['festival', 'festa', 'feira', 'brasil', 'show', 'shows', 'evento', 'edicao', 'nacional', 'internacional', 'municipal', 'cidade', 'para', 'com', 'dos', 'das', 'del', 'the']);
 const titleTokens = (t) => fold(t).split(' ').filter((w) => w.length >= 4 && !STOP.has(w) && !/^\d+$/.test(w));
 
-async function checkUrl(url, timeoutMs = 12000) {
+export async function checkUrl(url, timeoutMs = 12000) {
   if (urlCache.has(url)) return urlCache.get(url);
   let out = { ok: false, status: 0, text: '', img: null };
   if (SKIP_URL_CHECK) { out = { ok: true, status: 200, text: '', img: null }; urlCache.set(url, out); return out; }

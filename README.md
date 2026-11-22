@@ -22,6 +22,9 @@ leaves the device.
 | `manifest.webmanifest`, icons, `og-image.jpg` | Install + link-preview assets. |
 | `privacy.html` | Privacy notice (PT-BR). |
 | `api/search.mjs` | Vercel function behind “🔎 Buscar mais perto de mim”: on-demand search around one family's city (see below). |
+| `cadastrar.html` + `cadastrar.js` | Form for organizers to list an event (no AI: validated, e-mail confirmed, approved by the owner). |
+| `admin.html` + `admin.js` | The owner's approval queue (open once as `admin.html#k=<ADMIN_TOKEN>`). |
+| `api/submit.mjs`, `api/confirm.mjs`, `api/admin.mjs` | Organizer submission, e-mail confirmation link, approval API. `api/_lib.mjs` holds shared helpers. |
 | `vercel.json` | Function settings (300 s max duration, bundled `cities.json`). |
 
 ### Making a change to the app
@@ -54,9 +57,21 @@ the app as soon as it finishes — first results in seconds — with the same va
 Vercel env: `ANTHROPIC_API_KEY`, `MUSE_FN_SECRET` (must match `muse_private.fn_secret` in Supabase),
 optional `LOCAL_MODEL`, `MUSE_DAILY_BUDGET`, `MUSE_SEARCH_KM`.
 
+## Events listed by organizers
+Organizers fill `cadastrar.html`. `api/submit.mjs` checks it without any AI (known category, dates within
+6 months, a real municipality — coordinates from `cities.json` — a link that opens, no adults-only
+wording; honeypot + 5 per network per day), stores it as *unconfirmed* and e-mails a confirmation link
+(Resend). Confirmed submissions wait in the owner's queue (`admin.html`); approving copies the event to
+`published_events`, which the app reads with the anon key and shows with a "✓ Cadastrado pelo
+organizador" badge. Contact data never leaves `event_submissions` (no anon access). Schema:
+`supabase/migrations/20261122020000_organizer_submissions.sql`. Vercel env: `RESEND_API_KEY`, `MAIL_FROM`
+(both set by `setup-email.yml`), `ADMIN_TOKEN`.
+
 ## Automation (`.github/workflows/`)
 - **`events.yml`** — the agenda (daily prune + Monday discovery; manual run with a `discover` toggle).
   Needs `ANTHROPIC_API_KEY`. Optional repo variable `EVENTS_MODEL` (default `claude-sonnet-5-5`, with the dynamic-filtering web search).
+- **`setup-email.yml`** (manual) — registers the domain in Resend, writes its DNS records in Vercel and copies
+  `RESEND_API_KEY` into Vercel. **`sync-vercel-key.yml`** (manual) — copies `ANTHROPIC_API_KEY` into Vercel.
 - **`metrics.yml`** (daily) → `metrics.mjs`: usage & agenda health dashboard at `/metrics/` (not linked
   from the app) — agenda by category/state, anonymous interactions, Vercel visitors by country/device.
 

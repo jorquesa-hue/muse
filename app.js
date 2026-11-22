@@ -14,7 +14,8 @@ const ROAD_FACTOR = 1.3;   // straight line -> road distance, rough
 const AVG_KMH = 65;
 const SB_URL = 'https://esviqajfbkdnpoohjpjt.supabase.co';
 const CLICK_ENDPOINT = SB_URL + '/rest/v1/event_clicks';
-const AREA_ENDPOINT = SB_URL + '/rest/v1/area_cache';   // events found by on-demand searches, per ~50 km cell (read-only)
+const AREA_ENDPOINT = SB_URL + '/rest/v1/area_cache';
+const ORG_ENDPOINT = SB_URL + '/rest/v1/published_events';  // events listed by organizers and approved (read-only)   // events found by on-demand searches, per ~50 km cell (read-only)
 const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdmlxYWpmYmtkbnBvb2hqcGp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NzM1NzgsImV4cCI6MjA5OTQ0OTU3OH0.0C0oBrs0OjrcvxNdDVXeBtBs8KTVmgviGJkWffkFKj4'; // public by design — RLS: insert-only clicks, read-only area cache
 
 const CAT_ORDER = ['music', 'food', 'festas', 'kids', 'outdoor', 'fairs'];
@@ -106,7 +107,8 @@ const T = {
   updated: { pt: 'Agenda atualizada em {d}', en: 'Agenda updated {d}', es: 'Agenda actualizada el {d}' },
   stale: { pt: 'A agenda não é atualizada há alguns dias. Confirme no site do evento antes de sair.', en: "The agenda hasn't refreshed in a few days. Check the event's site before you go.", es: 'La agenda no se actualiza hace unos días. Confirma en el sitio del evento antes de salir.' },
   privacy: { pt: 'Privacidade', en: 'Privacy', es: 'Privacidad' },
-  suggest: { pt: '＋ Conhece um evento? Conte pra gente no Instagram', en: '＋ Know an event? Tell us on Instagram', es: '＋ ¿Conoces un evento? Cuéntanos en Instagram' },
+  suggest: { pt: '＋ Organiza um evento? Cadastre no Muse', en: '＋ Organizing an event? List it on Muse', es: '＋ ¿Organizas un evento? Regístralo en Muse' },
+  orgB: { pt: '✓ Cadastrado pelo organizador', en: '✓ Listed by the organizer', es: '✓ Registrado por el organizador' },
   labTitle: { pt: 'Como o Muse funciona', en: 'How Muse works', es: 'Cómo funciona Muse' },
   labBody: {
     pt: '<p><b>De onde vêm os eventos.</b> Todo dia o Muse revisa a agenda; duas vezes por semana uma IA pesquisa a web por eventos familiares em todos os estados e confirma as datas dos grandes festivais anuais.</p><p><b>Nada entra sem checagem.</b> Cada evento precisa de datas concretas, de uma cidade real e de uma página-fonte que funcione. Eventos +18 ficam de fora.</p><p><b>{km} km.</b> A distância é em linha reta a partir da sua cidade; o tempo de carro é uma estimativa. Sua localização nunca sai do seu aparelho.</p><p><b>Antes de sair</b>, confirme horários no link “Detalhes”: eventos mudam.</p>',
@@ -145,7 +147,7 @@ const state = { lang: detectLang(), day: 'today', cat: 'all', free: false, focus
   km: RADII.includes(store.get('muse-km', DEFAULT_KM)) ? store.get('muse-km', DEFAULT_KM) : DEFAULT_KM };
 let DATA = null, LOAD_ERR = false, CITIES = null, acItems = [], acIdx = -1;
 // on-demand search: events cached for the cells around the family, and the search button's state
-const LOCAL = { key: null, events: [], rows: [], myCell: null };
+const LOCAL = { key: null, events: [], rows: [], myCell: null, org: [] };
 const SEARCH = { phase: 'idle', msg: null, tip: 0, timer: null, found: 0 };
 
 function tr(k, vars) {
@@ -228,9 +230,11 @@ async function loadCities() {
 /* ---------------- on-demand local search ---------------- */
 const cellOf = (lat, lng) => `${Math.floor(lat * 2)}_${Math.floor(lng * 2)}`; // same grid as api/search.mjs
 function allEvents() {
-  if (!LOCAL.events.length) return (DATA && DATA.events) || [];
-  const seen = new Set(((DATA && DATA.events) || []).map((e) => e.id));
-  return ((DATA && DATA.events) || []).concat(LOCAL.events.filter((e) => !seen.has(e.id) && seen.add(e.id)));
+  const base = (DATA && DATA.events) || [];
+  if (!LOCAL.events.length && !LOCAL.org.length) return base;
+  // organizer listings first: when the same event was also found by search, the organizer's version wins
+  const seen = new Set(LOCAL.org.map((e) => e.id));
+  return LOCAL.org.concat(base.filter((e) => !seen.has(e.id) && seen.add(e.id)), LOCAL.events.filter((e) => !seen.has(e.id) && seen.add(e.id)));
 }
 async function nearestCity(lat, lng) {
   const cs = await loadCities(); let best = Infinity, near = null;
@@ -248,8 +252,11 @@ async function loadArea(force) {
   try {
     const near = await nearestCity(loc.lat, loc.lng).catch(() => null);
     LOCAL.myCell = near ? cellOf(near.lat, near.lng) : null;
-    const r = await fetch(`${AREA_ENDPOINT}?${q}`, { headers: { apikey: ANON_KEY, Authorization: 'Bearer ' + ANON_KEY } });
-    if (!r.ok) return;
+    const hdr = { headers: { apikey: ANON_KEY, Authorization: 'Bearer ' + ANON_KEY } };
+    const [r, o] = await Promise.all([fetch(`${AREA_ENDPOINT}?${q}`, hdr),
+      fetch(`${ORG_ENDPOINT}?${q.replace('select=cell,place,searched_at,events', 'select=event')}`, hdr).catch(() => null)]);
+    if (o && o.ok) { const orows = await o.json().catch(() => []); if (LOCAL.key === key) LOCAL.org = orows.map((x) => x.event).filter((e) => e && e.id); }
+    if (!r.ok) { render(); return; }
     const rows = await r.json(); if (LOCAL.key !== key) return;
     const today = ymd(new Date());
     LOCAL.rows = rows;
@@ -412,6 +419,7 @@ function card(x, hero) {
   else if (e.price === 'paid') badges.push(`<span class="badge">${esc(e.priceText || tr('paidB'))}</span>`);
   if (e.kids === 'yes') badges.push(`<span class="badge kids">${esc(tr('kidsB'))}</span>`);
   if (e.weekly) badges.push(`<span class="badge week">${esc(tr('weeklyB'))}</span>`);
+  if (e.org) badges.push(`<span class="badge org">${esc(tr('orgB'))}</span>`);
   return `<article class="ev cat-${e.cat}${hero ? ' hero' : ''}" id="ev-${esc(e.id)}" data-id="${esc(e.id)}">
   <div class="band"><span>${CATS[e.cat].emoji} ${esc(hero ? tr('highlight') + ' · ' + catName(e.cat) : catName(e.cat))}</span><span class="when">${esc(whenText(e, days))}</span></div>
   ${e.img ? `<img class="cover" src="${esc(safeUrl(e.img))}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ''}
@@ -459,7 +467,7 @@ function renderChrome() {
 
 function renderStats(list) {
   const dk = { today: 'dToday', tomorrow: 'dTomorrow', weekend: 'dWeekend', nextwk: 'dNextwk' }[state.day];
-  const ready = state.loc && DATA && !LOAD_ERR && (DATA.events || []).length;
+  const ready = state.loc && DATA && !LOAD_ERR && allEvents().length;
   $('stats').innerHTML = ready
     ? tr('stats', { n: list.length, w: esc(tr(list.length === 1 ? 'outing1' : 'outingN')), d: esc(tr(dk)) })
       + `<button class="morebtn" type="button" data-search-go${SEARCH.phase === 'running' ? ' disabled' : ''}>${esc(tr(SEARCH.phase === 'running' ? 'srchGoRun' : 'srchGo'))}</button>` : '';
@@ -476,7 +484,7 @@ function render() {
   }
   if (LOAD_ERR) { renderStats([]); out.innerHTML = `<div class="card"><div class="big" aria-hidden="true">📡</div><p>${esc(tr('loadFail'))}</p><div class="row"><button class="btn" type="button" data-retry>${esc(tr('retry'))}</button></div></div>`; return; }
   if (!DATA) { out.innerHTML = `<p class="vh">${esc(tr('loading'))}</p><div class="skel"></div><div class="skel"></div>`; return; }
-  if (!(DATA.events || []).length) { renderStats([]); out.innerHTML = `<div class="card"><div class="big" aria-hidden="true">🎪</div><h2>${esc(tr('building'))}</h2><p>${esc(tr('buildingS'))}</p></div>`; return; }
+  if (!allEvents().length) { renderStats([]); out.innerHTML = `<div class="card"><div class="big" aria-hidden="true">🎪</div><h2>${esc(tr('building'))}</h2><p>${esc(tr('buildingS'))}</p></div>`; return; }
 
   const list = visibleEvents(state.day);
   renderStats(list);
@@ -587,7 +595,7 @@ document.addEventListener('click', (ev) => {
   // shortcut under the stats line: search right away, or show the card that explains why not
   if (t.closest('[data-search-go]')) { if (canSearch()) runSearch(); else { const c = document.querySelector('.srch'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); } return; }
   if (t.closest('[data-retry]')) { DATA = null; render(); loadEvents(); return; }
-  if (t.closest('[data-suggest]')) { window.open('https://www.instagram.com/muse_find/', '_blank', 'noopener'); return; }
+  if (t.closest('[data-suggest]')) { location.href = 'cadastrar.html'; return; }
   const far = t.closest('[data-far]'); if (far) { renderFar(far.dataset.far); far.remove(); return; }
   const opt = t.closest('.ac .opt'); if (opt) { const c = acItems[+opt.dataset.i]; if (c) pickCity(c); return; }
   const act = t.closest('[data-act]');
