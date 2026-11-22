@@ -52,6 +52,8 @@ const T = {
               es: 'Mostramos festivales, gastronomía y fiestas a menos de {km} km. Tu ubicación queda en tu dispositivo.' },
   typeCity: { pt: 'Escolher cidade', en: 'Pick a city', es: 'Elegir ciudad' },
   loading: { pt: 'Carregando a agenda…', en: 'Loading events…', es: 'Cargando la agenda…' },
+  srchGo: { pt: '🔎 Buscar mais perto de mim', en: '🔎 Find more near me', es: '🔎 Buscar más cerca de mí' },
+  srchGoRun: { pt: '🔎 Buscando…', en: '🔎 Searching…', es: '🔎 Buscando…' },
   srchT: { pt: 'Quer mais opções por perto?', en: 'Want more nearby options?', es: '¿Quieres más opciones cerca?' },
   srchBtn: { pt: '🔎 Buscar mais eventos perto de mim', en: '🔎 Find more events near me', es: '🔎 Buscar más eventos cerca de mí' },
   srchS: { pt: 'A IA vasculha as agendas da sua região: prefeituras, SESC, bilheterias e imprensa local. 1 busca por semana; o que ela achar fica para todas as famílias por perto.',
@@ -271,6 +273,10 @@ function searchCard() {
   else body = `<p class="mut">${esc(tr('srchS'))}</p><div class="row"><button class="btn pink" type="button" data-search>${esc(tr('srchBtn'))}</button></div>`;
   return `<div class="card srch"><h2>${esc(tr('srchT'))}</h2>${note}${body}</div>`;
 }
+function canSearch() {
+  const next = store.get('muse-search-next', null);
+  return !LOCAL.rows.find((x) => x.cell === LOCAL.myCell) && !(next && Date.parse(next) > Date.now());
+}
 async function runSearch() {
   if (SEARCH.phase === 'running' || !state.loc) return;
   SEARCH.phase = 'running'; SEARCH.msg = null; SEARCH.tip = 0;
@@ -426,8 +432,10 @@ function renderChrome() {
 
 function renderStats(list) {
   const dk = { today: 'dToday', tomorrow: 'dTomorrow', weekend: 'dWeekend', nextwk: 'dNextwk' }[state.day];
-  $('stats').innerHTML = state.loc && DATA && !LOAD_ERR && (DATA.events || []).length
-    ? tr('stats', { n: list.length, w: esc(tr(list.length === 1 ? 'outing1' : 'outingN')), d: esc(tr(dk)) }) : '';
+  const ready = state.loc && DATA && !LOAD_ERR && (DATA.events || []).length;
+  $('stats').innerHTML = ready
+    ? tr('stats', { n: list.length, w: esc(tr(list.length === 1 ? 'outing1' : 'outingN')), d: esc(tr(dk)) })
+      + `<button class="morebtn" type="button" data-search-go${SEARCH.phase === 'running' ? ' disabled' : ''}>${esc(tr(SEARCH.phase === 'running' ? 'srchGoRun' : 'srchGo'))}</button>` : '';
 }
 
 function render() {
@@ -547,6 +555,8 @@ document.addEventListener('click', (ev) => {
   // tapping the "100 km" pill opens the panel without popping the keyboard (they came to change the distance)
   if (t.closest('#locBtn') || t.closest('[data-openloc]')) { togglePanel($('locPanel').hidden, !!t.closest('#locRadius') && !!state.loc); return; }
   if (t.closest('[data-search]')) { runSearch(); return; }
+  // shortcut under the stats line: search right away, or show the card that explains why not
+  if (t.closest('[data-search-go]')) { if (canSearch()) runSearch(); else { const c = document.querySelector('.srch'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); } return; }
   if (t.closest('[data-retry]')) { DATA = null; render(); loadEvents(); return; }
   if (t.closest('[data-suggest]')) { window.open('https://www.instagram.com/muse_find/', '_blank', 'noopener'); return; }
   const far = t.closest('[data-far]'); if (far) { renderFar(far.dataset.far); far.remove(); return; }

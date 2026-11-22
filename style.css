@@ -114,6 +114,10 @@ svg{display:block}
 .tagline em{font-style:normal;color:var(--acc-ink);background:linear-gradient(transparent 62%,color-mix(in srgb,var(--sun) 70%,transparent) 62%)}
 .stats{margin:6px 0 0;font-size:13.5px;color:var(--mut);font-weight:600}
 .stats b{color:var(--ink)}
+.morebtn{display:flex;align-items:center;justify-content:center;width:100%;margin-top:10px;padding:10px 14px;border-radius:14px;
+  background:#fff;border:2px dashed var(--acc);color:var(--ink);font-weight:800;font-size:14.5px}
+.morebtn:active{transform:translateY(1px)}
+.morebtn:disabled{opacity:.6}
 
 /* results */
 main{padding:10px 14px 6px;display:flex;flex-direction:column;gap:14px}
