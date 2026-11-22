@@ -44,6 +44,8 @@ const DRY = process.env.DRY_RUN === '1';
 const SKIP_URL_CHECK = process.env.SKIP_URL_CHECK === '1';
 const MOCK_FILE = process.env.MOCK_FILE || '';
 const DISCOVER = process.argv.includes('--discover');
+// Experiments: AREA_FILTER=regex limits discovery to matching areas and skips the calendar seeds.
+const AREA_FILTER = process.env.AREA_FILTER ? new RegExp(process.env.AREA_FILTER, 'i') : null;
 
 const DISCOVER_DAYS = 14;          // open search horizon
 const SEED_LOOKAHEAD_DAYS = 60;    // calendar seeds are confirmed this far ahead
@@ -411,7 +413,8 @@ async function confirmSeeds(due, state, today, mock) {
 async function discoverRegions(states, cities, today, mock) {
   const to = addDays(today, DISCOVER_DAYS);
   const found = [], rejected = {};
-  const jobs = AREAS.flatMap((area) => Object.keys(LENSES).map((lens) => ({ area, lens })));
+  const jobs = AREAS.filter((a) => !AREA_FILTER || AREA_FILTER.test(a.focus))
+    .flatMap((area) => Object.keys(LENSES).map((lens) => ({ area, lens })));
   await pool(jobs, DISCOVER_PARALLEL, async ({ area, lens }) => {
     const tag = `${area.ufs.join('/')} · ${area.focus.split(' (')[0]} · ${lens}`;
     let list, text;
@@ -430,6 +433,8 @@ async function discoverRegions(states, cities, today, mock) {
       if (r.ok) { found.push(r.ev); kept++; } else rejected[r.why.split(' ')[0]] = (rejected[r.why.split(' ')[0]] || 0) + 1;
     }
     console.log(`${tag}: ${list.length} candidates, ${kept} valid`);
+    // an empty answer is worth seeing: what did the model say instead?
+    if (!list.length && text) console.log(`  (${tag} said: ${text.replace(/\s+/g, ' ').slice(0, 300)})`);
   });
   const checked = await pool(found, 6, async (ev) => ({ ev, err: await verifySource(ev) }));
   const ok = checked.filter((c) => !c.err).map((c) => c.ev);
@@ -455,7 +460,7 @@ async function main() {
 
   if (DISCOVER) {
     if (!API_KEY() && !mock) throw new Error('ANTHROPIC_API_KEY is required for --discover (or set MOCK_FILE)');
-    const due = seedsDue(seeds, state, today);
+    const due = AREA_FILTER ? [] : seedsDue(seeds, state, today);
     console.log(`calendar: ${due.length} seeds to confirm`);
     await confirmSeeds(due, state, today, mock);
     const { ok, rejected } = await discoverRegions(citiesData.states, cities, today, mock);

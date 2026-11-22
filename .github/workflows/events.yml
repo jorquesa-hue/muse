@@ -20,6 +20,18 @@ on:
         description: 'Run AI discovery (uses ANTHROPIC_API_KEY)'
         type: boolean
         default: true
+      model:
+        description: 'Experiment: model override (empty = default)'
+        type: string
+        default: ''
+      search_tool:
+        description: 'Experiment: web search tool version (empty = default for the model)'
+        type: string
+        default: ''
+      areas:
+        description: 'Experiment: only areas matching this regex, no calendar seeds, nothing published'
+        type: string
+        default: ''
 
 permissions:
   contents: write
@@ -47,7 +59,10 @@ jobs:
       - name: Build events.json
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          EVENTS_MODEL: ${{ vars.EVENTS_MODEL }}
+          EVENTS_MODEL: ${{ inputs.model || vars.EVENTS_MODEL }}
+          WEB_SEARCH_TOOL: ${{ inputs.search_tool }}
+          AREA_FILTER: ${{ inputs.areas }}
+          DRY_RUN: ${{ inputs.areas && '1' || '' }}
           DISCOVER: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.discover) || github.event.schedule == '37 8 * * 0' }}
         run: |
           if [ "$DISCOVER" = "true" ]; then node scripts/events.mjs --discover; else node scripts/events.mjs; fi
