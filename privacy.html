@@ -1,70 +1,57 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; object-src 'none'; base-uri 'none'; style-src 'self' 'unsafe-inline'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Muse — privacy notice</title>
+<title>Muse — privacidade</title>
 <style>
-  body{max-width:640px;margin:0 auto;padding:32px 20px 64px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;color:#18181b;background:#f6f6f4}
-  @media (prefers-color-scheme:dark){ body{color:#ededf0;background:#0c0c0e} a{color:#e08a86} }
-  h1{font-size:22px;margin-bottom:4px}
-  h2{font-size:15px;margin-top:32px;text-transform:uppercase;letter-spacing:.04em;opacity:.7}
-  p,li{font-size:14.5px}
-  .updated{opacity:.6;font-size:12.5px;margin-top:0}
-  a{color:#c2413c}
-  code{font-size:13px;opacity:.85}
-  .back{display:inline-block;margin-top:36px;font-size:13px;opacity:.75}
+  @font-face{font-family:Fredoka;font-weight:600;src:url(fonts/fredoka-latin-600-normal.woff2) format('woff2')}
+  @font-face{font-family:Nunito;font-weight:400;src:url(fonts/nunito-latin-400-normal.woff2) format('woff2')}
+  body{max-width:640px;margin:0 auto;padding:32px 20px 64px;font-family:Nunito,system-ui,sans-serif;line-height:1.6;color:#1e1640;background:#fff8ec}
+  h1{font-family:Fredoka,sans-serif;font-weight:600;font-size:28px;margin-bottom:4px}
+  h2{font-family:Fredoka,sans-serif;font-weight:600;font-size:18px;margin-top:30px}
+  p,li{font-size:15px}
+  .updated{opacity:.65;font-size:13px;margin-top:0}
+  a{color:#c8155a}
+  code{font-size:13px}
+  .back{display:inline-block;margin-top:34px;font-weight:700}
 </style>
 </head>
 <body>
-  <h1>Privacy notice</h1>
-  <p class="updated">Last updated: 2026-07-16</p>
+  <h1>Privacidade</h1>
+  <p class="updated">Atualizado em 22/11/2026</p>
+  <p>O Muse mostra passeios em família perto de você. Quase tudo acontece no seu próprio navegador.</p>
 
-  <p>Muse is a working prototype. Almost everything it does runs entirely in your browser, offline,
-  against a dataset shipped with the app — nothing about a normal search leaves your device. This
-  page covers the two things that do: the anonymous device id, and the two features that log data
-  to make the app better for everyone.</p>
+  <h2>Sua localização</h2>
+  <p>Se você usa “Usar minha localização”, as coordenadas são usadas <strong>só no seu aparelho</strong> para
+  calcular a distância até cada evento. Elas ficam salvas no armazenamento local do navegador
+  (<code>muse-loc</code>) e <strong>nunca são enviadas</strong> para nós. O mesmo vale se você digita a cidade.</p>
 
-  <h2>What's collected</h2>
+  <h2>O que é registrado</h2>
   <ul>
-    <li><strong>An anonymous device id (<code>muse-sid</code>).</strong> Generated randomly on your
-    first visit and stored in your browser's local storage. It isn't tied to your name, email, or
-    any account — there is no account. It exists only to group your own ratings together so the
-    "good match / off" feedback stays consistent per device.</li>
-    <li><strong>"Find anything" live searches.</strong> When you search for a title that isn't
-    already in the offline catalog and the app finds it live, the resolved title, its category, and
-    the derived matching data (genre, mood profile, themes, popularity — no personal data) are
-    logged so a daily job can fold it into tomorrow's catalog for everyone.</li>
-    <li><strong>Match ratings.</strong> If you tap "Spot on" / "Off" on a match, that rating, the
-    device id, and the match context (which two works, which category, the score) are logged. This
-    is the only feedback signal used to improve the matching algorithm over time.</li>
+    <li><strong>Toques nos botões de um evento</strong> (Detalhes, Como chegar, Agenda, Compartilhar): o tipo de
+    toque, qual evento, a categoria, o estado <em>do evento</em> e o idioma do app. Isso nos mostra quais
+    passeios interessam às famílias.</li>
+    <li><strong>Um identificador anônimo</strong> (<code>muse-sid</code>), gerado aleatoriamente no seu navegador,
+    para contar visitas que voltam. Não está ligado a nome, e-mail ou conta (não existe conta).</li>
+    <li><strong>Estatísticas de visita</strong> pelo Vercel Web Analytics: contagens agregadas de páginas,
+    país e tipo de dispositivo, sem cookies e sem identificar você.</li>
   </ul>
 
-  <h2>What's NOT collected</h2>
-  <p>No name, email, account, location, or advertising identifiers. No cross-site tracking. The
-  live "find anything" feature does talk directly to Wikipedia and Wikidata from your browser to
-  resolve a title — those requests go straight from your device to them, not through us, and their
-  own privacy policies apply to that traffic.</p>
+  <h2>O que não é registrado</h2>
+  <p>Nome, e-mail, conta, sua localização, contatos ou identificadores de publicidade. Sem rastreamento entre sites.
+  Ao abrir “Detalhes” ou “Como chegar”, você vai para o site do evento ou para o Google Maps, que têm políticas próprias.</p>
 
-  <h2>Where it's stored</h2>
-  <p>In a Supabase-hosted database. Write access uses a public, insert-only key by design — that key
-  cannot read other people's data back out.</p>
+  <h2>Onde fica e por quanto tempo</h2>
+  <p>Os toques ficam num banco de dados Supabase. A chave pública do app só consegue <em>inserir</em> dados,
+  nunca lê-los. Os registros são apagados depois de até 180 dias.</p>
 
-  <h2>Retention</h2>
-  <p>Logged searches and ratings are kept for up to 180 days, then deleted on a rolling basis.</p>
+  <h2>Apagar seus dados</h2>
+  <p>Limpe o armazenamento do site no seu navegador (isso apaga <code>muse-sid</code> e <code>muse-loc</code>).
+  Para remover registros antigos, escreva para <a href="mailto:jorquesa@gmail.com">jorquesa@gmail.com</a>
+  com a data aproximada.</p>
 
-  <h2>Deletion</h2>
-  <p>Since there's no account, we can't look up "your" data by name — but if you want your device's
-  history erased sooner, clear <code>muse-sid</code> from your browser's local storage (this
-  disconnects future ratings from past ones immediately) and email
-  <a href="mailto:jorquesa@gmail.com">jorquesa@gmail.com</a> with the approximate date/time and
-  what you searched, and it will be removed on request.</p>
-
-  <h2>Changes</h2>
-  <p>This is a prototype and this notice may change as the app does. Meaningful changes will update
-  the date above.</p>
-
-  <a class="back" href="index.html">← Back to Muse</a>
+  <a class="back" href="index.html">← Voltar ao Muse</a>
 </body>
 </html>

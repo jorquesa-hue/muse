@@ -1,26 +1,29 @@
-/* Muse — service worker (offline-first app shell) */
-/* bump this version string on every deploy so returning users get the update */
-const CACHE = 'muse-v160';
+/* Muse — service worker.
+ * App shell (html/css/js/fonts/cities) is cache-first so the app opens instantly and offline.
+ * events.json is NETWORK-FIRST: the agenda changes daily, so a cached copy is only a fallback for
+ * when the family is offline (e.g. on the road), never what a connected visit sees.
+ * Bump CACHE on every app-shell deploy (node scripts/bump-sw.mjs) so returning users get it. */
+const CACHE = 'muse-v200';
 const ASSETS = [
   './index.html',
   './style.css',
   './app.js',
-  './boot-data.js',
   './register-sw.js',
-  './data.json',
   './manifest.webmanifest',
-  './apple-touch-icon.png'
+  './apple-touch-icon.png',
+  './cities.json',
+  './fonts/fredoka-latin-600-normal.woff2',
+  './fonts/fredoka-latin-700-normal.woff2',
+  './fonts/nunito-latin-400-normal.woff2',
+  './fonts/nunito-latin-600-normal.woff2',
+  './fonts/nunito-latin-700-normal.woff2',
+  './fonts/nunito-latin-800-normal.woff2',
 ];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE)
-      .then((c) => c.addAll(ASSETS).then(() => Promise.all([
-        c.add('embeddings.b64.json').catch(() => {}),
-        c.add('vibe.b64.json').catch(() => {}),
-        c.add('edges.json').catch(() => {}),
-        c.add('weights.json').catch(() => {}),
-      ])))
+      .then((c) => c.addAll(ASSETS).then(() => c.add('./events.json').catch(() => {})))
       .then(() => self.skipWaiting())
   );
 });
@@ -36,20 +39,24 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
-  // Cache-first: the whole app (data included) is in the shell, so this works fully offline.
-  e.respondWith(
-    caches.match(req).then((hit) => {
-      if (hit) return hit;
-      return fetch(req).then((res) => {
-        if (res && res.status === 200 && res.type === 'basic') {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
-        }
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;          // event images, Supabase, maps: browser default
+  if (url.pathname.startsWith('/_vercel/')) return;          // analytics beacons are never cached
+
+  if (url.pathname.endsWith('/events.json')) {
+    e.respondWith(
+      fetch(req).then((res) => {
+        if (res && res.status === 200) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put('./events.json', copy)); }
         return res;
-      }).catch(() => {
-        // navigation fallback when offline
-        if (req.mode === 'navigate') return caches.match('./index.html');
-      });
-    })
+      }).catch(() => caches.match('./events.json'))
+    );
+    return;
+  }
+
+  e.respondWith(
+    caches.match(req).then((hit) => hit || fetch(req).then((res) => {
+      if (res && res.status === 200 && res.type === 'basic') { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }
+      return res;
+    }).catch(() => { if (req.mode === 'navigate') return caches.match('./index.html'); }))
   );
 });

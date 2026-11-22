@@ -1,44 +1,45 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; img-src 'self' https: data:; connect-src 'self' https://esviqajfbkdnpoohjpjt.supabase.co https://en.wikipedia.org https://query.wikidata.org; style-src 'self' 'unsafe-inline'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; img-src 'self' https: data:; connect-src 'self' https://esviqajfbkdnpoohjpjt.supabase.co; style-src 'self' 'unsafe-inline'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f6f4">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0c0e">
+<meta name="theme-color" content="#fff3d6">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preload" href="fonts/fredoka-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/nunito-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Muse">
 <meta name="application-name" content="Muse">
-<title>Muse — taste engine</title>
-<meta name="description" content="Name one thing you love — a movie, book, album, game, dish or place — and Muse finds everything like it across media.">
+<title>Muse — passeios em família perto de você</title>
+<meta name="description" content="Festivais de música, gastronomia e festas populares para fazer em família hoje e no fim de semana, a até 100 km de você.">
 <link rel="canonical" href="https://muse-find.com/">
 <!-- Open Graph / social link previews (WhatsApp, iMessage, Telegram, Slack, Facebook, LinkedIn…) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Muse">
-<meta property="og:title" content="Muse — taste engine">
-<meta property="og:description" content="Name one thing you love — a movie, book, album, game, dish or place — and Muse finds everything like it across media.">
+<meta property="og:title" content="Muse — passeios em família perto de você">
+<meta property="og:description" content="Festivais de música, gastronomia e festas populares para fazer em família hoje e no fim de semana, a até 100 km de você.">
 <meta property="og:url" content="https://muse-find.com/">
-<meta property="og:image" content="https://muse-find.com/og-image.png">
-<meta property="og:image:secure_url" content="https://muse-find.com/og-image.png">
-<meta property="og:image:type" content="image/png">
+<meta property="og:image" content="https://muse-find.com/og-image.jpg">
+<meta property="og:image:secure_url" content="https://muse-find.com/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="muse — name one thing you love, find everything like it. Movies, TV, books, music, games, anime, food, travel.">
-<meta property="og:locale" content="en">
+<meta property="og:image:alt" content="muse — passeios em família: festivais de música, gastronomia e festas a até 100 km de você.">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="es_ES">
 <!-- Twitter / X card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Muse — taste engine">
-<meta name="twitter:description" content="Name one thing you love — a movie, book, album, game, dish or place — and Muse finds everything like it across media.">
-<meta name="twitter:image" content="https://muse-find.com/og-image.png">
-<meta name="twitter:image:alt" content="muse — name one thing you love, find everything like it.">
+<meta name="twitter:title" content="Muse — passeios em família perto de você">
+<meta name="twitter:description" content="Festivais de música, gastronomia e festas populares para fazer em família hoje e no fim de semana, a até 100 km de você.">
+<meta name="twitter:image" content="https://muse-find.com/og-image.jpg">
+<meta name="twitter:image:alt" content="muse — passeios em família a até 100 km de você.">
 <link rel="stylesheet" href="style.css">
-<!-- Vercel Web Analytics — same-origin script Vercel rewrites at the edge (no external host, so
-     the existing script-src/connect-src 'self' CSP already covers it); a harmless no-op request
-     until Web Analytics is turned on for this project in the Vercel dashboard. -->
+<!-- Vercel Web Analytics — same-origin script Vercel rewrites at the edge, covered by the CSP's 'self'. -->
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body><div class="device">
@@ -60,39 +61,50 @@
             <button class="wordmark" type="button" data-home aria-label="Home">muse<span class="dot" aria-hidden="true"></span></button>
           </div>
           <div class="topright">
-            <a class="ig-top" id="igTop" href="https://www.instagram.com/muse_find/" target="_blank" rel="noopener noreferrer" aria-label="Muse on Instagram">
+            <a class="ig-top" id="igTop" href="https://www.instagram.com/muse_find/" target="_blank" rel="noopener noreferrer" aria-label="Muse no Instagram">
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.4"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.4" cy="6.6" r="1.15" fill="currentColor" stroke="none"></circle></svg>
             </a>
-            <div class="langs" id="langs" role="group" aria-label="Language"></div>
+            <div class="langs" id="langs" role="group" aria-label="Idioma"></div>
           </div>
         </div>
-        <div class="searchbox">
-          <div class="searchrow">
-            <svg class="mag" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>
-            <input id="q" type="text" autocomplete="off" spellcheck="false" aria-label="Search" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls="ac" aria-expanded="false" />
-            <button class="dice" id="dice" type="button" aria-label="Surprise me"></button>
+
+        <button class="locbtn" id="locBtn" type="button" aria-expanded="false" aria-controls="locPanel">
+          <svg class="pin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          <span class="loctext" id="locText"></span>
+          <span class="locradius" id="locRadius"></span>
+        </button>
+        <div class="locpanel" id="locPanel" hidden>
+          <button class="gps" id="gpsBtn" type="button"></button>
+          <div class="searchbox">
+            <div class="searchrow">
+              <svg class="mag" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>
+              <input id="q" type="text" autocomplete="off" spellcheck="false" aria-label="Cidade" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls="ac" aria-expanded="false" />
+            </div>
+            <div class="ac" id="ac" role="listbox" hidden></div>
           </div>
-          <div class="ac" id="ac" role="listbox" hidden></div>
+          <p class="locnote" id="locNote" role="status"></p>
         </div>
+
+        <nav class="days" id="days" aria-label="Dia"></nav>
       </div>
 
-      <nav class="cats" id="cats" aria-label="Categories"></nav>
+      <nav class="cats" id="cats" aria-label="Categorias"></nav>
 
       <div class="pitch" id="pitch">
         <h1 class="tagline" id="tagline"></h1>
         <p class="stats" id="stats"></p>
       </div>
 
-      <main id="out"></main>
+      <main id="out" aria-live="polite"></main>
 
       <details class="lab" id="lab">
-        <summary><svg class="fl" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6.5L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 9.5V3"></path><path d="M7.5 14h9"></path></svg><span id="labTitle"></span><span class="arr">▾</span></summary>
-        <div class="labgrid" id="labGrid"></div>
+        <summary><svg class="fl" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span id="labTitle"></span><span class="arr">▾</span></summary>
+        <div class="labbody" id="labBody"></div>
       </details>
       <p class="foot" id="foot"></p>
       <button class="suggest" type="button" data-suggest id="suggestBtn"></button>
       <div class="social">
-        <a class="ig" id="igLink" href="https://www.instagram.com/muse_find/" target="_blank" rel="noopener noreferrer" aria-label="Muse on Instagram">
+        <a class="ig" id="igLink" href="https://www.instagram.com/muse_find/" target="_blank" rel="noopener noreferrer" aria-label="Muse no Instagram">
           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.4"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.4" cy="6.6" r="1.15" fill="currentColor" stroke="none"></circle></svg>
           <span>@muse_find</span>
         </a>
@@ -103,24 +115,6 @@
   </div>
 </div>
 
-<!-- first-visit intro: dormant by default (hidden + no video src). app.js sets the src and
-     only reveals it once the first frame decodes; if intro.mp4 404s/errors it stays hidden. -->
-<div class="intro" id="introModal" role="dialog" aria-modal="true" aria-labelledby="introTitle" hidden>
-  <div class="intro-backdrop" data-intro-close></div>
-  <div class="intro-card" role="document">
-    <button class="intro-x" type="button" data-intro-close id="introX" aria-label="Close">&times;</button>
-    <div class="intro-video-wrap">
-      <video id="introVideo" playsinline muted controls preload="none"></video>
-    </div>
-    <div class="intro-body">
-      <h2 class="intro-title" id="introTitle"></h2>
-      <p class="intro-sub" id="introSub"></p>
-      <button class="intro-cta" type="button" data-intro-close id="introCta"></button>
-    </div>
-  </div>
-</div>
-
-<script src="boot-data.js"></script>
 <script src="app.js"></script>
 <script src="register-sw.js"></script>
 </body>

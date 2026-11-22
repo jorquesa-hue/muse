@@ -1,0 +1,69 @@
+name: Events
+
+# Builds events.json — the family agenda the app reads (scripts/events.mjs).
+#   daily      : prune finished events + re-expand confirmed calendar seeds (no API calls, free)
+#   Mon & Thu  : --discover — Claude with web search confirms calendar seeds and searches every
+#                region of Brazil for the next 14 days; each event is validated before publishing.
+# events.json is served network-first by the service worker, so no sw.js bump is needed here.
+on:
+  schedule:
+    - cron: '13 9 * * *'      # 06:13 BRT, every day
+    - cron: '37 8 * * 1,4'    # 05:37 BRT, Monday + Thursday → discover
+  workflow_dispatch:
+    inputs:
+      discover:
+        description: 'Run AI discovery (uses ANTHROPIC_API_KEY)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: catalog-writes
+  cancel-in-progress: false
+
+jobs:
+  events:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build events.json
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          EVENTS_MODEL: ${{ vars.EVENTS_MODEL }}
+          DISCOVER: ${{ github.event_name == 'workflow_dispatch' && inputs.discover || github.event.schedule == '37 8 * * 1,4' }}
+        run: |
+          if [ "$DISCOVER" = "true" ]; then node scripts/events.mjs --discover; else node scripts/events.mjs; fi
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "muse-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add events.json calendar/state.json
+          if git diff --staged --quiet; then echo "No changes."; exit 0; fi
+          git commit -m "chore: refresh events [skip ci]"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push; then exit 0; fi
+            echo "push attempt $i failed, retrying..."; git rebase --abort 2>/dev/null || true; sleep $((i * 5))
+          done
+          echo "FATAL: could not push after 3 attempts." >&2; exit 1
+
+      - name: File an issue if this run failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `${context.workflow} failed`;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const { data: issues } = await github.rest.issues.listForRepo({ owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 50 });
+            const existing = issues.find(i => i.title === title && !i.pull_request);
+            if (existing) await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: existing.number, body: `Failed again on \`${context.sha.slice(0,7)}\`: ${runUrl}` });
+            else await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body: `The **${context.workflow}** workflow failed on \`${context.sha.slice(0,7)}\`.\n\n${runUrl}` });
