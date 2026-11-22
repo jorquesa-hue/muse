@@ -147,14 +147,16 @@ export function extractJSON(text) {
 }
 
 // A search answer that is not valid JSON: one cheap call without tools to re-emit it as JSON.
-async function repairJSON(text) {
+async function repairJSON(text, shape = ITEM_SHAPE) {
   const res = await post({ model: MODEL, max_tokens: 8000, messages: [{ role: 'user', content:
-    `Converta a lista de eventos abaixo para um array JSON válido entre <json> e </json>, sem acrescentar nem inventar nada. Formato de cada item:\n${ITEM_SHAPE}\n\n---\n${String(text).slice(0, 60000)}` }] });
+    `Converta a lista de eventos abaixo para um array JSON válido entre <json> e </json>, sem acrescentar nem inventar nada. Formato de cada item:\n${shape}\n\n---\n${String(text).slice(0, 60000)}` }] });
   usage.calls++; usage.input += res.usage?.input_tokens || 0; usage.output += res.usage?.output_tokens || 0;
   return extractJSON((res.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('\n'));
 }
 
 const ITEM_SHAPE = `{"title":"nome do evento","cat":"music|food|festas|kids|outdoor|fairs","start":"YYYY-MM-DD","end":"YYYY-MM-DD","time":"HH:MM ou null","venue":"local","city":"município","uf":"SP","price":"free|paid|unknown","priceText":"ex. Gratuito, R$ 40 ou null","kids":"yes|unknown","url":"https://página-fonte","d":{"pt":"descrição curta, até 150 caracteres","en":"short description","es":"descripción corta"}}`;
+
+const SEED_SHAPE = `{"id":"id da lista","status":"confirmed|none","occurrences":[{"start":"YYYY-MM-DD","end":"YYYY-MM-DD"}],"weekly":[0,6] ou null,"time":"HH:MM ou null","venue":"local","city":"município","uf":"UF","price":"free|paid|unknown","priceText":"... ou null","url":"https://página-fonte","d":{"pt":"até 150 caracteres","en":"...","es":"..."}}`;
 
 const CAT_GUIDE = `Categorias, em ordem de prioridade: music = festivais de música, shows ao ar livre e apresentações musicais; food = festivais e festas gastronômicas; festas = festas populares e tradicionais (Natal, juninas, carnaval, festas religiosas de rua); kids = programação infantil, teatro e cinema para crianças; outdoor = atividades ao ar livre (balonismo, flores, parques, esportes abertos ao público); fairs = feiras culturais, de livros e de artesanato.`;
 
@@ -193,7 +195,7 @@ Para os semanais: ainda acontece regularmente? Em quais dias da semana, horário
 Só confirme o que uma fonte vista por você confirma (site oficial, prefeitura ou imprensa recente). Se não houver edição no período, ou não for possível confirmar, use status "none". Descrições escritas por você.
 
 Responda APENAS com um array JSON entre <json> e </json>, um item por id:
-{"id":"id da lista","status":"confirmed|none","occurrences":[{"start":"YYYY-MM-DD","end":"YYYY-MM-DD"}],"weekly":[0,6] ou null,"time":"HH:MM ou null","venue":"local","city":"município","uf":"UF","price":"free|paid|unknown","priceText":"... ou null","url":"https://página-fonte","d":{"pt":"até 150 caracteres","en":"...","es":"..."}}
+${SEED_SHAPE}
 Para semanais use "weekly" e deixe "occurrences" vazio.`;
 }
 
@@ -315,15 +317,19 @@ function expandSeeds(seeds, state, cities, today, until) {
 
 async function confirmSeeds(due, state, today, mock) {
   const to = addDays(today, SEED_LOOKAHEAD_DAYS);
-  for (let i = 0; i < due.length; i += SEEDS_PER_CALL) {
-    const batch = due.slice(i, i + SEEDS_PER_CALL);
+  const batches = [];
+  for (let i = 0; i < due.length; i += SEEDS_PER_CALL) batches.push(due.slice(i, i + SEEDS_PER_CALL));
+  await pool(batches, DISCOVER_PARALLEL, async (batch) => {
     let answer;
     if (mock) answer = mock.seeds || [];
     else {
-      try { answer = extractJSON(await askWithSearch(seedPrompt(batch, today, to), { maxSearches: 2 * batch.length })); }
-      catch (e) { console.error('seed batch failed:', e.message); continue; }
+      let text;
+      try { text = await askWithSearch(seedPrompt(batch, today, to), { maxSearches: 2 * batch.length }); }
+      catch (e) { console.error('seed batch failed:', e.message); return; }
+      answer = extractJSON(text);
+      if (!Array.isArray(answer)) { try { answer = await repairJSON(text, SEED_SHAPE); } catch (e) { console.error('seed repair failed:', e.message); } }
     }
-    if (!Array.isArray(answer)) { console.error('seed batch: unparseable answer'); continue; }
+    if (!Array.isArray(answer)) { console.error('seed batch: unparseable answer'); return; }
     for (const s of batch) {
       const a = answer.find((x) => x && x.id === s.id);
       const confirmed = a && a.status === 'confirmed' && a.url && ((Array.isArray(a.weekly) && a.weekly.length) || (Array.isArray(a.occurrences) && a.occurrences.length));
@@ -338,7 +344,9 @@ async function confirmSeeds(due, state, today, mock) {
             time: a.time, venue: a.venue, city: a.city || s.city, uf: a.uf || s.uf, price: a.price, priceText: a.priceText, url: a.url, d: a.d } }
         : { checked: today, status: 'none' };
     }
-  }
+  });
+  const n = due.filter((s) => state.seeds[s.id] && state.seeds[s.id].checked === today && state.seeds[s.id].status === 'confirmed').length;
+  console.log(`calendar: ${n}/${due.length} confirmed`);
 }
 
 /* ---------------- open discovery ---------------- */
