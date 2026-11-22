@@ -11,7 +11,7 @@ create table if not exists public.event_clicks (
   sid         text not null check (char_length(sid) <= 64),
   event_id    text not null check (char_length(event_id) <= 160),
   cat         text not null check (cat in ('music','food','festas','kids','outdoor','fairs')),
-  kind        text not null check (kind in ('details','directions','calendar','share')),
+  kind        text not null check (kind in ('details','directions','calendar','share','search')),
   uf          text check (uf is null or uf ~ '^[A-Z]{2}$'),
   lang        text check (lang is null or lang in ('en','es','pt'))
 );

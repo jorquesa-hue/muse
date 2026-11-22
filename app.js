@@ -12,8 +12,10 @@ const DEFAULT_KM = 100;
 const farKm = () => Math.max(300, state.km * 2); // empty-state helper: "a little further away"
 const ROAD_FACTOR = 1.3;   // straight line -> road distance, rough
 const AVG_KMH = 65;
-const CLICK_ENDPOINT = 'https://esviqajfbkdnpoohjpjt.supabase.co/rest/v1/event_clicks';
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdmlxYWpmYmtkbnBvb2hqcGp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NzM1NzgsImV4cCI6MjA5OTQ0OTU3OH0.0C0oBrs0OjrcvxNdDVXeBtBs8KTVmgviGJkWffkFKj4'; // public by design — RLS is insert-only
+const SB_URL = 'https://esviqajfbkdnpoohjpjt.supabase.co';
+const CLICK_ENDPOINT = SB_URL + '/rest/v1/event_clicks';
+const AREA_ENDPOINT = SB_URL + '/rest/v1/area_cache';   // events found by on-demand searches, per ~50 km cell (read-only)
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdmlxYWpmYmtkbnBvb2hqcGp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NzM1NzgsImV4cCI6MjA5OTQ0OTU3OH0.0C0oBrs0OjrcvxNdDVXeBtBs8KTVmgviGJkWffkFKj4'; // public by design — RLS: insert-only clicks, read-only area cache
 
 const CAT_ORDER = ['music', 'food', 'festas', 'kids', 'outdoor', 'fairs'];
 const CATS = {
@@ -49,6 +51,23 @@ const T = {
               es: 'Mostramos festivales, gastronomía y fiestas a menos de {km} km. Tu ubicación queda en tu dispositivo.' },
   typeCity: { pt: 'Escolher cidade', en: 'Pick a city', es: 'Elegir ciudad' },
   loading: { pt: 'Carregando a agenda…', en: 'Loading events…', es: 'Cargando la agenda…' },
+  srchT: { pt: 'Quer mais opções por perto?', en: 'Want more nearby options?', es: '¿Quieres más opciones cerca?' },
+  srchBtn: { pt: '🔎 Buscar mais eventos perto de mim', en: '🔎 Find more events near me', es: '🔎 Buscar más eventos cerca de mí' },
+  srchS: { pt: 'A IA vasculha as agendas da sua região: prefeituras, SESC, bilheterias e imprensa local. 1 busca por semana; o que ela achar fica para todas as famílias por perto.',
+           en: 'AI combs through your region’s listings: city halls, SESC, ticket sites and local press. 1 search a week; what it finds stays for every family nearby.',
+           es: 'La IA revisa las agendas de tu región: alcaldías, SESC, boleterías y prensa local. 1 búsqueda por semana; lo que encuentre queda para todas las familias cercanas.' },
+  srchRun: { pt: 'Procurando passeios perto de {c}…', en: 'Looking for outings near {c}…', es: 'Buscando paseos cerca de {c}…' },
+  srchRunS: { pt: 'Isso leva de 1 a 3 minutos. Pode deixar esta tela aberta.', en: 'This takes 1 to 3 minutes. Keep this screen open.', es: 'Esto tarda de 1 a 3 minutos. Deja esta pantalla abierta.' },
+  srchTips: { pt: '🎶 festivais de música|🍲 festivais gastronômicos|🧒 teatro infantil|🌳 parques e atividades ao ar livre|🛍️ feiras de artesanato|🎉 festas populares',
+              en: '🎶 music festivals|🍲 food festivals|🧒 kids’ theatre|🌳 parks and outdoor fun|🛍️ craft fairs|🎉 folk festivals',
+              es: '🎶 festivales de música|🍲 festivales gastronómicos|🧒 teatro infantil|🌳 parques y aire libre|🛍️ ferias de artesanía|🎉 fiestas populares' },
+  srchDone: { pt: 'Pronto! Encontramos {n} eventos na sua região.', en: 'Done! We found {n} events in your region.', es: '¡Listo! Encontramos {n} eventos en tu región.' },
+  srchNone: { pt: 'Procuramos bem, mas não achamos nada novo para os próximos dias. Volte na semana que vem!', en: 'We looked hard but found nothing new for the coming days. Check back next week!', es: 'Buscamos bien, pero no hay nada nuevo para los próximos días. ¡Vuelve la próxima semana!' },
+  srchCached: { pt: 'A região de {p} já foi pesquisada em {d} — os eventos encontrados já estão na lista. Nova busca a partir de {n}.', en: 'The {p} area was searched on {d} — what we found is already in the list. Next search from {n}.', es: 'La región de {p} se buscó el {d} — lo encontrado ya está en la lista. Nueva búsqueda desde el {n}.' },
+  srchLimited: { pt: 'Você já usou a busca desta semana. A próxima fica liberada em {n}.', en: 'You’ve used this week’s search. The next one opens on {n}.', es: 'Ya usaste la búsqueda de esta semana. La próxima se libera el {n}.' },
+  srchBusy: { pt: 'Alguém aqui perto está buscando agora. Volte em alguns minutos para ver o resultado.', en: 'Someone nearby is searching right now. Come back in a few minutes to see the results.', es: 'Alguien cerca está buscando ahora. Vuelve en unos minutos para ver el resultado.' },
+  srchBudget: { pt: 'Muitas buscas hoje! Tente de novo amanhã.', en: 'Lots of searches today! Try again tomorrow.', es: '¡Muchas búsquedas hoy! Inténtalo mañana.' },
+  srchErr: { pt: 'A busca não está disponível agora. Tente mais tarde.', en: 'Search isn’t available right now. Try later.', es: 'La búsqueda no está disponible ahora. Inténtalo más tarde.' },
   loadFail: { pt: 'Não conseguimos carregar a agenda. Confira sua conexão e tente de novo.', en: "We couldn't load events. Check your connection and try again.", es: 'No pudimos cargar la agenda. Revisa tu conexión e inténtalo de nuevo.' },
   retry: { pt: 'Tentar de novo', en: 'Try again', es: 'Reintentar' },
   building: { pt: 'A agenda está sendo montada', en: 'The agenda is being built', es: 'La agenda se está armando' },
@@ -119,6 +138,9 @@ function detectLang() {
 const state = { lang: detectLang(), day: 'today', cat: 'all', free: false, focus: null, loc: store.get('muse-loc', null),
   km: RADII.includes(store.get('muse-km', DEFAULT_KM)) ? store.get('muse-km', DEFAULT_KM) : DEFAULT_KM };
 let DATA = null, LOAD_ERR = false, CITIES = null, acItems = [], acIdx = -1;
+// on-demand search: events cached for the cells around the family, and the search button's state
+const LOCAL = { key: null, events: [], rows: [], myCell: null };
+const SEARCH = { phase: 'idle', msg: null, tip: 0, timer: null };
 
 function tr(k, vars) {
   const e = T[k]; let s = e ? (e[state.lang] || e.pt) : k;
@@ -180,6 +202,7 @@ async function loadEvents() {
     DATA = await r.json();
   } catch (e) { LOAD_ERR = true; }
   render();
+  loadArea();
 }
 async function loadCities() {
   if (CITIES) return CITIES;
@@ -188,13 +211,89 @@ async function loadCities() {
   return CITIES;
 }
 
+/* ---------------- on-demand local search ---------------- */
+const cellOf = (lat, lng) => `${Math.floor(lat * 2)}_${Math.floor(lng * 2)}`; // same grid as api/search.mjs
+function allEvents() {
+  if (!LOCAL.events.length) return (DATA && DATA.events) || [];
+  const seen = new Set(((DATA && DATA.events) || []).map((e) => e.id));
+  return ((DATA && DATA.events) || []).concat(LOCAL.events.filter((e) => !seen.has(e.id) && seen.add(e.id)));
+}
+async function nearestCity(lat, lng) {
+  const cs = await loadCities(); let best = Infinity, near = null;
+  for (const c of cs) { const k = haversine(lat, lng, c.lat, c.lng); if (k < best) { best = k; near = c; } }
+  return near;
+}
+async function loadArea(force) {
+  if (!state.loc) return;
+  const loc = state.loc, key = `${loc.lat.toFixed(3)},${loc.lng.toFixed(3)},${state.km}`;
+  if (!force && LOCAL.key === key) return;
+  LOCAL.key = key;
+  const dLat = (state.km + 60) / 111, dLng = (state.km + 60) / (111 * Math.cos(loc.lat * Math.PI / 180));
+  const q = `select=cell,place,searched_at,events&lat=gte.${(loc.lat - dLat).toFixed(3)}&lat=lte.${(loc.lat + dLat).toFixed(3)}`
+    + `&lng=gte.${(loc.lng - dLng).toFixed(3)}&lng=lte.${(loc.lng + dLng).toFixed(3)}`;
+  try {
+    const near = await nearestCity(loc.lat, loc.lng).catch(() => null);
+    LOCAL.myCell = near ? cellOf(near.lat, near.lng) : null;
+    const r = await fetch(`${AREA_ENDPOINT}?${q}`, { headers: { apikey: ANON_KEY, Authorization: 'Bearer ' + ANON_KEY } });
+    if (!r.ok) return;
+    const rows = await r.json(); if (LOCAL.key !== key) return;
+    const today = ymd(new Date());
+    LOCAL.rows = rows;
+    LOCAL.events = rows.flatMap((x) => Array.isArray(x.events) ? x.events : []).filter((e) => e && e.id && e.end >= today);
+    render();
+  } catch (e) { /* the cache is a bonus: the agenda works without it */ }
+}
+const dateShort = (iso) => new Date(iso).toLocaleDateString(LOCALE[state.lang], { day: 'numeric', month: 'short' }).replace(/\.$/, '');
+function searchCard() {
+  if (!state.loc) return '';
+  const here = state.loc.uf ? `${state.loc.name}` : '';
+  if (SEARCH.phase === 'running') {
+    const tips = tr('srchTips').split('|');
+    return `<div class="card srch running" role="status"><div class="big spin" aria-hidden="true">🔎</div><h2>${esc(tr('srchRun', { c: here || '…' }))}</h2>
+      <p class="tip">${esc(tips[SEARCH.tip % tips.length])}</p><p class="mut">${esc(tr('srchRunS'))}</p></div>`;
+  }
+  const mine = LOCAL.rows.find((x) => x.cell === LOCAL.myCell);
+  const next = store.get('muse-search-next', null);
+  let note = SEARCH.msg ? `<p class="srchmsg">${esc(SEARCH.msg)}</p>` : '';
+  let body;
+  if (mine) body = `<p>${esc(tr('srchCached', { p: mine.place, d: dateShort(mine.searched_at), n: dateShort(Date.parse(mine.searched_at) + 7 * 86400000) }))}</p>`;
+  else if (next && Date.parse(next) > Date.now()) body = `<p>${esc(tr('srchLimited', { n: dateShort(next) }))}</p>`;
+  else body = `<p class="mut">${esc(tr('srchS'))}</p><div class="row"><button class="btn pink" type="button" data-search>${esc(tr('srchBtn'))}</button></div>`;
+  return `<div class="card srch"><h2>${esc(tr('srchT'))}</h2>${note}${body}</div>`;
+}
+async function runSearch() {
+  if (SEARCH.phase === 'running' || !state.loc) return;
+  SEARCH.phase = 'running'; SEARCH.msg = null; SEARCH.tip = 0;
+  SEARCH.timer = setInterval(() => { SEARCH.tip++; const t = document.querySelector('.srch.running .tip'); if (t) t.textContent = tr('srchTips').split('|')[SEARCH.tip % 6]; }, 2500);
+  render();
+  const el = document.querySelector('.srch'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  let res = null;
+  try {
+    const r = await fetch('/api/search', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lat: state.loc.lat, lng: state.loc.lng, sid: getSid() }) });
+    res = await r.json().catch(() => null);
+  } catch (e) { res = null; }
+  clearInterval(SEARCH.timer); SEARCH.phase = 'idle';
+  const st = res && res.status;
+  if (st === 'done') {
+    store.set('muse-search-next', new Date(Date.now() + 7 * 86400000).toISOString());
+    SEARCH.msg = res.events && res.events.length ? tr('srchDone', { n: res.events.length }) : tr('srchNone');
+    if (Array.isArray(res.events)) { const ids = new Set(LOCAL.events.map((e) => e.id)); LOCAL.events = LOCAL.events.concat(res.events.filter((e) => !ids.has(e.id))); }
+    loadArea(true);
+  } else if (st === 'cached') { loadArea(true); }
+  else if (st === 'limited') { if (res.next_at) store.set('muse-search-next', res.next_at); }
+  else SEARCH.msg = tr(st === 'busy' ? 'srchBusy' : st === 'budget' ? 'srchBudget' : 'srchErr');
+  logClick('search', { id: 'local-search', cat: 'music', uf: state.loc.uf || null });
+  render();
+}
+
 function visibleEvents(which, opts) {
   opts = opts || {};
   if (!DATA || !state.loc) return [];
   const days = viewDays(which), first = days[0], last = days[days.length - 1];
   const max = opts.maxKm || state.km;
   const out = [];
-  for (const e of DATA.events || []) {
+  for (const e of allEvents()) {
     if (!(e.start <= last && e.end >= first)) continue;
     if (!opts.ignoreCat && state.cat !== 'all' && e.cat !== state.cat) continue;
     if (!opts.ignoreFree && state.free && e.price !== 'free') continue;
@@ -338,13 +437,14 @@ function render() {
   renderStats(list);
   let html = '';
   if (DATA.generated && Date.now() - Date.parse(DATA.generated) > 4 * 86400000) html += `<div class="notice">${esc(tr('stale'))}</div>`;
-  if (!list.length) html += emptyState();
+  if (!list.length) html += emptyState() + searchCard();
   else {
     const heroIdx = list.findIndex((x) => x.e.cat === 'music');
     const hero = list[heroIdx >= 0 ? heroIdx : 0];
     html += card(hero, true);
     const rest = list.filter((x) => x !== hero);
     if (rest.length) html += `<h2 class="sec">${esc(tr('more'))} <span class="pillc">${rest.length}</span></h2>` + rest.map((x) => card(x, false)).join('');
+    html += searchCard();
   }
   out.innerHTML = html;
   if (state.focus) {
@@ -373,14 +473,14 @@ function emptyState() {
 }
 
 function renderFar(id) {
-  const e = (DATA.events || []).find((x) => x.id === id); if (!e) return;
+  const e = allEvents().find((x) => x.id === id); if (!e) return;
   const km = haversine(state.loc.lat, state.loc.lng, e.lat, e.lng);
   $('out').insertAdjacentHTML('beforeend', card({ e, km }, false));
   const el = document.getElementById('ev-' + id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 /* ---------------- location ---------------- */
-function setLoc(loc) { state.loc = loc; store.set('muse-loc', loc); togglePanel(false); render(); }
+function setLoc(loc) { state.loc = loc; store.set('muse-loc', loc); togglePanel(false); SEARCH.msg = null; render(); loadArea(); }
 function togglePanel(open, noFocus) {
   $('locPanel').hidden = !open; $('locBtn').setAttribute('aria-expanded', String(open));
   if (open) { loadCities().catch(() => {}); if (!noFocus) setTimeout(() => $('q').focus(), 30); }
@@ -433,16 +533,17 @@ document.addEventListener('click', (ev) => {
   if (t.closest('[data-free]')) { state.free = !state.free; writeHash(); render(); return; }
   if (t.closest('[data-home]')) { state.day = 'today'; state.cat = 'all'; state.free = false; writeHash(); render(); window.scrollTo(0, 0); return; }
   if (t.closest('#gpsBtn') || t.closest('[data-gps]')) { useGps(); return; }
-  const km = t.closest('[data-km]'); if (km) { state.km = +km.dataset.km; store.set('muse-km', state.km); togglePanel(false); render(); return; }
+  const km = t.closest('[data-km]'); if (km) { state.km = +km.dataset.km; store.set('muse-km', state.km); togglePanel(false); render(); loadArea(); return; }
   // tapping the "100 km" pill opens the panel without popping the keyboard (they came to change the distance)
   if (t.closest('#locBtn') || t.closest('[data-openloc]')) { togglePanel($('locPanel').hidden, !!t.closest('#locRadius') && !!state.loc); return; }
+  if (t.closest('[data-search]')) { runSearch(); return; }
   if (t.closest('[data-retry]')) { DATA = null; render(); loadEvents(); return; }
   if (t.closest('[data-suggest]')) { window.open('https://www.instagram.com/muse_find/', '_blank', 'noopener'); return; }
   const far = t.closest('[data-far]'); if (far) { renderFar(far.dataset.far); far.remove(); return; }
   const opt = t.closest('.ac .opt'); if (opt) { const c = acItems[+opt.dataset.i]; if (c) pickCity(c); return; }
   const act = t.closest('[data-act]');
   if (act) {
-    const art = act.closest('.ev'); const e = art && DATA && (DATA.events || []).find((x) => x.id === art.dataset.id); if (!e) return;
+    const art = act.closest('.ev'); const e = art && DATA && allEvents().find((x) => x.id === art.dataset.id); if (!e) return;
     logClick(act.dataset.act, e);
     if (act.dataset.act === 'calendar') downloadIcs(e);
     else if (act.dataset.act === 'share') shareEvent(e, act);

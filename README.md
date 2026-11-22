@@ -21,6 +21,8 @@ leaves the device.
 | `sw.js` | Service worker: app shell cache-first (bump with `node scripts/bump-sw.mjs`), `events.json` **network-first** so the agenda is never stale when online. |
 | `manifest.webmanifest`, icons, `og-image.jpg` | Install + link-preview assets. |
 | `privacy.html` | Privacy notice (PT-BR). |
+| `api/search.mjs` | Vercel function behind “🔎 Buscar mais perto de mim”: on-demand search around one family's city (see below). |
+| `vercel.json` | Function settings (300 s max duration, bundled `cities.json`). |
 
 ### Making a change to the app
 1. Edit `index.html`, `style.css`, and/or `app.js`.
@@ -30,7 +32,7 @@ leaves the device.
 ## How the agenda is built (`scripts/events.mjs`)
 - **Daily (free, no API):** drops finished events and re-expands the confirmed calendar seeds (weekly
   fairs become one dated event per day they run).
-- **Monday + Thursday (`--discover`):** Claude with the web-search tool (1) confirms the exact dates,
+- **Monday (`--discover`):** Claude with the web-search tool (1) confirms the exact dates,
   venue and official page of calendar seeds whose usual months are near, and (2) searches 20 areas of Brazil
   (capital, interior and coast split apart in the big states) twice each — once for stage events
   (music first, festas, food) and once for family activities (kids, outdoor, fairs) — over the next
@@ -41,9 +43,19 @@ leaves the device.
   title must appear on it). Adults-only events are dropped; near-duplicates merged.
 - Local testing without the API: `MOCK_FILE=mock.json SKIP_URL_CHECK=1 DRY_RUN=1 node scripts/events.mjs --discover`.
 
+## On-demand local search (`api/search.mjs`)
+The weekly sweep can't cover every town, so families can ask for a search around their own city:
+1 search per device per week (3 per network), and one per ~50 km cell per week — the results are cached
+in Supabase (`area_cache`) and every family in that region sees them instantly for 7 days. The function
+snaps the family to the nearest municipality, runs two searches (stage events / family activities)
+with the same validation as the sweep, and stops for the day once `MUSE_DAILY_BUDGET` (USD, default 3)
+is spent. Limits and the cache live in `supabase/migrations/20261122010000_local_search.sql`.
+Vercel env: `ANTHROPIC_API_KEY`, `MUSE_FN_SECRET` (must match `muse_private.fn_secret` in Supabase),
+optional `EVENTS_MODEL`, `MUSE_DAILY_BUDGET`, `MUSE_SEARCH_KM`.
+
 ## Automation (`.github/workflows/`)
-- **`events.yml`** — the agenda (daily prune + Mon/Thu discovery; manual run with a `discover` toggle).
-  Needs `ANTHROPIC_API_KEY`. Optional repo variable `EVENTS_MODEL` (default `claude-haiku-5-5`).
+- **`events.yml`** — the agenda (daily prune + Monday discovery; manual run with a `discover` toggle).
+  Needs `ANTHROPIC_API_KEY`. Optional repo variable `EVENTS_MODEL` (default `claude-sonnet-5-5`, with the dynamic-filtering web search).
 - **`metrics.yml`** (daily) → `metrics.mjs`: usage & agenda health dashboard at `/metrics/` (not linked
   from the app) — agenda by category/state, anonymous interactions, Vercel visitors by country/device.
 

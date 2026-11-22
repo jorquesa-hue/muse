@@ -20,13 +20,20 @@
 </head>
 <body>
   <h1>Privacidade</h1>
-  <p class="updated">Atualizado em 22/11/2026</p>
+  <p class="updated">Atualizado em 22/11/2026 (busca perto de você)</p>
   <p>O Muse mostra passeios em família perto de você. Quase tudo acontece no seu próprio navegador.</p>
 
   <h2>Sua localização</h2>
   <p>Se você usa “Usar minha localização”, as coordenadas são usadas <strong>só no seu aparelho</strong> para
   calcular a distância até cada evento. Elas ficam salvas no armazenamento local do navegador
   (<code>muse-loc</code>) e <strong>nunca são enviadas</strong> para nós. O mesmo vale se você digita a cidade.</p>
+
+  <h2>Busca perto de você</h2>
+  <p>Se você toca em “Buscar mais eventos perto de mim”, o app envia ao nosso servidor (Vercel) as coordenadas da sua
+  cidade e o identificador anônimo, <strong>só para essa busca</strong>. O servidor encontra o município mais próximo e
+  procura eventos ao redor dele. Guardamos apenas a <strong>região</strong> (uma área de cerca de 50 km), os eventos
+  encontrados — que ficam visíveis para outras famílias da região por 7 dias — e versões embaralhadas (hash) do
+  identificador e do endereço de rede, para limitar a uma busca por semana. Suas coordenadas não são guardadas.</p>
 
   <h2>O que é registrado</h2>
   <ul>

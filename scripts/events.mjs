@@ -3,9 +3,10 @@
  * Builds events.json, the only data the app reads. Two modes:
  *   node scripts/events.mjs            daily, no API calls: drops finished events, re-expands the
  *                                      confirmed calendar seeds (incl. weekly fairs) for the window.
- *   node scripts/events.mjs --discover twice a week: Claude (web search tool) (1) confirms the dates of
+ *   node scripts/events.mjs --discover weekly: Claude (web search tool) (1) confirms the dates of
  *                                      calendar/festivals-br.json seeds whose usual months are near, and
- *                                      (2) searches each region for family events in the next 14 days.
+ *                                      (2) searches 20 areas x 2 lenses for family events in the next 14 days.
+ * The same search + validation code also serves api/search.mjs (on-demand search around one family).
  *
  * Nothing the model returns is published unchecked. Every candidate must have: a category we know,
  * concrete dates overlapping the window, a municipality that exists in cities.json (that is where the
@@ -14,7 +15,8 @@
  * When the source page is plain HTML with real text, at least one distinctive word of the title must
  * appear in it. Adults-only events are dropped. Near-duplicates are merged.
  *
- * Env: ANTHROPIC_API_KEY (discover only), EVENTS_MODEL, WEB_SEARCH_TOOL, DRY_RUN=1 (write
+ * Env: ANTHROPIC_API_KEY (discover only), EVENTS_MODEL (default claude-sonnet-5-5), EVENTS_EFFORT
+ * (default medium), WEB_SEARCH_TOOL, DRY_RUN=1 (write
  * events.dryrun.json), SKIP_URL_CHECK=1 (local tests where the sandbox can't reach event sites),
  * MOCK_FILE=path (canned model answers {seeds:[...], regions:{SP:[...]}} — no API).
  * Node 20+. No dependencies.
@@ -27,9 +29,17 @@ const SEEDS_FILE = ROOT + 'calendar/festivals-br.json';
 const STATE_FILE = ROOT + 'calendar/state.json';
 const CITIES_FILE = ROOT + 'cities.json';
 
-const API_KEY = process.env.ANTHROPIC_API_KEY;
-const MODEL = process.env.EVENTS_MODEL || 'claude-haiku-5-5';
-const SEARCH_TOOL = process.env.WEB_SEARCH_TOOL || 'web_search_20250305';
+const API_KEY = () => process.env.ANTHROPIC_API_KEY; // read at call time (also used by the Vercel function)
+// Sonnet 5.5 + the dynamic-filtering web search finds more events and fewer wrong dates than Haiku.
+export const MODEL = process.env.EVENTS_MODEL || 'claude-sonnet-5-5';
+const searchToolFor = (m) => process.env.WEB_SEARCH_TOOL || (/haiku/.test(m) ? 'web_search_20250305' : 'web_search_20260209');
+const EFFORT = process.env.EVENTS_EFFORT || 'medium';
+// USD per million tokens (input, output) + $10 per 1000 web searches. Haiku/Sonnet prices for prompts under 100K/any.
+const PRICE = { 'claude-haiku-5-5': [0.10, 0.50], 'claude-sonnet-5-5': [2, 10], 'claude-opus-5-5': [4, 20] };
+export function estimateCost(u, model = MODEL) {
+  const [pi, po] = PRICE[model] || [2, 10];
+  return (u.input * pi + u.output * po) / 1e6 + u.searches * 0.01;
+}
 const DRY = process.env.DRY_RUN === '1';
 const SKIP_URL_CHECK = process.env.SKIP_URL_CHECK === '1';
 const MOCK_FILE = process.env.MOCK_FILE || '';
@@ -67,7 +77,7 @@ const AREAS = [
   { ufs: ['PA', 'AP'], focus: 'Pará e Amapá (Belém, Santarém, Marabá, Macapá)' },
   { ufs: ['AM', 'RR', 'RO', 'AC'], focus: 'Amazonas, Roraima, Rondônia e Acre (Manaus, Parintins, Boa Vista, Porto Velho, Rio Branco)' },
 ];
-const LENSES = {
+export const LENSES = {
   stage: { cats: 'music, festas, food', ask: 'festivais de música e shows ao ar livre (prioridade), festas populares e tradicionais, festivais gastronômicos' },
   family: { cats: 'kids, outdoor, fairs', ask: 'programação infantil (teatro infantil, SESC, centros culturais, museus com atividades para crianças), atividades ao ar livre (parques, festivais de flores, balonismo, trilhas guiadas) e feiras culturais, de livros e de artesanato' },
 };
@@ -80,7 +90,7 @@ export const brToday = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Ameri
 export const addDays = (ymd, n) => { const d = new Date(ymd + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
 const daysBetween = (a, b) => Math.round((new Date(b + 'T12:00:00Z') - new Date(a + 'T12:00:00Z')) / 86400000);
 const weekday = (ymd) => new Date(ymd + 'T12:00:00Z').getUTCDay();
-const isYmd = (s) => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(s + 'T12:00:00Z'));
+export const isYmd = (s) => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(s + 'T12:00:00Z'));
 const slug = (s) => fold(s).replace(/ /g, '-').slice(0, 60);
 const clip = (s, n) => (typeof s === 'string' && s.trim() ? s.trim().slice(0, n) : null);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -100,14 +110,13 @@ export function findCity(idx, city, uf) {
 
 /* ---------------- Claude (web search) ---------------- */
 async function post(body) {
+  const headers = { 'x-api-key': API_KEY(), 'anthropic-version': '2023-06-01', 'content-type': 'application/json' };
+  // Sonnet/Opus: if a safety classifier declines a search, retry it on the server's fallback model
+  if (/sonnet-5-5|opus-5/.test(body.model)) { headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'; body = { ...body, fallbacks: 'default' }; }
   for (let attempt = 0; attempt < 5; attempt++) {
     let res;
     try {
-      res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'x-api-key': API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-        body: JSON.stringify(body),
-      });
+      res = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers, body: JSON.stringify(body) });
     } catch (e) { if (attempt === 4) throw e; await sleep(1000 * 2 ** attempt); continue; }
     if (res.ok) return res.json();
     if (res.status === 429 || res.status >= 500) {
@@ -119,18 +128,21 @@ async function post(body) {
   throw new Error('Anthropic API: retries exhausted');
 }
 
-let usage = { calls: 0, input: 0, output: 0, searches: 0 };
+const usage = { calls: 0, input: 0, output: 0, searches: 0 };
+const addUsage = (acc, res) => { acc.calls++; acc.input += res.usage?.input_tokens || 0; acc.output += res.usage?.output_tokens || 0;
+  acc.searches += res.usage?.server_tool_use?.web_search_requests || 0; };
 // Up to 30 events x 3 languages is ~10k output tokens: 16k leaves room so answers aren't cut mid-JSON.
-async function askWithSearch(prompt, { maxSearches = 6, maxTokens = 16000, tag = '' } = {}) {
-  const tools = [{ type: SEARCH_TOOL, name: 'web_search', max_uses: maxSearches,
+export async function askWithSearch(prompt, { maxSearches = 6, maxTokens = 16000, tag = '', model = MODEL, acc = usage } = {}) {
+  const tools = [{ type: searchToolFor(model), name: 'web_search', max_uses: maxSearches,
     user_location: { type: 'approximate', country: 'BR', timezone: 'America/Sao_Paulo' } }];
   const messages = [{ role: 'user', content: prompt }];
+  const extra = /haiku-4/.test(model) ? {} : { output_config: { effort: EFFORT } };
   let text = '';
   for (let turn = 0; turn < 6; turn++) {
-    const res = await post({ model: MODEL, max_tokens: maxTokens, tools, messages });
+    const res = await post({ model, max_tokens: maxTokens, tools, messages, ...extra });
     if (res.stop_reason === 'max_tokens') console.error(`${tag} answer hit max_tokens (${maxTokens})`);
-    usage.calls++; usage.input += res.usage?.input_tokens || 0; usage.output += res.usage?.output_tokens || 0;
-    usage.searches += res.usage?.server_tool_use?.web_search_requests || 0;
+    if (res.stop_reason === 'refusal') { console.error(`${tag} declined by the model`); addUsage(acc, res); break; }
+    addUsage(acc, res);
     text += (res.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('\n');
     // long searches can pause mid-turn: hand the partial turn back unchanged and let it continue
     if (res.stop_reason === 'pause_turn') { messages.push({ role: 'assistant', content: res.content }); continue; }
@@ -149,18 +161,18 @@ export function extractJSON(text) {
 }
 
 // A search answer that is not valid JSON: one cheap call without tools to re-emit it as JSON.
-async function repairJSON(text, shape = ITEM_SHAPE) {
-  const res = await post({ model: MODEL, max_tokens: 16000, messages: [{ role: 'user', content:
+export async function repairJSON(text, shape = ITEM_SHAPE, { model = MODEL, acc = usage } = {}) {
+  const res = await post({ model, max_tokens: 16000, messages: [{ role: 'user', content:
     `Converta a lista de eventos abaixo para um array JSON válido entre <json> e </json>, sem acrescentar nem inventar nada. Formato de cada item:\n${shape}\n\n---\n${String(text).slice(0, 60000)}` }] });
-  usage.calls++; usage.input += res.usage?.input_tokens || 0; usage.output += res.usage?.output_tokens || 0;
+  addUsage(acc, res);
   return extractJSON((res.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('\n'));
 }
 
-const ITEM_SHAPE = `{"title":"nome do evento","cat":"music|food|festas|kids|outdoor|fairs","start":"YYYY-MM-DD","end":"YYYY-MM-DD","time":"HH:MM ou null","venue":"local","city":"município","uf":"SP","price":"free|paid|unknown","priceText":"ex. Gratuito, R$ 40 ou null","kids":"yes|unknown","url":"https://página-fonte","d":{"pt":"descrição curta, até 150 caracteres","en":"short description","es":"descripción corta"}}`;
+export const ITEM_SHAPE = `{"title":"nome do evento","cat":"music|food|festas|kids|outdoor|fairs","start":"YYYY-MM-DD","end":"YYYY-MM-DD","time":"HH:MM ou null","venue":"local","city":"município","uf":"SP","price":"free|paid|unknown","priceText":"ex. Gratuito, R$ 40 ou null","kids":"yes|unknown","url":"https://página-fonte","d":{"pt":"descrição curta, até 150 caracteres","en":"short description","es":"descripción corta"}}`;
 
 const SEED_SHAPE = `{"id":"id da lista","status":"confirmed|none","occurrences":[{"start":"YYYY-MM-DD","end":"YYYY-MM-DD"}],"weekly":[0,6] ou null,"time":"HH:MM ou null","venue":"local","city":"município","uf":"UF","price":"free|paid|unknown","priceText":"... ou null","url":"https://página-fonte","d":{"pt":"até 150 caracteres","en":"...","es":"..."}}`;
 
-const CAT_GUIDE = `Categorias, em ordem de prioridade: music = festivais de música, shows ao ar livre e apresentações musicais; food = festivais e festas gastronômicas; festas = festas populares e tradicionais (Natal, juninas, carnaval, festas religiosas de rua); kids = programação infantil, teatro e cinema para crianças; outdoor = atividades ao ar livre (balonismo, flores, parques, esportes abertos ao público); fairs = feiras culturais, de livros e de artesanato.`;
+export const CAT_GUIDE = `Categorias, em ordem de prioridade: music = festivais de música, shows ao ar livre e apresentações musicais; food = festivais e festas gastronômicas; festas = festas populares e tradicionais (Natal, juninas, carnaval, festas religiosas de rua); kids = programação infantil, teatro e cinema para crianças; outdoor = atividades ao ar livre (balonismo, flores, parques, esportes abertos ao público); fairs = feiras culturais, de livros e de artesanato.`;
 
 function discoverPrompt(area, lens, states, today, to) {
   const names = `${area.focus} — estado(s): ${area.ufs.map((u) => `${states[u]} (${u})`).join(', ')}`;
@@ -177,6 +189,27 @@ Regras:
 - Só eventos com datas concretas dentro do período e uma página-fonte que você realmente viu (site oficial, prefeitura, bilheteria ou imprensa).
 - Exclua eventos +18, baladas, eventos corporativos, missas/cultos regulares e eventos online.
 - Cubra várias cidades da área, não só a maior. Traga TODOS os eventos que encontrar que passem nas regras, até 30.
+- Não invente nada. Na dúvida, deixe de fora. Descrições escritas por você, sem copiar texto da fonte.
+
+Responda APENAS com um array JSON entre <json> e </json>. Cada item:
+${ITEM_SHAPE}`;
+}
+
+// On-demand search around one family's city (api/search.mjs).
+export function localPrompt(place, lens, today, to, km) {
+  const L = LENSES[lens];
+  return `Você é o curador da agenda do Muse, um app para famílias no Brasil escolherem um passeio de um dia. Hoje é ${today} (horário de Brasília).
+
+Uma família de ${place.name}/${place.uf} quer saber o que fazer. Use a busca na web para encontrar eventos FAMILIARES — bons para crianças e adultos juntos — acontecendo entre ${today} e ${to} em ${place.name} e nas cidades a até ${km} km dela.
+
+${CAT_GUIDE}
+
+Nesta busca, procure especificamente: ${L.ask}. Use só as categorias ${L.cats}. Faça buscas variadas: pelo nome de ${place.name} e das cidades vizinhas, por tipo de evento, nas agendas da prefeitura, do SESC, do Sympla, de guias culturais e da imprensa local.
+
+Regras:
+- Só eventos com datas concretas dentro do período e uma página-fonte que você realmente viu (site oficial, prefeitura, bilheteria ou imprensa).
+- Exclua eventos +18, baladas, eventos corporativos, missas/cultos regulares e eventos online.
+- Traga TODOS os eventos que encontrar que passem nas regras, até 30.
 - Não invente nada. Na dúvida, deixe de fora. Descrições escritas por você, sem copiar texto da fonte.
 
 Responda APENAS com um array JSON entre <json> e </json>. Cada item:
@@ -258,7 +291,7 @@ export function normalizeCandidate(raw, { cities, src, today, until }) {
   } };
 }
 
-async function verifySource(ev) {
+export async function verifySource(ev) {
   const page = await checkUrl(ev.url);
   if (!page.ok) return `source unreachable (${page.status || 'network'})`;
   const toks = titleTokens(ev.t);
@@ -267,7 +300,7 @@ async function verifySource(ev) {
   return null;
 }
 
-async function pool(items, n, fn) {
+export async function pool(items, n, fn) {
   const out = new Array(items.length); let i = 0;
   await Promise.all(Array.from({ length: Math.min(n, items.length) }, async () => { while (i < items.length) { const k = i++; out[k] = await fn(items[k], k); } }));
   return out;
@@ -398,7 +431,7 @@ async function main() {
   let report = { mode: DISCOVER ? 'discover' : 'prune' };
 
   if (DISCOVER) {
-    if (!API_KEY && !mock) throw new Error('ANTHROPIC_API_KEY is required for --discover (or set MOCK_FILE)');
+    if (!API_KEY() && !mock) throw new Error('ANTHROPIC_API_KEY is required for --discover (or set MOCK_FILE)');
     const due = seedsDue(seeds, state, today);
     console.log(`calendar: ${due.length} seeds to confirm`);
     await confirmSeeds(due, state, today, mock);
@@ -407,7 +440,7 @@ async function main() {
     // and write nothing, so the agenda already published stays as it is.
     if (!mock && usage.calls === 0) throw new Error('discover: no Anthropic API call succeeded (see errors above); nothing written');
     searchEvents = searchEvents.concat(ok);
-    report = { ...report, seedsChecked: due.length, discovered: ok.length, rejected, usage };
+    report = { ...report, model: MODEL, seedsChecked: due.length, discovered: ok.length, rejected, usage, costUSD: +estimateCost(usage).toFixed(2) };
   }
 
   const calendarEvents = expandSeeds(seeds, state, cities, today, until);
