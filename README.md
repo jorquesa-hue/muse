@@ -47,10 +47,10 @@ leaves the device.
 The weekly sweep can't cover every town, so families can ask for a search around their own city:
 1 search per device per week (3 per network), and one per ~50 km cell per week — the results are cached
 in Supabase (`area_cache`) and every family in that region sees them instantly for 7 days. The function
-snaps the family to the nearest municipality, runs four short searches in parallel (music / festas+food /
-kids / outdoor+fairs) on a fast model (`LOCAL_MODEL`, Haiku 5.5) and streams each one's validated events to
+snaps the family to the nearest municipality, runs six short searches in parallel (music / festas / food /
+kids / outdoor / fairs) on the same thorough model as the sweep (Sonnet 5.5) and streams each one's validated events to
 the app as soon as it finishes — first results in seconds — with the same validation as the sweep, and stops for the day once `MUSE_DAILY_BUDGET` (USD, default 3)
-is spent. Limits and the cache live in `supabase/migrations/20261122010000_local_search.sql`.
+(set to 8 in Vercel) is spent. Limits and the cache live in `supabase/migrations/20261122010000_local_search.sql`.
 Vercel env: `ANTHROPIC_API_KEY`, `MUSE_FN_SECRET` (must match `muse_private.fn_secret` in Supabase),
 optional `LOCAL_MODEL`, `MUSE_DAILY_BUDGET`, `MUSE_SEARCH_KM`.
 

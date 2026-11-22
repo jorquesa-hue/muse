@@ -5,11 +5,12 @@
  *   2. Asks Supabase (muse_search_begin) whether a search may run: the cell may already have fresh
  *      results (shared with everyone nearby for 7 days), the device may have used its weekly search,
  *      or the day's spending cap may be reached.
- *   3. If allowed: four narrow web searches around the city run in parallel (music / festas+food / kids /
- *      outdoor+fairs). Each one's validated events are STREAMED to the app as soon as it finishes
- *      (NDJSON), so the family sees the first results in seconds instead of waiting for all four.
- *      Everything is then cached per cell. Fast model by default (LOCAL_MODEL, Haiku 5.5): someone
- *      is waiting; the weekly sweep uses the slower, more thorough model.
+ *   3. If allowed: six narrow web searches around the city run in parallel (music / festas / food / kids /
+ *      outdoor / fairs). Each one's validated events are STREAMED to the app as soon as it finishes
+ *      (NDJSON), so the family sees the first results in seconds instead of waiting for all six.
+ *      Everything is then cached per cell. Same thorough model as the weekly sweep (Sonnet 5.5 with the
+ *      dynamic-filtering web search); speed comes from splitting the work, not from a weaker model.
+ *      LOCAL_MODEL / LOCAL_EFFORT / LOCAL_SPEED override it (LOCAL_SPEED=fast with claude-opus-5-5 = fast mode).
  *
  * Env: ANTHROPIC_API_KEY, MUSE_FN_SECRET (shared with Supabase muse_private), LOCAL_MODEL,
  *      MUSE_DAILY_BUDGET (USD, default 3), MUSE_SEARCH_KM (default 100).
@@ -23,7 +24,9 @@ import {
   cityIndex, localPrompt, estimateCost, LOCAL_LENSES, brToday, addDays,
 } from '../scripts/events.mjs';
 
-const LOCAL_MODEL = process.env.LOCAL_MODEL || 'claude-haiku-5-5';
+const LOCAL_MODEL = process.env.LOCAL_MODEL || 'claude-sonnet-5-5';
+const LOCAL_EFFORT = process.env.LOCAL_EFFORT || 'low';   // narrow lenses don't need long deliberation
+const LOCAL_SPEED = process.env.LOCAL_SPEED || '';
 
 const SB = 'https://esviqajfbkdnpoohjpjt.supabase.co';
 const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdmlxYWpmYmtkbnBvb2hqcGp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NzM1NzgsImV4cCI6MjA5OTQ0OTU3OH0.0C0oBrs0OjrcvxNdDVXeBtBs8KTVmgviGJkWffkFKj4'; // public, same as app.js
@@ -59,7 +62,7 @@ async function rpc(fn, args) {
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 
-// Runs the four lenses in parallel and calls onBatch(newEvents) as each one finishes.
+// Runs the six lenses in parallel and calls onBatch(newEvents) as each one finishes.
 export async function searchAround(place, { km, today, acc, onBatch = () => {} }) {
   const to = addDays(today, HORIZON_DAYS);
   const { idx } = await cities();
@@ -69,7 +72,7 @@ export async function searchAround(place, { km, today, acc, onBatch = () => {} }
     let list = [];
     try {
       const text = await askWithSearch(localPrompt(place, lens, today, to, km),
-        { maxSearches: 4, maxTokens: 5000, effort: 'low', model: LOCAL_MODEL, tag, acc });
+        { maxSearches: 5, maxTokens: 8000, effort: LOCAL_EFFORT, speed: LOCAL_SPEED, model: LOCAL_MODEL, tag, acc });
       list = extractJSON(text);
       if (!Array.isArray(list)) list = await repairJSON(text, undefined, { model: LOCAL_MODEL, acc });
       if (!Array.isArray(list)) list = [];

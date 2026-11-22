@@ -132,11 +132,12 @@ const usage = { calls: 0, input: 0, output: 0, searches: 0 };
 const addUsage = (acc, res) => { acc.calls++; acc.input += res.usage?.input_tokens || 0; acc.output += res.usage?.output_tokens || 0;
   acc.searches += res.usage?.server_tool_use?.web_search_requests || 0; };
 // Up to 30 events x 3 languages is ~10k output tokens: 16k leaves room so answers aren't cut mid-JSON.
-export async function askWithSearch(prompt, { maxSearches = 6, maxTokens = 16000, tag = '', model = MODEL, acc = usage, effort = EFFORT } = {}) {
+export async function askWithSearch(prompt, { maxSearches = 6, maxTokens = 16000, tag = '', model = MODEL, acc = usage, effort = EFFORT, speed } = {}) {
   const tools = [{ type: searchToolFor(model), name: 'web_search', max_uses: maxSearches,
     user_location: { type: 'approximate', country: 'BR', timezone: 'America/Sao_Paulo' } }];
   const messages = [{ role: 'user', content: prompt }];
   const extra = /haiku-4/.test(model) ? {} : { output_config: { effort } };
+  if (speed === 'fast' && /opus-5-5/.test(model)) extra.speed = 'fast'; // fast mode: same model, faster output, premium price
   let text = '';
   for (let turn = 0; turn < 6; turn++) {
     const res = await post({ model, max_tokens: maxTokens, tools, messages, ...extra });
@@ -195,14 +196,17 @@ Responda APENAS com um array JSON entre <json> e </json>. Cada item:
 ${ITEM_SHAPE}`;
 }
 
-// On-demand search around one family's city (api/search.mjs). Built for speed: a family is waiting,
-// so four narrow searches run in parallel and each answer is short (12 events, Portuguese only —
-// the app falls back to the Portuguese text in English/Spanish).
+// On-demand search around one family's city (api/search.mjs). A family is waiting, so the sweep is
+// split into six narrow searches that run in parallel: each answer stays short (12 events, Portuguese
+// only — the app falls back to it in English/Spanish) and is streamed as soon as it is ready, while
+// together they cover every category thoroughly.
 export const LOCAL_LENSES = {
-  music: { cats: 'music', ask: 'festivais de música, shows ao ar livre, apresentações musicais gratuitas, corais e bandas em praças' },
-  festas: { cats: 'festas, food', ask: 'festas populares e tradicionais (Natal, festas de padroeiro, quermesses) e festivais gastronômicos' },
-  kids: { cats: 'kids', ask: 'programação infantil: teatro infantil, SESC, centros culturais, bibliotecas, museus e cinema com atividades para crianças' },
-  outdoor: { cats: 'outdoor, fairs', ask: 'atividades ao ar livre (parques, festivais de flores, balonismo, trilhas guiadas) e feiras de artesanato, livros e cultura' },
+  music: { cats: 'music', ask: 'festivais de música, shows ao ar livre, apresentações musicais gratuitas, corais, orquestras e bandas em praças' },
+  festas: { cats: 'festas', ask: 'festas populares e tradicionais: Natal e Ano-Novo, festas de padroeiro, quermesses, carnaval, festas juninas, desfiles' },
+  food: { cats: 'food', ask: 'festivais e festas gastronômicas, feiras de comida, rotas e semanas gastronômicas abertas ao público' },
+  kids: { cats: 'kids', ask: 'programação infantil: teatro e cinema infantil, SESC, centros culturais, bibliotecas, contação de histórias e oficinas para crianças' },
+  outdoor: { cats: 'outdoor', ask: 'atividades ao ar livre: parques com programação, festivais de flores, balonismo, trilhas guiadas, passeios de trem, esportes abertos ao público' },
+  fairs: { cats: 'fairs', ask: 'feiras de artesanato, de livros, de antiguidades e culturais; exposições e museus com programação especial para famílias' },
 };
 const LOCAL_SHAPE = `{"title":"nome do evento","cat":"categoria","start":"YYYY-MM-DD","end":"YYYY-MM-DD","time":"HH:MM ou null","venue":"local","city":"município","uf":"UF","price":"free|paid|unknown","priceText":"ex. Gratuito ou null","kids":"yes|unknown","url":"https://página-fonte","d":{"pt":"até 100 caracteres"}}`;
 export function localPrompt(place, lens, today, to, km) {
