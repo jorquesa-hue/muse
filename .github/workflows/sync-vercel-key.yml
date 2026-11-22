@@ -1,0 +1,37 @@
+name: Sync API key to Vercel
+
+# Copies the ANTHROPIC_API_KEY repo secret into the Vercel project's environment, so the on-demand
+# search (api/search.mjs) uses the same key as the weekly sweep. Run it manually after rotating the
+# key. The value is never printed: it goes from the secret straight into Vercel's API.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Upsert ANTHROPIC_API_KEY in Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          KEY_VALUE: ${{ secrets.ANTHROPIC_API_KEY }}
+          PROJECT: prj_oI8NSLUV1yNzga7SjqBrp49If3Gz
+          TEAM: team_zh337tXixhvsa4rinCndAoKc
+        run: |
+          node -e '
+            const { VERCEL_TOKEN, KEY_VALUE, PROJECT, TEAM } = process.env;
+            if (!VERCEL_TOKEN || !KEY_VALUE) { console.error("missing VERCEL_TOKEN or ANTHROPIC_API_KEY secret"); process.exit(1); }
+            fetch(`https://api.vercel.com/v10/projects/${PROJECT}/env?upsert=true&teamId=${TEAM}`, {
+              method: "POST",
+              headers: { Authorization: `Bearer ${VERCEL_TOKEN}`, "Content-Type": "application/json" },
+              body: JSON.stringify({ key: "ANTHROPIC_API_KEY", value: KEY_VALUE, type: "sensitive", target: ["production", "preview"],
+                comment: "Copied from the GitHub secret by sync-vercel-key.yml" }),
+            }).then(async (r) => {
+              const t = await r.text();
+              if (!r.ok) { console.error("Vercel API", r.status, t.slice(0, 300)); process.exit(1); }
+              console.log("ANTHROPIC_API_KEY saved in Vercel (production, preview).");
+            }).catch((e) => { console.error(e.message); process.exit(1); });
+          '
