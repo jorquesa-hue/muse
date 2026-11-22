@@ -35,7 +35,7 @@ leaves the device.
 ## How the agenda is built (`scripts/events.mjs`)
 - **Daily (free, no API):** drops finished events and re-expands the confirmed calendar seeds (weekly
   fairs become one dated event per day they run).
-- **Monday (`--discover`):** Claude with the web-search tool (1) confirms the exact dates,
+- **Sunday (`--discover`):** Claude with the web-search tool (1) confirms the exact dates,
   venue and official page of calendar seeds whose usual months are near, and (2) searches 34 areas of Brazil
   (the interior of SP, MG, RJ, PR, SC, RS and BA split into regions) twice each — once for stage events
   (music first, festas, food) and once for family activities (kids, outdoor, fairs) — over the next
@@ -68,7 +68,7 @@ organizador" badge. Contact data never leaves `event_submissions` (no anon acces
 (both set by `setup-email.yml`), `ADMIN_TOKEN`.
 
 ## Automation (`.github/workflows/`)
-- **`events.yml`** — the agenda (daily prune + Monday discovery; manual run with a `discover` toggle).
+- **`events.yml`** — the agenda (daily prune + Sunday discovery; manual run with a `discover` toggle).
   Needs `ANTHROPIC_API_KEY`. Optional repo variable `EVENTS_MODEL` (default `claude-sonnet-5-5`, with the dynamic-filtering web search).
 - **`setup-email.yml`** (manual) — registers the domain in Resend, writes its DNS records in Vercel and copies
   `RESEND_API_KEY` into Vercel. **`sync-vercel-key.yml`** (manual) — copies `ANTHROPIC_API_KEY` into Vercel.
