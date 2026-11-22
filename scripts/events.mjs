@@ -344,6 +344,9 @@ async function main() {
     console.log(`calendar: ${due.length} seeds to confirm`);
     await confirmSeeds(due, state, today, mock);
     const { ok, rejected } = await discoverRegions(citiesData.states, cities, today, mock);
+    // Every API call failed (bad key, no credit, wrong model): fail the run so an issue is filed,
+    // and write nothing, so the agenda already published stays as it is.
+    if (!mock && usage.calls === 0) throw new Error('discover: no Anthropic API call succeeded (see errors above); nothing written');
     searchEvents = searchEvents.concat(ok);
     report = { ...report, seedsChecked: due.length, discovered: ok.length, rejected, usage };
   }
