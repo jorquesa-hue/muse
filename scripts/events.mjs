@@ -132,11 +132,11 @@ const usage = { calls: 0, input: 0, output: 0, searches: 0 };
 const addUsage = (acc, res) => { acc.calls++; acc.input += res.usage?.input_tokens || 0; acc.output += res.usage?.output_tokens || 0;
   acc.searches += res.usage?.server_tool_use?.web_search_requests || 0; };
 // Up to 30 events x 3 languages is ~10k output tokens: 16k leaves room so answers aren't cut mid-JSON.
-export async function askWithSearch(prompt, { maxSearches = 6, maxTokens = 16000, tag = '', model = MODEL, acc = usage } = {}) {
+export async function askWithSearch(prompt, { maxSearches = 6, maxTokens = 16000, tag = '', model = MODEL, acc = usage, effort = EFFORT } = {}) {
   const tools = [{ type: searchToolFor(model), name: 'web_search', max_uses: maxSearches,
     user_location: { type: 'approximate', country: 'BR', timezone: 'America/Sao_Paulo' } }];
   const messages = [{ role: 'user', content: prompt }];
-  const extra = /haiku-4/.test(model) ? {} : { output_config: { effort: EFFORT } };
+  const extra = /haiku-4/.test(model) ? {} : { output_config: { effort } };
   let text = '';
   for (let turn = 0; turn < 6; turn++) {
     const res = await post({ model, max_tokens: maxTokens, tools, messages, ...extra });
@@ -195,25 +195,24 @@ Responda APENAS com um array JSON entre <json> e </json>. Cada item:
 ${ITEM_SHAPE}`;
 }
 
-// On-demand search around one family's city (api/search.mjs).
+// On-demand search around one family's city (api/search.mjs). Built for speed: a family is waiting,
+// so four narrow searches run in parallel and each answer is short (12 events, Portuguese only —
+// the app falls back to the Portuguese text in English/Spanish).
+export const LOCAL_LENSES = {
+  music: { cats: 'music', ask: 'festivais de música, shows ao ar livre, apresentações musicais gratuitas, corais e bandas em praças' },
+  festas: { cats: 'festas, food', ask: 'festas populares e tradicionais (Natal, festas de padroeiro, quermesses) e festivais gastronômicos' },
+  kids: { cats: 'kids', ask: 'programação infantil: teatro infantil, SESC, centros culturais, bibliotecas, museus e cinema com atividades para crianças' },
+  outdoor: { cats: 'outdoor, fairs', ask: 'atividades ao ar livre (parques, festivais de flores, balonismo, trilhas guiadas) e feiras de artesanato, livros e cultura' },
+};
+const LOCAL_SHAPE = `{"title":"nome do evento","cat":"categoria","start":"YYYY-MM-DD","end":"YYYY-MM-DD","time":"HH:MM ou null","venue":"local","city":"município","uf":"UF","price":"free|paid|unknown","priceText":"ex. Gratuito ou null","kids":"yes|unknown","url":"https://página-fonte","d":{"pt":"até 100 caracteres"}}`;
 export function localPrompt(place, lens, today, to, km) {
-  const L = LENSES[lens];
-  return `Você é o curador da agenda do Muse, um app para famílias no Brasil escolherem um passeio de um dia. Hoje é ${today} (horário de Brasília).
+  const L = LOCAL_LENSES[lens];
+  return `Hoje é ${today}. Uma família de ${place.name}/${place.uf} quer um passeio. Use a busca na web para achar ${L.ask} acontecendo entre ${today} e ${to} em ${place.name} ou em cidades a até ${km} km. Categorias permitidas: ${L.cats}.
 
-Uma família de ${place.name}/${place.uf} quer saber o que fazer. Use a busca na web para encontrar eventos FAMILIARES — bons para crianças e adultos juntos — acontecendo entre ${today} e ${to} em ${place.name} e nas cidades a até ${km} km dela.
-
-${CAT_GUIDE}
-
-Nesta busca, procure especificamente: ${L.ask}. Use só as categorias ${L.cats}. Faça buscas variadas: pelo nome de ${place.name} e das cidades vizinhas, por tipo de evento, nas agendas da prefeitura, do SESC, do Sympla, de guias culturais e da imprensa local.
-
-Regras:
-- Só eventos com datas concretas dentro do período e uma página-fonte que você realmente viu (site oficial, prefeitura, bilheteria ou imprensa).
-- Exclua eventos +18, baladas, eventos corporativos, missas/cultos regulares e eventos online.
-- Traga TODOS os eventos que encontrar que passem nas regras, até 30.
-- Não invente nada. Na dúvida, deixe de fora. Descrições escritas por você, sem copiar texto da fonte.
+Regras: só eventos com datas concretas no período e uma página-fonte que você viu (prefeitura, SESC, Sympla, site oficial ou imprensa). Nada +18, balada, corporativo ou online. Não invente; na dúvida, deixe de fora. No máximo 12 eventos. Seja rápido: poucas buscas bem escolhidas.
 
 Responda APENAS com um array JSON entre <json> e </json>. Cada item:
-${ITEM_SHAPE}`;
+${LOCAL_SHAPE}`;
 }
 
 function seedPrompt(seeds, today, to) {
@@ -239,12 +238,12 @@ const urlCache = new Map();
 const STOP = new Set(['festival', 'festa', 'feira', 'brasil', 'show', 'shows', 'evento', 'edicao', 'nacional', 'internacional', 'municipal', 'cidade', 'para', 'com', 'dos', 'das', 'del', 'the']);
 const titleTokens = (t) => fold(t).split(' ').filter((w) => w.length >= 4 && !STOP.has(w) && !/^\d+$/.test(w));
 
-async function checkUrl(url) {
+async function checkUrl(url, timeoutMs = 12000) {
   if (urlCache.has(url)) return urlCache.get(url);
   let out = { ok: false, status: 0, text: '', img: null };
   if (SKIP_URL_CHECK) { out = { ok: true, status: 200, text: '', img: null }; urlCache.set(url, out); return out; }
   try {
-    const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), 12000);
+    const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), timeoutMs);
     const res = await fetch(url, { redirect: 'follow', signal: ctl.signal, headers: {
       'user-agent': 'Mozilla/5.0 (compatible; MuseEventsBot/1.0; +https://muse-find.com)',
       'accept': 'text/html,application/xhtml+xml', 'accept-language': 'pt-BR,pt;q=0.9' } });
@@ -291,8 +290,8 @@ export function normalizeCandidate(raw, { cities, src, today, until }) {
   } };
 }
 
-export async function verifySource(ev) {
-  const page = await checkUrl(ev.url);
+export async function verifySource(ev, { timeoutMs } = {}) {
+  const page = await checkUrl(ev.url, timeoutMs);
   if (!page.ok) return `source unreachable (${page.status || 'network'})`;
   const toks = titleTokens(ev.t);
   if (page.text.length > 3000 && toks.length && !toks.some((w) => page.text.includes(w))) return 'source page does not mention the event';

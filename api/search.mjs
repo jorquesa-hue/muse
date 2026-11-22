@@ -5,10 +5,13 @@
  *   2. Asks Supabase (muse_search_begin) whether a search may run: the cell may already have fresh
  *      results (shared with everyone nearby for 7 days), the device may have used its weekly search,
  *      or the day's spending cap may be reached.
- *   3. If allowed: two web searches around the city (stage events / family activities), every candidate
- *      validated exactly like the weekly sweep (scripts/events.mjs), then cached per cell.
+ *   3. If allowed: four narrow web searches around the city run in parallel (music / festas+food / kids /
+ *      outdoor+fairs). Each one's validated events are STREAMED to the app as soon as it finishes
+ *      (NDJSON), so the family sees the first results in seconds instead of waiting for all four.
+ *      Everything is then cached per cell. Fast model by default (LOCAL_MODEL, Haiku 5.5): someone
+ *      is waiting; the weekly sweep uses the slower, more thorough model.
  *
- * Env: ANTHROPIC_API_KEY, MUSE_FN_SECRET (shared with Supabase muse_private), EVENTS_MODEL,
+ * Env: ANTHROPIC_API_KEY, MUSE_FN_SECRET (shared with Supabase muse_private), LOCAL_MODEL,
  *      MUSE_DAILY_BUDGET (USD, default 3), MUSE_SEARCH_KM (default 100).
  * The location is used only for this request; the database stores the city's grid cell and
  * salted hashes of the device id and network address, never the coordinates.
@@ -16,9 +19,11 @@
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import {
-  MODEL, askWithSearch, extractJSON, repairJSON, normalizeCandidate, verifySource, pool, dedupe,
-  cityIndex, localPrompt, estimateCost, LENSES, brToday, addDays,
+  askWithSearch, extractJSON, repairJSON, normalizeCandidate, verifySource, pool, dedupe,
+  cityIndex, localPrompt, estimateCost, LOCAL_LENSES, brToday, addDays,
 } from '../scripts/events.mjs';
+
+const LOCAL_MODEL = process.env.LOCAL_MODEL || 'claude-haiku-5-5';
 
 const SB = 'https://esviqajfbkdnpoohjpjt.supabase.co';
 const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdmlxYWpmYmtkbnBvb2hqcGp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NzM1NzgsImV4cCI6MjA5OTQ0OTU3OH0.0C0oBrs0OjrcvxNdDVXeBtBs8KTVmgviGJkWffkFKj4'; // public, same as app.js
@@ -54,27 +59,34 @@ async function rpc(fn, args) {
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 
-export async function searchAround(place, { km, today, acc }) {
+// Runs the four lenses in parallel and calls onBatch(newEvents) as each one finishes.
+export async function searchAround(place, { km, today, acc, onBatch = () => {} }) {
   const to = addDays(today, HORIZON_DAYS);
   const { idx } = await cities();
-  const lists = await Promise.all(Object.keys(LENSES).map(async (lens) => {
+  const all = [];
+  await Promise.all(Object.keys(LOCAL_LENSES).map(async (lens) => {
     const tag = `local ${place.name}/${place.uf} · ${lens}`;
+    let list = [];
     try {
-      const text = await askWithSearch(localPrompt(place, lens, today, to, km), { maxSearches: 10, tag, acc });
-      let list = extractJSON(text);
-      if (!Array.isArray(list)) list = await repairJSON(text, undefined, { acc });
-      return Array.isArray(list) ? list : [];
-    } catch (e) { console.error(tag, e.message); return []; }
+      const text = await askWithSearch(localPrompt(place, lens, today, to, km),
+        { maxSearches: 4, maxTokens: 5000, effort: 'low', model: LOCAL_MODEL, tag, acc });
+      list = extractJSON(text);
+      if (!Array.isArray(list)) list = await repairJSON(text, undefined, { model: LOCAL_MODEL, acc });
+      if (!Array.isArray(list)) list = [];
+    } catch (e) { console.error(tag, e.message); }
+    const found = [];
+    for (const raw of list) {
+      const r = normalizeCandidate(raw, { cities: idx, src: 'local', today, until: to });
+      if (!r.ok) continue;
+      if (haversine(place.lat, place.lng, r.ev.lat, r.ev.lng) > km + 60) continue; // the model drifted too far
+      found.push(r.ev);
+    }
+    const checked = await pool(found, 8, async (ev) => ({ ev, err: await verifySource(ev, { timeoutMs: 4000 }) }));
+    const fresh = dedupe([...all, ...checked.filter((c) => !c.err).map((c) => c.ev)]).filter((e) => !all.includes(e));
+    all.push(...fresh);
+    if (fresh.length) onBatch(fresh);
   }));
-  const found = [];
-  for (const raw of lists.flat()) {
-    const r = normalizeCandidate(raw, { cities: idx, src: 'local', today, until: to });
-    if (!r.ok) continue;
-    if (haversine(place.lat, place.lng, r.ev.lat, r.ev.lng) > km + 60) continue; // the model drifted too far
-    found.push(r.ev);
-  }
-  const checked = await pool(found, 6, async (ev) => ({ ev, err: await verifySource(ev) }));
-  return dedupe(checked.filter((c) => !c.err).map((c) => c.ev));
+  return dedupe(all);
 }
 
 export async function POST(request) {
@@ -98,15 +110,29 @@ export async function POST(request) {
 
   const acc = { calls: 0, input: 0, output: 0, searches: 0 };
   const km = Number(process.env.MUSE_SEARCH_KM || 100);
-  let events = [], ok = false;
-  try { events = await searchAround(place, { km, today: brToday(), acc }); ok = acc.calls > 0; }
-  catch (e) { console.error('search failed', e.message); }
-  const cost = +estimateCost(acc, MODEL).toFixed(4);
-  console.log(`local search ${place.name}/${place.uf} cell ${cell}: ${events.length} events, $${cost}`, JSON.stringify(acc));
-  try {
-    await rpc('muse_search_finish', { p_log_id: gate.log_id, p_ok: ok, p_cost: cost, p_cell: cell,
-      p_lat: place.lat, p_lng: place.lng, p_place: `${place.name}/${place.uf}`, p_events: events });
-  } catch (e) { console.error(e.message); }
-  if (!ok) return json({ status: 'error' }, 502);
-  return json({ status: 'done', place: `${place.name}/${place.uf}`, events });
+  const t0 = Date.now();
+  const enc = new TextEncoder();
+  const place1 = `${place.name}/${place.uf}`;
+  // NDJSON stream: {"type":"start"} then {"type":"events","events":[...]} per finished lens, then {"type":"done",...}
+  const stream = new ReadableStream({
+    async start(ctl) {
+      const send = (o) => { try { ctl.enqueue(enc.encode(JSON.stringify(o) + String.fromCharCode(10))); } catch {} };
+      send({ type: 'start', place: place1 });
+      let events = [], ok = false;
+      try {
+        events = await searchAround(place, { km, today: brToday(), acc, onBatch: (evs) => send({ type: 'events', events: evs }) });
+        ok = acc.calls > 0;
+      } catch (e) { console.error('search failed', e.message); }
+      const cost = +estimateCost(acc, LOCAL_MODEL).toFixed(4);
+      const secs = ((Date.now() - t0) / 1000).toFixed(1);
+      console.log(`local search ${place1} cell ${cell}: ${events.length} events, $${cost}, ${secs}s`, JSON.stringify(acc));
+      try {
+        await rpc('muse_search_finish', { p_log_id: gate.log_id, p_ok: ok, p_cost: cost, p_cell: cell,
+          p_lat: place.lat, p_lng: place.lng, p_place: place1, p_events: events });
+      } catch (e) { console.error(e.message); }
+      send(ok ? { type: 'done', status: 'done', place: place1, count: events.length } : { type: 'done', status: 'error' });
+      ctl.close();
+    },
+  });
+  return new Response(stream, { headers: { 'content-type': 'application/x-ndjson; charset=utf-8', 'cache-control': 'no-store' } });
 }

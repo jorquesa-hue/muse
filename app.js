@@ -60,7 +60,9 @@ const T = {
            en: 'AI combs through your region’s listings: city halls, SESC, ticket sites and local press. 1 search a week; what it finds stays for every family nearby.',
            es: 'La IA revisa las agendas de tu región: alcaldías, SESC, boleterías y prensa local. 1 búsqueda por semana; lo que encuentre queda para todas las familias cercanas.' },
   srchRun: { pt: 'Procurando passeios perto de {c}…', en: 'Looking for outings near {c}…', es: 'Buscando paseos cerca de {c}…' },
-  srchRunS: { pt: 'Isso leva de 1 a 3 minutos. Pode deixar esta tela aberta.', en: 'This takes 1 to 3 minutes. Keep this screen open.', es: 'Esto tarda de 1 a 3 minutos. Deja esta pantalla abierta.' },
+  srchRunS: { pt: 'Os eventos aparecem aqui conforme vamos achando.', en: 'Events show up here as we find them.', es: 'Los eventos aparecen aquí a medida que los encontramos.' },
+  srchSoFar: { pt: '{n} encontrados até agora — procurando mais…', en: '{n} found so far — looking for more…', es: '{n} encontrados hasta ahora — buscando más…' },
+  srchSoFar1: { pt: '1 encontrado até agora — procurando mais…', en: '1 found so far — looking for more…', es: '1 encontrado hasta ahora — buscando más…' },
   srchTips: { pt: '🎶 festivais de música|🍲 festivais gastronômicos|🧒 teatro infantil|🌳 parques e atividades ao ar livre|🛍️ feiras de artesanato|🎉 festas populares',
               en: '🎶 music festivals|🍲 food festivals|🧒 kids’ theatre|🌳 parks and outdoor fun|🛍️ craft fairs|🎉 folk festivals',
               es: '🎶 festivales de música|🍲 festivales gastronómicos|🧒 teatro infantil|🌳 parques y aire libre|🛍️ ferias de artesanía|🎉 fiestas populares' },
@@ -144,7 +146,7 @@ const state = { lang: detectLang(), day: 'today', cat: 'all', free: false, focus
 let DATA = null, LOAD_ERR = false, CITIES = null, acItems = [], acIdx = -1;
 // on-demand search: events cached for the cells around the family, and the search button's state
 const LOCAL = { key: null, events: [], rows: [], myCell: null };
-const SEARCH = { phase: 'idle', msg: null, tip: 0, timer: null };
+const SEARCH = { phase: 'idle', msg: null, tip: 0, timer: null, found: 0 };
 
 function tr(k, vars) {
   const e = T[k]; let s = e ? (e[state.lang] || e.pt) : k;
@@ -262,7 +264,8 @@ function searchCard() {
   if (SEARCH.phase === 'running') {
     const tips = tr('srchTips').split('|');
     return `<div class="card srch running" role="status"><div class="big spin" aria-hidden="true">🔎</div><h2>${esc(tr('srchRun', { c: here || '…' }))}</h2>
-      <p class="tip">${esc(tips[SEARCH.tip % tips.length])}</p><p class="mut">${esc(tr('srchRunS'))}</p></div>`;
+      <p class="tip">${esc(tips[SEARCH.tip % tips.length])}</p>
+      <p class="mut">${esc(SEARCH.found ? (SEARCH.found === 1 ? tr('srchSoFar1') : tr('srchSoFar', { n: SEARCH.found })) : tr('srchRunS'))}</p></div>`;
   }
   const mine = LOCAL.rows.find((x) => x.cell === LOCAL.myCell);
   const next = store.get('muse-search-next', null);
@@ -277,9 +280,16 @@ function canSearch() {
   const next = store.get('muse-search-next', null);
   return !LOCAL.rows.find((x) => x.cell === LOCAL.myCell) && !(next && Date.parse(next) > Date.now());
 }
+function addLocal(events) {
+  if (!Array.isArray(events)) return 0;
+  const ids = new Set(allEvents().map((e) => e.id));
+  const fresh = events.filter((e) => e && e.id && !ids.has(e.id));
+  LOCAL.events = LOCAL.events.concat(fresh);
+  return fresh.length;
+}
 async function runSearch() {
   if (SEARCH.phase === 'running' || !state.loc) return;
-  SEARCH.phase = 'running'; SEARCH.msg = null; SEARCH.tip = 0;
+  SEARCH.phase = 'running'; SEARCH.msg = null; SEARCH.tip = 0; SEARCH.found = 0;
   SEARCH.timer = setInterval(() => { SEARCH.tip++; const t = document.querySelector('.srch.running .tip'); if (t) t.textContent = tr('srchTips').split('|')[SEARCH.tip % 6]; }, 2500);
   render();
   const el = document.querySelector('.srch'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -287,14 +297,31 @@ async function runSearch() {
   try {
     const r = await fetch('/api/search', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lat: state.loc.lat, lng: state.loc.lng, sid: getSid() }) });
-    res = await r.json().catch(() => null);
-  } catch (e) { res = null; }
+    if ((r.headers.get('content-type') || '').includes('ndjson') && r.body) {
+      // the search streams one line per finished lens: show each batch as soon as it arrives
+      const reader = r.body.getReader(), dec = new TextDecoder(); let buf = '';
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (value) buf += dec.decode(value, { stream: true });
+        let nl;
+        while ((nl = buf.indexOf('\n')) >= 0) {
+          const line = buf.slice(0, nl).trim(); buf = buf.slice(nl + 1);
+          if (!line) continue;
+          let m; try { m = JSON.parse(line); } catch (e) { continue; }
+          if (m.type === 'events') { SEARCH.found += addLocal(m.events); render(); }
+          else if (m.type === 'done') res = m;
+        }
+        if (done) break;
+      }
+      if (!res) res = { status: SEARCH.found ? 'done' : 'error' };
+    } else res = await r.json().catch(() => null);
+  } catch (e) { res = SEARCH.found ? { status: 'done' } : null; }
   clearInterval(SEARCH.timer); SEARCH.phase = 'idle';
   const st = res && res.status;
   if (st === 'done') {
     store.set('muse-search-next', new Date(Date.now() + 7 * 86400000).toISOString());
-    SEARCH.msg = res.events && res.events.length ? tr('srchDone', { n: res.events.length }) : tr('srchNone');
-    if (Array.isArray(res.events)) { const ids = new Set(LOCAL.events.map((e) => e.id)); LOCAL.events = LOCAL.events.concat(res.events.filter((e) => !ids.has(e.id))); }
+    if (Array.isArray(res.events)) SEARCH.found += addLocal(res.events);
+    SEARCH.msg = SEARCH.found ? tr('srchDone', { n: SEARCH.found }) : tr('srchNone');
     loadArea(true);
   } else if (st === 'cached') { loadArea(true); }
   else if (st === 'limited') { if (res.next_at) store.set('muse-search-next', res.next_at); }
