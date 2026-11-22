@@ -1,7 +1,7 @@
 # Muse
 
 A smartphone-first, installable **PWA for families in Brazil**: open it and see what you can do
-**today, tomorrow or this weekend within 100 km** — music festivals first, then food festivals, popular
+**today, tomorrow or this weekend within 100 km** (the family can switch to 50, 120 or 150 km) — music festivals first, then food festivals, popular
 festas, kids' shows, outdoor activities and fairs. Trilingual (PT-BR / EN / ES). Your location never
 leaves the device.
 
@@ -13,7 +13,7 @@ leaves the device.
 |---|---|
 | `index.html` | HTML shell (device frame on desktop, full-screen on phones), meta/OG tags. |
 | `style.css` | All styling. Bright light theme, self-hosted Fredoka + Nunito (`fonts/`, SIL OFL). |
-| `app.js` | The app: location (GPS or city), day tabs, 100 km filter, category chips, event cards, `.ics` export, share, i18n (`T`/`tr()`), hash routing, anonymous click counts. |
+| `app.js` | The app: location (GPS or city), day tabs, radius filter (50 / 100 / 120 / 150 km, remembered on the device), category chips, event cards, `.ics` export, share, i18n (`T`/`tr()`), hash routing, anonymous click counts. |
 | `events.json` | The agenda the app reads. **Auto-generated — do not hand-edit** (see Automation). |
 | `cities.json` | All 5,570 Brazilian municipalities with coordinates (IBGE, via kelvins/municipios-brasileiros, MIT). Powers the city picker and every distance, offline. |
 | `calendar/festivals-br.json` | Seed calendar of recurring festivals and weekly fairs — *hints* the pipeline confirms before publishing. Add festivals here. |

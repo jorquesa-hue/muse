@@ -1,14 +1,15 @@
 /* Muse — family day-out finder for Brazil.
  * Reads events.json (built by scripts/events.mjs in GitHub Actions) and shows what a family can do
- * today / tomorrow / this weekend within RADIUS_KM of where they are. Music festivals lead.
+ * today / tomorrow / this weekend within the chosen radius (50–150 km, default 100) of where they are. Music festivals lead.
  * Everything runs in the browser: location never leaves the device (distance is computed here
  * against cities.json, the IBGE municipality list). The only network writes are anonymous
  * "tapped details / directions / calendar / share" counts (event id + category + the event's state).
  */
 'use strict';
 
-const RADIUS_KM = 100;
-const FAR_KM = 300;        // empty-state helper: "a little further away"
+const RADII = [50, 100, 120, 150]; // radius choices (km) in the location panel; 100 is the default
+const DEFAULT_KM = 100;
+const farKm = () => Math.max(300, state.km * 2); // empty-state helper: "a little further away"
 const ROAD_FACTOR = 1.3;   // straight line -> road distance, rough
 const AVG_KMH = 65;
 const CLICK_ENDPOINT = 'https://esviqajfbkdnpoohjpjt.supabase.co/rest/v1/event_clicks';
@@ -26,15 +27,16 @@ const CATS = {
 const LOCALE = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' };
 
 const T = {
-  tagline: { pt: 'Um dia inteiro de <em>diversão em família</em>, a até 100 km de você.',
-             en: 'A whole day of <em>family fun</em>, within 100 km of you.',
-             es: 'Un día entero de <em>diversión en familia</em>, a menos de 100 km.' },
+  tagline: { pt: 'Um dia inteiro de <em>diversão em família</em>, a até {km} km de você.',
+             en: 'A whole day of <em>family fun</em>, within {km} km of you.',
+             es: 'Un día entero de <em>diversión en familia</em>, a menos de {km} km.' },
   today: { pt: 'Hoje', en: 'Today', es: 'Hoy' },
   tomorrow: { pt: 'Amanhã', en: 'Tomorrow', es: 'Mañana' },
   weekend: { pt: 'Fim de semana', en: 'Weekend', es: 'Fin de semana' },
   all: { pt: 'Tudo', en: 'All', es: 'Todo' },
   free: { pt: 'Grátis', en: 'Free', es: 'Gratis' },
   near: { pt: 'Perto de {c}', en: 'Near {c}', es: 'Cerca de {c}' },
+  radius: { pt: 'Distância máxima', en: 'Maximum distance', es: 'Distancia máxima' },
   chooseLoc: { pt: 'Escolha sua cidade', en: 'Choose your city', es: 'Elige tu ciudad' },
   useGps: { pt: '📍 Usar minha localização', en: '📍 Use my location', es: '📍 Usar mi ubicación' },
   locating: { pt: 'Localizando…', en: 'Locating…', es: 'Buscando…' },
@@ -42,9 +44,9 @@ const T = {
   cityPh: { pt: 'Ou digite sua cidade…', en: 'Or type your city…', es: 'O escribe tu ciudad…' },
   noCity: { pt: 'Nenhuma cidade encontrada', en: 'No city found', es: 'Ninguna ciudad encontrada' },
   welcomeT: { pt: 'Onde a família está?', en: 'Where is the family?', es: '¿Dónde está la familia?' },
-  welcomeS: { pt: 'Mostramos festivais, gastronomia e festas a até 100 km. Sua localização fica só no seu aparelho.',
-              en: 'We show festivals, food and folk festivals within 100 km. Your location stays on your device.',
-              es: 'Mostramos festivales, gastronomía y fiestas a menos de 100 km. Tu ubicación queda en tu dispositivo.' },
+  welcomeS: { pt: 'Mostramos festivais, gastronomia e festas a até {km} km. Sua localização fica só no seu aparelho.',
+              en: 'We show festivals, food and folk festivals within {km} km. Your location stays on your device.',
+              es: 'Mostramos festivales, gastronomía y fiestas a menos de {km} km. Tu ubicación queda en tu dispositivo.' },
   typeCity: { pt: 'Escolher cidade', en: 'Pick a city', es: 'Elegir ciudad' },
   loading: { pt: 'Carregando a agenda…', en: 'Loading events…', es: 'Cargando la agenda…' },
   loadFail: { pt: 'Não conseguimos carregar a agenda. Confira sua conexão e tente de novo.', en: "We couldn't load events. Check your connection and try again.", es: 'No pudimos cargar la agenda. Revisa tu conexión e inténtalo de nuevo.' },
@@ -52,7 +54,7 @@ const T = {
   building: { pt: 'A agenda está sendo montada', en: 'The agenda is being built', es: 'La agenda se está armando' },
   buildingS: { pt: 'Estamos reunindo os eventos de todo o Brasil. Volte em algumas horas!', en: "We're gathering events from all over Brazil. Check back in a few hours!", es: 'Estamos reuniendo eventos de todo Brasil. ¡Vuelve en unas horas!' },
   emptyT: { pt: 'Nada por aqui {d}', en: 'Nothing nearby {d}', es: 'Nada por aquí {d}' },
-  emptyS: { pt: 'Não achamos eventos a até 100 km{c}. Experimente:', en: 'No events within 100 km{c}. Try:', es: 'No hay eventos a menos de 100 km{c}. Prueba:' },
+  emptyS: { pt: 'Não achamos eventos a até {km} km{c}. Experimente:', en: 'No events within {km} km{c}. Try:', es: 'No hay eventos a menos de {km} km{c}. Prueba:' },
   inCat: { pt: ' em {c}', en: ' in {c}', es: ' en {c}' },
   allCats: { pt: 'Todas as categorias', en: 'All categories', es: 'Todas las categorías' },
   paidToo: { pt: 'Incluir pagos', en: 'Include paid', es: 'Incluir de pago' },
@@ -82,9 +84,9 @@ const T = {
   suggest: { pt: '＋ Conhece um evento? Conte pra gente no Instagram', en: '＋ Know an event? Tell us on Instagram', es: '＋ ¿Conoces un evento? Cuéntanos en Instagram' },
   labTitle: { pt: 'Como o Muse funciona', en: 'How Muse works', es: 'Cómo funciona Muse' },
   labBody: {
-    pt: '<p><b>De onde vêm os eventos.</b> Todo dia o Muse revisa a agenda; duas vezes por semana uma IA pesquisa a web por eventos familiares em todos os estados e confirma as datas dos grandes festivais anuais.</p><p><b>Nada entra sem checagem.</b> Cada evento precisa de datas concretas, de uma cidade real e de uma página-fonte que funcione. Eventos +18 ficam de fora.</p><p><b>100 km.</b> A distância é em linha reta a partir da sua cidade; o tempo de carro é uma estimativa. Sua localização nunca sai do seu aparelho.</p><p><b>Antes de sair</b>, confirme horários no link “Detalhes”: eventos mudam.</p>',
-    en: '<p><b>Where events come from.</b> Muse refreshes its agenda daily; twice a week an AI searches the web for family events in every Brazilian state and confirms the dates of the big annual festivals.</p><p><b>Nothing goes in unchecked.</b> Every event needs concrete dates, a real city and a working source page. Adults-only events are left out.</p><p><b>100 km.</b> Distance is a straight line from your city; drive time is an estimate. Your location never leaves your device.</p><p><b>Before you go</b>, confirm times on the “Details” link: events change.</p>',
-    es: '<p><b>De dónde vienen los eventos.</b> Muse revisa la agenda a diario; dos veces por semana una IA busca en la web eventos familiares en todos los estados y confirma las fechas de los grandes festivales anuales.</p><p><b>Nada entra sin verificar.</b> Cada evento necesita fechas concretas, una ciudad real y una página fuente que funcione. Los eventos +18 quedan fuera.</p><p><b>100 km.</b> La distancia es en línea recta desde tu ciudad; el tiempo en coche es una estimación. Tu ubicación nunca sale de tu dispositivo.</p><p><b>Antes de salir</b>, confirma horarios en “Detalles”: los eventos cambian.</p>',
+    pt: '<p><b>De onde vêm os eventos.</b> Todo dia o Muse revisa a agenda; duas vezes por semana uma IA pesquisa a web por eventos familiares em todos os estados e confirma as datas dos grandes festivais anuais.</p><p><b>Nada entra sem checagem.</b> Cada evento precisa de datas concretas, de uma cidade real e de uma página-fonte que funcione. Eventos +18 ficam de fora.</p><p><b>{km} km.</b> A distância é em linha reta a partir da sua cidade; o tempo de carro é uma estimativa. Sua localização nunca sai do seu aparelho.</p><p><b>Antes de sair</b>, confirme horários no link “Detalhes”: eventos mudam.</p>',
+    en: '<p><b>Where events come from.</b> Muse refreshes its agenda daily; twice a week an AI searches the web for family events in every Brazilian state and confirms the dates of the big annual festivals.</p><p><b>Nothing goes in unchecked.</b> Every event needs concrete dates, a real city and a working source page. Adults-only events are left out.</p><p><b>{km} km.</b> Distance is a straight line from your city; drive time is an estimate. Your location never leaves your device.</p><p><b>Before you go</b>, confirm times on the “Details” link: events change.</p>',
+    es: '<p><b>De dónde vienen los eventos.</b> Muse revisa la agenda a diario; dos veces por semana una IA busca en la web eventos familiares en todos los estados y confirma las fechas de los grandes festivales anuales.</p><p><b>Nada entra sin verificar.</b> Cada evento necesita fechas concretas, una ciudad real y una página fuente que funcione. Los eventos +18 quedan fuera.</p><p><b>{km} km.</b> La distancia es en línea recta desde tu ciudad; el tiempo en coche es una estimación. Tu ubicación nunca sale de tu dispositivo.</p><p><b>Antes de salir</b>, confirma horarios en “Detalles”: los eventos cambian.</p>',
   },
 };
 
@@ -114,13 +116,14 @@ function detectLang() {
   const n = (navigator.language || 'pt').slice(0, 2).toLowerCase();
   return n === 'es' ? 'es' : n === 'en' ? 'en' : 'pt';
 }
-const state = { lang: detectLang(), day: 'today', cat: 'all', free: false, focus: null, loc: store.get('muse-loc', null) };
+const state = { lang: detectLang(), day: 'today', cat: 'all', free: false, focus: null, loc: store.get('muse-loc', null),
+  km: RADII.includes(store.get('muse-km', DEFAULT_KM)) ? store.get('muse-km', DEFAULT_KM) : DEFAULT_KM };
 let DATA = null, LOAD_ERR = false, CITIES = null, acItems = [], acIdx = -1;
 
 function tr(k, vars) {
   const e = T[k]; let s = e ? (e[state.lang] || e.pt) : k;
   if (vars) for (const v in vars) s = s.split('{' + v + '}').join(vars[v]);
-  return s;
+  return s.split('{km}').join(String(state.km));
 }
 function driveText(km) {
   const mins = Math.max(10, Math.round((km * ROAD_FACTOR / AVG_KMH) * 60 / 5) * 5);
@@ -189,7 +192,7 @@ function visibleEvents(which, opts) {
   opts = opts || {};
   if (!DATA || !state.loc) return [];
   const days = viewDays(which), first = days[0], last = days[days.length - 1];
-  const max = opts.maxKm || RADIUS_KM;
+  const max = opts.maxKm || state.km;
   const out = [];
   for (const e of DATA.events || []) {
     if (!(e.start <= last && e.end >= first)) continue;
@@ -293,7 +296,9 @@ function renderChrome() {
   $('langs').innerHTML = ['pt', 'en', 'es'].map((l) => `<button type="button" data-lang="${l}" aria-pressed="${state.lang === l}">${l.toUpperCase()}</button>`).join('');
   $('tagline').innerHTML = tr('tagline');
   $('locText').textContent = state.loc ? tr('near', { c: state.loc.uf ? `${state.loc.name}/${state.loc.uf}` : state.loc.name }) : tr('chooseLoc');
-  $('locRadius').textContent = `${RADIUS_KM} km`;
+  $('locRadius').textContent = `${state.km} km`;
+  $('radiusLbl').textContent = tr('radius');
+  $('radii').innerHTML = RADII.map((k) => `<button type="button" class="chip" data-km="${k}" aria-pressed="${state.km === k}">${k} km</button>`).join('');
   if (!$('gpsBtn').disabled) $('gpsBtn').textContent = tr('useGps');
   $('q').placeholder = tr('cityPh');
   $('days').innerHTML = ['today', 'tomorrow', 'weekend'].map((d) =>
@@ -359,7 +364,7 @@ function emptyState() {
   }
   if (state.cat !== 'all') { const n = visibleEvents(state.day, { ignoreCat: true }).length; if (n) alts.push(`<button class="btn alt" type="button" data-cat="all">${esc(tr('allCats'))} (${n})</button>`); }
   if (state.free) { const n = visibleEvents(state.day, { ignoreFree: true }).length; if (n) alts.push(`<button class="btn alt" type="button" data-free>${esc(tr('paidToo'))} (${n})</button>`); }
-  const far = visibleEvents(state.day, { maxKm: FAR_KM }).filter((x) => x.km > RADIUS_KM).sort((a, b) => a.km - b.km).slice(0, 3);
+  const far = visibleEvents(state.day, { maxKm: farKm() }).filter((x) => x.km > state.km).sort((a, b) => a.km - b.km).slice(0, 3);
   const farHtml = far.length ? `<div class="near"><strong>${esc(tr('further'))}</strong>${far.map((x) =>
     `<button type="button" data-far="${esc(x.e.id)}"><span>${CATS[x.e.cat].emoji} ${esc(x.e.t)} — ${esc(x.e.city)}/${esc(x.e.uf)}</span><span class="k">${Math.round(x.km)} km</span></button>`).join('')}</div>` : '';
   return `<div class="card"><div class="big" aria-hidden="true">🔭</div><h2>${esc(tr('emptyT', { d: tr(dk) }))}</h2>
@@ -376,9 +381,9 @@ function renderFar(id) {
 
 /* ---------------- location ---------------- */
 function setLoc(loc) { state.loc = loc; store.set('muse-loc', loc); togglePanel(false); render(); }
-function togglePanel(open) {
+function togglePanel(open, noFocus) {
   $('locPanel').hidden = !open; $('locBtn').setAttribute('aria-expanded', String(open));
-  if (open) { loadCities().catch(() => {}); setTimeout(() => $('q').focus(), 30); }
+  if (open) { loadCities().catch(() => {}); if (!noFocus) setTimeout(() => $('q').focus(), 30); }
   else { $('q').value = ''; $('locNote').textContent = ''; hideAC(); }
 }
 function useGps() {
@@ -428,7 +433,9 @@ document.addEventListener('click', (ev) => {
   if (t.closest('[data-free]')) { state.free = !state.free; writeHash(); render(); return; }
   if (t.closest('[data-home]')) { state.day = 'today'; state.cat = 'all'; state.free = false; writeHash(); render(); window.scrollTo(0, 0); return; }
   if (t.closest('#gpsBtn') || t.closest('[data-gps]')) { useGps(); return; }
-  if (t.closest('#locBtn') || t.closest('[data-openloc]')) { togglePanel($('locPanel').hidden); return; }
+  const km = t.closest('[data-km]'); if (km) { state.km = +km.dataset.km; store.set('muse-km', state.km); togglePanel(false); render(); return; }
+  // tapping the "100 km" pill opens the panel without popping the keyboard (they came to change the distance)
+  if (t.closest('#locBtn') || t.closest('[data-openloc]')) { togglePanel($('locPanel').hidden, !!t.closest('#locRadius') && !!state.loc); return; }
   if (t.closest('[data-retry]')) { DATA = null; render(); loadEvents(); return; }
   if (t.closest('[data-suggest]')) { window.open('https://www.instagram.com/muse_find/', '_blank', 'noopener'); return; }
   const far = t.closest('[data-far]'); if (far) { renderFar(far.dataset.far); far.remove(); return; }

@@ -69,6 +69,10 @@ svg{display:block}
 .loctext{flex:1;font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .locradius{flex:none;font-size:12px;font-weight:800;background:var(--sun);border-radius:999px;padding:3px 9px}
 .locpanel{margin-top:10px;background:#fff;border:2px solid var(--line);border-radius:18px;padding:12px}
+.radiusrow{margin-bottom:12px}
+.radiuslbl{display:block;font-size:12px;font-weight:800;color:var(--mut);margin:0 2px 6px}
+.radii{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.radii .chip{justify-content:center;padding-left:0;padding-right:0}
 .gps{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;border-radius:14px;
   background:var(--acc);color:#fff;font-weight:800;font-size:15px}
 .gps:disabled{opacity:.6}
