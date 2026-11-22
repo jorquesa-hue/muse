@@ -31,8 +31,10 @@ leaves the device.
 - **Daily (free, no API):** drops finished events and re-expands the confirmed calendar seeds (weekly
   fairs become one dated event per day they run).
 - **Monday + Thursday (`--discover`):** Claude with the web-search tool (1) confirms the exact dates,
-  venue and official page of calendar seeds whose usual months are near, and (2) searches each of 10
-  regions of Brazil for family events in the next 14 days, music festivals first.
+  venue and official page of calendar seeds whose usual months are near, and (2) searches 20 areas of Brazil
+  (capital, interior and coast split apart in the big states) twice each — once for stage events
+  (music first, festas, food) and once for family activities (kids, outdoor, fairs) — over the next
+  14 days. A malformed answer gets one cheap re-format call instead of being lost.
 - **Nothing is published unchecked.** Each candidate needs a known category, concrete dates in the
   window, a municipality that exists in `cities.json` (coordinates come from there, never from the
   model), and a source URL that resolves (404/DNS failure → dropped; when the page is plain HTML, the

@@ -43,7 +43,35 @@ const SEED_RECHECK_DAYS = 14, WEEKLY_RECHECK_DAYS = 30;
 const SEEDS_PER_CALL = 6;
 
 export const CATS = ['music', 'food', 'festas', 'kids', 'outdoor', 'fairs'];
-const REGIONS = [['SP'], ['RJ', 'ES'], ['MG'], ['PR', 'SC'], ['RS'], ['BA', 'SE', 'AL'], ['PE', 'PB', 'RN'], ['CE', 'PI', 'MA'], ['DF', 'GO', 'TO', 'MS', 'MT'], ['PA', 'AM', 'AP', 'RR', 'RO', 'AC']];
+// Discovery areas: small enough that a search covers the interior, not just the capital.
+// Each area is searched twice, once per LENS (stage events / family activities).
+const AREAS = [
+  { ufs: ['SP'], focus: 'cidade de São Paulo e Grande São Paulo (ABC, Guarulhos, Osasco, Mogi das Cruzes)' },
+  { ufs: ['SP'], focus: 'interior de São Paulo (Campinas, Jundiaí, Sorocaba, Ribeirão Preto, São José dos Campos, Piracicaba, Bauru, São José do Rio Preto, Holambra, Atibaia)' },
+  { ufs: ['SP'], focus: 'litoral paulista e Vale do Ribeira (Santos, Guarujá, São Vicente, Litoral Norte, Registro)' },
+  { ufs: ['RJ'], focus: 'cidade do Rio de Janeiro e Região Metropolitana (Niterói, São Gonçalo, Baixada Fluminense)' },
+  { ufs: ['RJ', 'ES'], focus: 'interior e litoral do Rio de Janeiro (Petrópolis, Teresópolis, Região dos Lagos, Paraty, Volta Redonda) e o Espírito Santo inteiro' },
+  { ufs: ['MG'], focus: 'Belo Horizonte, região metropolitana e cidades históricas (Ouro Preto, Tiradentes, Sabará)' },
+  { ufs: ['MG'], focus: 'interior de Minas Gerais (Uberlândia, Juiz de Fora, Montes Claros, Sul de Minas, Triângulo Mineiro)' },
+  { ufs: ['PR'], focus: 'Paraná inteiro (Curitiba, Londrina, Maringá, Ponta Grossa, Foz do Iguaçu, litoral)' },
+  { ufs: ['SC'], focus: 'Santa Catarina inteira (Florianópolis, Joinville, Blumenau, Balneário Camboriú, serra catarinense, oeste)' },
+  { ufs: ['RS'], focus: 'Rio Grande do Sul inteiro (Porto Alegre e região, Serra Gaúcha com Gramado e Caxias do Sul, Pelotas, interior)' },
+  { ufs: ['BA'], focus: 'Bahia inteira (Salvador, Feira de Santana, Recôncavo, Chapada Diamantina, Sul da Bahia, Vitória da Conquista)' },
+  { ufs: ['SE', 'AL'], focus: 'Sergipe e Alagoas (Aracaju, Maceió e interior)' },
+  { ufs: ['PE'], focus: 'Pernambuco inteiro (Recife, Olinda, Caruaru, Garanhuns, Petrolina)' },
+  { ufs: ['PB', 'RN'], focus: 'Paraíba e Rio Grande do Norte (João Pessoa, Campina Grande, Natal, Mossoró)' },
+  { ufs: ['CE'], focus: 'Ceará inteiro (Fortaleza, Juazeiro do Norte, Sobral, litoral)' },
+  { ufs: ['PI', 'MA'], focus: 'Piauí e Maranhão (Teresina, São Luís, Parnaíba, Imperatriz)' },
+  { ufs: ['DF', 'GO'], focus: 'Distrito Federal e Goiás (Brasília, Goiânia, Anápolis, Pirenópolis, Caldas Novas)' },
+  { ufs: ['MT', 'MS', 'TO'], focus: 'Mato Grosso, Mato Grosso do Sul e Tocantins (Cuiabá, Campo Grande, Bonito, Palmas)' },
+  { ufs: ['PA', 'AP'], focus: 'Pará e Amapá (Belém, Santarém, Marabá, Macapá)' },
+  { ufs: ['AM', 'RR', 'RO', 'AC'], focus: 'Amazonas, Roraima, Rondônia e Acre (Manaus, Parintins, Boa Vista, Porto Velho, Rio Branco)' },
+];
+const LENSES = {
+  stage: { cats: 'music, festas, food', ask: 'festivais de música e shows ao ar livre (prioridade), festas populares e tradicionais, festivais gastronômicos' },
+  family: { cats: 'kids, outdoor, fairs', ask: 'programação infantil (teatro infantil, SESC, centros culturais, museus com atividades para crianças), atividades ao ar livre (parques, festivais de flores, balonismo, trilhas guiadas) e feiras culturais, de livros e de artesanato' },
+};
+const DISCOVER_PARALLEL = 3;
 
 /* ---------------- small utils ---------------- */
 const readJSON = async (p, fb) => { try { return JSON.parse(await readFile(p, 'utf8')); } catch { return fb; } };
@@ -82,7 +110,10 @@ async function post(body) {
       });
     } catch (e) { if (attempt === 4) throw e; await sleep(1000 * 2 ** attempt); continue; }
     if (res.ok) return res.json();
-    if (res.status === 429 || res.status >= 500) { await sleep(2000 * 2 ** attempt); continue; }
+    if (res.status === 429 || res.status >= 500) {
+      const ra = Number(res.headers.get('retry-after'));
+      await sleep(Number.isFinite(ra) && ra > 0 ? ra * 1000 : 2000 * 2 ** attempt); continue;
+    }
     throw new Error(`Anthropic API ${res.status}: ${(await res.text().catch(() => '')).slice(0, 400)}`);
   }
   throw new Error('Anthropic API: retries exhausted');
@@ -109,26 +140,39 @@ async function askWithSearch(prompt, { maxSearches = 6, maxTokens = 8000 } = {})
 export function extractJSON(text) {
   const tagged = [...String(text).matchAll(/<json>([\s\S]*?)<\/json>/g)].pop();
   const fenced = [...String(text).matchAll(/```(?:json)?\s*([\s\S]*?)```/g)].pop();
-  const raw = (tagged && tagged[1]) || (fenced && fenced[1]) || '';
-  try { return JSON.parse(raw.trim()); } catch { return null; }
+  let raw = (tagged && tagged[1]) || (fenced && fenced[1]) || '';
+  if (!raw) { const a = String(text).indexOf('['), b = String(text).lastIndexOf(']'); if (a >= 0 && b > a) raw = String(text).slice(a, b + 1); }
+  try { return JSON.parse(raw.trim()); } catch {}
+  try { return JSON.parse(raw.trim().replace(/,\s*([\]}])/g, '$1')); } catch { return null; } // trailing commas
+}
+
+// A search answer that is not valid JSON: one cheap call without tools to re-emit it as JSON.
+async function repairJSON(text) {
+  const res = await post({ model: MODEL, max_tokens: 8000, messages: [{ role: 'user', content:
+    `Converta a lista de eventos abaixo para um array JSON válido entre <json> e </json>, sem acrescentar nem inventar nada. Formato de cada item:\n${ITEM_SHAPE}\n\n---\n${String(text).slice(0, 60000)}` }] });
+  usage.calls++; usage.input += res.usage?.input_tokens || 0; usage.output += res.usage?.output_tokens || 0;
+  return extractJSON((res.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('\n'));
 }
 
 const ITEM_SHAPE = `{"title":"nome do evento","cat":"music|food|festas|kids|outdoor|fairs","start":"YYYY-MM-DD","end":"YYYY-MM-DD","time":"HH:MM ou null","venue":"local","city":"município","uf":"SP","price":"free|paid|unknown","priceText":"ex. Gratuito, R$ 40 ou null","kids":"yes|unknown","url":"https://página-fonte","d":{"pt":"descrição curta, até 150 caracteres","en":"short description","es":"descripción corta"}}`;
 
 const CAT_GUIDE = `Categorias, em ordem de prioridade: music = festivais de música, shows ao ar livre e apresentações musicais; food = festivais e festas gastronômicas; festas = festas populares e tradicionais (Natal, juninas, carnaval, festas religiosas de rua); kids = programação infantil, teatro e cinema para crianças; outdoor = atividades ao ar livre (balonismo, flores, parques, esportes abertos ao público); fairs = feiras culturais, de livros e de artesanato.`;
 
-function discoverPrompt(ufs, states, today, to) {
-  const names = ufs.map((u) => `${states[u]} (${u})`).join(', ');
+function discoverPrompt(area, lens, states, today, to) {
+  const names = `${area.focus} — estado(s): ${area.ufs.map((u) => `${states[u]} (${u})`).join(', ')}`;
+  const L = LENSES[lens];
   return `Você é o curador da agenda do Muse, um app para famílias no Brasil escolherem um passeio de um dia. Hoje é ${today} (horário de Brasília).
 
 Use a busca na web para encontrar eventos FAMILIARES — bons para crianças e adultos juntos — acontecendo entre ${today} e ${to} em: ${names}.
 
-${CAT_GUIDE} Festivais de música são o foco principal: procure-os primeiro.
+${CAT_GUIDE}
+
+Nesta busca, procure especificamente: ${L.ask}. Use só as categorias ${L.cats}. Faça buscas variadas (por cidade, por tipo de evento, em agendas de prefeituras, SESC, Sympla, guias culturais e imprensa local).
 
 Regras:
 - Só eventos com datas concretas dentro do período e uma página-fonte que você realmente viu (site oficial, prefeitura, bilheteria ou imprensa).
 - Exclua eventos +18, baladas, eventos corporativos, missas/cultos regulares e eventos online.
-- Cubra cidades do interior também, não só a capital. No máximo 25 eventos.
+- Cubra várias cidades da área, não só a maior. Traga TODOS os eventos que encontrar que passem nas regras, até 30.
 - Não invente nada. Na dúvida, deixe de fora. Descrições escritas por você, sem copiar texto da fonte.
 
 Responda APENAS com um array JSON entre <json> e </json>. Cada item:
@@ -301,21 +345,27 @@ async function confirmSeeds(due, state, today, mock) {
 async function discoverRegions(states, cities, today, mock) {
   const to = addDays(today, DISCOVER_DAYS);
   const found = [], rejected = {};
-  for (const ufs of REGIONS) {
+  const jobs = AREAS.flatMap((area) => Object.keys(LENSES).map((lens) => ({ area, lens })));
+  await pool(jobs, DISCOVER_PARALLEL, async ({ area, lens }) => {
+    const tag = `${area.ufs.join('/')} · ${area.focus.split(' (')[0]} · ${lens}`;
     let list;
-    if (mock) list = (mock.regions && mock.regions[ufs[0]]) || [];
+    if (mock) list = (mock.regions && mock.regions[area.ufs[0]]) || [];
     else {
-      try { list = extractJSON(await askWithSearch(discoverPrompt(ufs, states, today, to), { maxSearches: 6 })); }
-      catch (e) { console.error(`region ${ufs.join('/')} failed:`, e.message); continue; }
+      let text;
+      try { text = await askWithSearch(discoverPrompt(area, lens, states, today, to), { maxSearches: 5 }); }
+      catch (e) { console.error(`${tag} failed:`, e.message); return; }
+      list = extractJSON(text);
+      if (!Array.isArray(list)) { try { list = await repairJSON(text); } catch (e) { console.error(`${tag} repair failed:`, e.message); } }
     }
-    if (!Array.isArray(list)) { console.error(`region ${ufs.join('/')}: unparseable answer`); continue; }
+    if (!Array.isArray(list)) { console.error(`${tag}: unparseable answer`); return; }
+    let kept = 0;
     for (const raw of list) {
-      if (raw && raw.uf && !ufs.includes(String(raw.uf).toUpperCase())) { rejected['wrong state'] = (rejected['wrong state'] || 0) + 1; continue; }
+      if (raw && raw.uf && !area.ufs.includes(String(raw.uf).toUpperCase())) { rejected['wrong state'] = (rejected['wrong state'] || 0) + 1; continue; }
       const r = normalizeCandidate(raw, { cities, src: 'search', today, until: to });
-      if (r.ok) found.push(r.ev); else rejected[r.why.split(' ')[0]] = (rejected[r.why.split(' ')[0]] || 0) + 1;
+      if (r.ok) { found.push(r.ev); kept++; } else rejected[r.why.split(' ')[0]] = (rejected[r.why.split(' ')[0]] || 0) + 1;
     }
-    console.log(`region ${ufs.join('/')}: ${list.length} candidates`);
-  }
+    console.log(`${tag}: ${list.length} candidates, ${kept} valid`);
+  });
   const checked = await pool(found, 6, async (ev) => ({ ev, err: await verifySource(ev) }));
   const ok = checked.filter((c) => !c.err).map((c) => c.ev);
   for (const c of checked) if (c.err) { console.log(`  drop "${c.ev.t}": ${c.err}`); rejected.source = (rejected.source || 0) + 1; }
