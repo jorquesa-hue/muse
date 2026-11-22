@@ -34,7 +34,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
+      # Always start from the newest main, not the commit that triggered the run: a queued run
+      # would otherwise rebuild from a stale events.json and conflict when it pushes.
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: actions/setup-node@v4
         with:
