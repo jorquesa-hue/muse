@@ -1,3 +1,482 @@
 {
- "seeds": {}
+ "seeds": {
+  "rock-the-mountain": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "psica": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": null,
+   "data": {
+    "occurrences": [
+     {
+      "start": "2026-12-11",
+      "end": "2026-12-13"
+     }
+    ],
+    "weekly": null,
+    "time": null,
+    "venue": "Cidade Velha (11/12, gratuito) e Estádio Olímpico do Pará – Mangueirão (12 e 13/12)",
+    "city": "Belém",
+    "uf": "PA",
+    "price": "paid",
+    "priceText": "Abertura de 11/12 gratuita. Passaportes 12 e 13/12 (lote 2): meia R$ 160, solidário R$ 195, inteira R$ 320.",
+    "url": "https://shotgun.live/pt-br/festivals/festival-psica-2026",
+    "d": {
+     "pt": "Festival de música e cultura amazônica em Belém. Abertura gratuita na Cidade Velha em 11/12; shows de 12 e 13/12 no Mangueirão, com passaportes pagos.",
+     "en": "Music and Amazonian culture festival in Belém. Free opening in Cidade Velha on Dec 11; shows on Dec 12 and 13 at Mangueirão, with paid passes.",
+     "es": "Festival de música y cultura amazónica en Belém. Apertura gratuita en Cidade Velha el 11/12; shows el 12 y 13/12 en el Mangueirão, con pases de pago."
+    }
+   }
+  },
+  "planeta-atlantida": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "coquetel-molotov": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://revistaogrito.com/wp-content/uploads/2026/09/Foto-Palco-Por-NicoleRodrigues.webp",
+   "data": {
+    "occurrences": [
+     {
+      "start": "2026-11-28",
+      "end": "2026-11-28"
+     }
+    ],
+    "weekly": null,
+    "time": null,
+    "venue": "Campus da UFPE, Av. Prof. Moraes Rego, 1235, Cidade Universitária",
+    "city": "Recife",
+    "uf": "PE",
+    "price": "paid",
+    "priceText": "A partir de R$ 95, à venda na plataforma Shotgun e na Casa Moinho.",
+    "url": "https://revistaogrito.com/festival-no-ar-coquetel-molotov-anuncia-karol-conka-azymuth-e-cidadao-instigado",
+    "d": {
+     "pt": "23ª edição do No Ar Coquetel Molotov no Campus da UFPE, Recife, em 28/11/2026, a partir das 15h. Ingressos pagos a partir de R$ 95.",
+     "en": "23rd No Ar Coquetel Molotov at UFPE campus, Recife, on Nov 28, 2026, from 3 pm. Paid tickets from R$ 95.",
+     "es": "23.ª edición de No Ar Coquetel Molotov en el campus de la UFPE, Recife, el 28/11/2026, desde las 15h. Entradas de pago desde R$ 95."
+    }
+   }
+  },
+  "mimo": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "fenaostra": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "festa-pomerana": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": null,
+   "data": {
+    "occurrences": [
+     {
+      "start": "2027-01-13",
+      "end": "2027-01-24"
+     }
+    ],
+    "weekly": null,
+    "time": null,
+    "venue": "Pavilhão Municipal de Eventos, Av. 21 de Janeiro, 2.700, Centro",
+    "city": "Pomerode",
+    "uf": "SC",
+    "price": "paid",
+    "priceText": "Ingressos a partir de R$ 25 segundo fontes; moradores de Pomerode entram grátis de segunda a quinta (exceto 20/01); crianças até 11 anos grátis.",
+    "url": "https://www.festapomerana.com.br/faq",
+    "d": {
+     "pt": "42ª Festa Pomerana, festa de herança alemã em Pomerode (SC), no Pavilhão Municipal de Eventos. Moradores entram grátis de segunda a quinta.",
+     "en": "42nd Pomerana Festival, a German-heritage festival in Pomerode (SC) at the Municipal Events Pavilion. Residents enter free Monday to Thursday.",
+     "es": "42.ª Festa Pomerana, fiesta de herencia alemana en Pomerode (SC), en el Pavilhão Municipal de Eventos. Residentes entran gratis de lunes a jueves."
+    }
+   }
+  },
+  "feira-sao-cristovao": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": null,
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     2,
+     3,
+     4,
+     5,
+     6,
+     0
+    ],
+    "time": "10:00",
+    "venue": "Centro Municipal Luiz Gonzaga de Tradições Nordestinas, Campo de São Cristóvão",
+    "city": "Rio de Janeiro",
+    "uf": "RJ",
+    "price": "unknown",
+    "priceText": "Fontes divergentes: uma diz entrada gratuita de terça a quinta e taxa de R$ 3 nos fins de semana; outra cobra R$ 10 em sextas, sábados e domingos.",
+    "url": "https://www.feiradesaocristovao.org.br/afeira",
+    "d": {
+     "pt": "Centro Luiz Gonzaga de Tradições Nordestinas: comidas, artesanato e forró nordestino. Abre de terça a domingo, fecha às segundas. Horário varia por dia.",
+     "en": "Luiz Gonzaga Centre of Northeastern traditions: food, crafts and forró. Open Tuesday to Sunday, closed Mondays. Hours vary by day.",
+     "es": "Centro Luiz Gonzaga de tradiciones nordestinas: comida, artesanía y forró. Abierto de martes a domingo, cerrado los lunes. Horario varía por día."
+    }
+   }
+  },
+  "natal-luz-gramado": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://www.natalluz.com.br/images/NatalLuzGramado-Backgorund2.png",
+   "data": {
+    "occurrences": [
+     {
+      "start": "2026-10-22",
+      "end": "2027-01-17"
+     }
+    ],
+    "weekly": null,
+    "time": null,
+    "venue": "Expogramado e Palácio dos Festivais (principais espetáculos); Centro de Gramado (atrações gratuitas)",
+    "city": "Gramado",
+    "uf": "RS",
+    "price": "paid",
+    "priceText": "Espetáculos pagos (ex.: Grande Desfile a partir de R$ 294 segundo fontes); Parada de Natal e outras atrações são gratuitas.",
+    "url": "https://www.natalluz.com.br/",
+    "d": {
+     "pt": "41º Natal Luz de Gramado (RS), com 88 dias de programação, espetáculos pagos e atrações gratuitas. Vai de 22/10/2026 a 17/01/2027.",
+     "en": "41st Natal Luz in Gramado (RS), 88 days of programming with paid shows and free attractions. Runs Oct 22, 2026 to Jan 17, 2027.",
+     "es": "41.ª edición del Natal Luz en Gramado (RS), 88 días de programación con espectáculos de pago y atracciones gratuitas. Del 22/10/2026 al 17/01/2027."
+    }
+   }
+  },
+  "natal-curitiba": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://portalbrasil.com.br/wp-content/uploads/2026/08/natal-curitiba-2026.webp",
+   "data": {
+    "occurrences": [
+     {
+      "start": "2026-11-24",
+      "end": "2027-01-06"
+     }
+    ],
+    "weekly": null,
+    "time": null,
+    "venue": "Praça Santos Andrade (abertura) e demais pontos do Centro e parques da cidade",
+    "city": "Curitiba",
+    "uf": "PR",
+    "price": "free",
+    "priceText": "Maioria das atrações gratuitas; o Disney Celebra no Parque Barigui tem ingressos pagos.",
+    "url": "https://portalbrasil.com.br/datas-e-atracoes-do-natal-curitiba-2026/",
+    "d": {
+     "pt": "Natal de Curitiba 2026 (10ª edição), com mais de 150 atrações, quase todas gratuitas. Abertura em 24/11 na Praça Santos Andrade, até 06/01/2027.",
+     "en": "Curitiba's Christmas season, 10th edition, with 150+ attractions, almost all free. Opens Nov 24 at Praça Santos Andrade, through Jan 6, 2027.",
+     "es": "Navidad de Curitiba 2026 (10.ª edición), más de 150 atracciones, casi todas gratuitas. Inicia el 24/11 en la Praça Santos Andrade, hasta el 06/01/2027."
+    }
+   }
+  },
+  "reveillon-copacabana": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": null,
+   "data": {
+    "occurrences": [
+     {
+      "start": "2026-12-31",
+      "end": "2026-12-31"
+     }
+    ],
+    "weekly": null,
+    "time": "18:00",
+    "venue": "Praia de Copacabana (Palco Rio em frente ao Copacabana Palace; fogos a partir de balsas no mar)",
+    "city": "Rio de Janeiro",
+    "uf": "RJ",
+    "price": "free",
+    "priceText": "Queima de fogos pública e gratuita; shows do palco principal a partir das 18h, sem ingresso segundo a fonte.",
+    "url": "https://prefeitura.rio/riotur/reveillon-do-rio-2027-djavan-simone-mendes-xande-de-pilares-e-revelacao-e-pedro-sampaio-comandam-a-festa-no-palco-rio-em-copacabana/",
+    "d": {
+     "pt": "Réveillon do Rio em Copacabana, 31/12/2026: 12 minutos de queima de fogos à meia-noite, a partir de 19 balsas. Shows no Palco Rio a partir das 18h.",
+     "en": "Rio New Year's Eve at Copacabana, Dec 31, 2026: 12 minutes of fireworks at midnight from 19 barges. Palco Rio shows from 6pm.",
+     "es": "Nochevieja de Río en Copacabana, 31/12/2026: 12 minutos de fuegos a medianoche desde 19 barcazas. Shows en el Palco Rio desde las 18h."
+    }
+   }
+  },
+  "lavagem-bonfim": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://jornalgrandebahia.com.br/wp-content/uploads/2026/09/Santuario-do-Bonfim-abre-vendas-de-camisas-para-caminhada-de-2027.jpg",
+   "data": {
+    "occurrences": [
+     {
+      "start": "2027-01-14",
+      "end": "2027-01-14"
+     }
+    ],
+    "weekly": null,
+    "time": null,
+    "venue": "Da Igreja de Nossa Senhora da Conceição da Praia à Basílica do Senhor do Bonfim",
+    "city": "Salvador",
+    "uf": "BA",
+    "price": "free",
+    "priceText": "Cortejo público e gratuito segundo fonte de 2023; a caminhada 'Lavagem de Corpo e Alma' tem camisas à venda entre R$ 60 e R$ 120.",
+    "url": "https://jornalgrandebahia.com.br/2026/09/salvador-santuario-do-bonfim-abre-vendas-de-camisas-para-caminhada-de-2027-renda-apoia-projeto-bom-samaritano/",
+    "d": {
+     "pt": "Procissão de baianas da Conceição da Praia até a Basílica do Bonfim, cerca de 8 km. Em 14/01/2027, confirmado por calendário do IFBA e pela Basílica.",
+     "en": "Procession of baianas from Conceição da Praia church to the Bonfim Basilica, about 8 km. Jan 14, 2027, per IFBA calendar and the Basilica.",
+     "es": "Procesión de baianas desde la iglesia de Conceição da Praia hasta la Basílica do Bonfim, unos 8 km. El 14/01/2027, según el calendario del IFBA y la Basílica."
+    }
+   }
+  },
+  "ccxp": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://ccxp.com.br/og-image.png",
+   "data": {
+    "occurrences": [
+     {
+      "start": "2026-12-03",
+      "end": "2026-12-06"
+     }
+    ],
+    "weekly": null,
+    "time": null,
+    "venue": "São Paulo Expo (Rodovia dos Imigrantes, km 1,5)",
+    "city": "São Paulo",
+    "uf": "SP",
+    "price": "paid",
+    "priceText": "Ingressos pagos; a partir de R$310 por dia e R$1.120 para 4 dias, com taxa de serviço, segundo o site oficial. Dias esgotados em parte da venda.",
+    "url": "https://ccxp.com.br/",
+    "d": {
+     "pt": "Maior evento de cultura pop do Brasil, de 3 a 6 de dezembro de 2026 no São Paulo Expo, com dia dedicado à Marvel.",
+     "en": "Brazil's biggest pop culture event, December 3-6, 2026 at São Paulo Expo, with a Marvel-dedicated day.",
+     "es": "El mayor evento de cultura pop de Brasil, del 3 al 6 de diciembre de 2026 en São Paulo Expo, con un día dedicado a Marvel."
+    }
+   }
+  },
+  "festa-flores-joinville": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://static.wixstatic.com/media/1a2e26_4568de584a054c8499c7b91a178610a5%7Emv2.png/v1/fit/w_2500,h_1330,al_c/1a2e26_4568de584a054c8499c7b91a178610a5%7Emv2.png",
+   "data": {
+    "occurrences": [
+     {
+      "start": "2026-11-17",
+      "end": "2026-11-22"
+     }
+    ],
+    "weekly": null,
+    "time": null,
+    "venue": "Expoville (Rua XV de Novembro, 4315, Glória)",
+    "city": "Joinville",
+    "uf": "SC",
+    "price": "paid",
+    "priceText": "R$ 30 inteira e R$ 15 meia-entrada; meia para moradores mediante comprovante de residência, segundo a organização.",
+    "url": "https://www.festadasflores.com.br/",
+    "d": {
+     "pt": "86ª Festa das Flores na Expoville, com cerca de 30 mil plantas e orquídeas. Vai de 17 a 22/11/2026; hoje é o último dia.",
+     "en": "86th Festa das Flores at Expoville, with about 30,000 plants and orchids. Runs Nov 17-22, 2026; today is the last day.",
+     "es": "86.ª Festa das Flores en Expoville, con unas 30.000 plantas y orquídeas. Del 17 al 22/11/2026; hoy es el último día."
+    }
+   }
+  },
+  "feira-livro-poa": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "flip": {
+   "checked": "2026-11-22",
+   "status": "none"
+  },
+  "feira-hippie-bh": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://soubh.uai.com.br/wp-content/uploads/2026/10/images-2.jpeg",
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     0
+    ],
+    "time": "07:00",
+    "venue": "Avenida Afonso Pena (entre Praça Sete e Rua Guajajaras)",
+    "city": "Belo Horizonte",
+    "uf": "MG",
+    "price": "free",
+    "priceText": "Entrada gratuita.",
+    "url": "https://soubh.uai.com.br/noticias/variedades/feira-hippie-de-bh-funciona-no-domingo-25-saiba-ate-que-horas/",
+    "d": {
+     "pt": "Feira aos domingos na Av. Afonso Pena. Imprensa de out/2026 cita 7h às 14h; notícia de 19/11 diz 8h. Setor de alimentação até 15h.",
+     "en": "Sunday fair on Av. Afonso Pena. Press from Oct 2026 says 7am-2pm; a Nov 19 report says 8am. Food section until 3pm.",
+     "es": "Feria los domingos en la Av. Afonso Pena. Prensa de oct/2026 dice 7-14 h; un informe del 19/11 dice 8 h. Comida hasta las 15 h."
+    }
+   }
+  },
+  "feira-embu": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://cidadeembudasartes.sp.gov.br/wp-content/uploads/2026/11/WhatsApp-Image-2026-11-16-at-15.05.21-400x200.jpeg",
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     6,
+     0
+    ],
+    "time": "09:00",
+    "venue": "Centro Histórico (Largo 21 de Abril)",
+    "city": "Embu das Artes",
+    "uf": "SP",
+    "price": "unknown",
+    "priceText": null,
+    "url": "https://cidadeembudasartes.sp.gov.br/veja-o-que-abre-e-o-que-fecha-no-feriado-da-consciencia-negra-2/",
+    "d": {
+     "pt": "Feira de artes e artesanato no centro histórico aos sábados e domingos. Prefeitura informa 9h às 18h nesta semana; outras fontes dizem 11h.",
+     "en": "Arts and crafts fair in the historic center on Saturdays and Sundays. City hall says 9am-6pm this week; other sources say 11am.",
+     "es": "Feria de artes y artesanía en el centro histórico los sábados y domingos. El ayuntamiento indica 9-18 h esta semana; otras fuentes dicen 11 h."
+    }
+   }
+  },
+  "benedito-calixto": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": null,
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     6
+    ],
+    "time": "09:00",
+    "venue": "Praça Benedito Calixto, Pinheiros",
+    "city": "São Paulo",
+    "uf": "SP",
+    "price": "free",
+    "priceText": "Entrada gratuita e pública",
+    "url": "http://cidadedesaopaulo.com/v2/atrativos/praca-benedito-calixto/?lang=pt",
+    "d": {
+     "pt": "Feira de antiguidades, artesanato e vinis aos sábados, das 9h às 19h, na Praça Benedito Calixto, em Pinheiros. Entrada gratuita.",
+     "en": "Antiques, crafts and vinyl market every Saturday, 9am to 7pm, at Praça Benedito Calixto in Pinheiros, São Paulo. Free entry.",
+     "es": "Feria de antigüedades, artesanía y vinilos cada sábado, de 9:00 a 19:00, en la Plaza Benedito Calixto, Pinheiros, São Paulo. Entrada gratuita."
+    }
+   }
+  },
+  "feira-hippie-ipanema": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://riotrip.com.br/wp-content/uploads/2026/06/feira-hippie-ipanema-rio-de-janeiro.jpg",
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     0
+    ],
+    "time": "08:00",
+    "venue": "Praça General Osório, Ipanema",
+    "city": "Rio de Janeiro",
+    "uf": "RJ",
+    "price": "free",
+    "priceText": "Entrada livre",
+    "url": "https://riotrip.com.br/feira-hippie-de-ipanema/",
+    "d": {
+     "pt": "Feira de artesanato e arte aos domingos na Praça General Osório, Ipanema. Fontes divergem: 8h–19h ou 9h–18h.",
+     "en": "Arts and crafts fair every Sunday at Praça General Osório, Ipanema. Sources differ on hours: 8am–7pm or 9am–6pm.",
+     "es": "Feria de artesanía y arte cada domingo en la Plaza General Osório, Ipanema. Las fuentes difieren: 8:00–19:00 o 9:00–18:00."
+    }
+   }
+  },
+  "feira-torre-tv": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://imgmd.net/images/c_limit%2Cw_1600/v1/guia/4493406/torre-de-tv-brasilia.jpg",
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     6,
+     0
+    ],
+    "time": "09:00",
+    "venue": "Feira de Artesanato da Torre de TV, Eixo Monumental (SDC)",
+    "city": "Brasília",
+    "uf": "DF",
+    "price": "unknown",
+    "priceText": null,
+    "url": "https://guia.melhoresdestinos.com.br/torre-de-tv-brasilia.html",
+    "d": {
+     "pt": "Artesanato e móveis feitos à mão aos fins de semana, das 9h às 18h, aos pés da Torre de TV. Horários podem variar em feriados.",
+     "en": "Handmade crafts and furniture on weekends, 9am to 6pm, at the foot of the TV Tower. Hours may vary on holidays.",
+     "es": "Artesanía y muebles hechos a mano los fines de semana, de 9:00 a 18:00, junto a la Torre de TV. Los horarios pueden variar en feriados."
+    }
+   }
+  },
+  "largo-da-ordem": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://curitiba-travel.com.br/api/og-image?src=https%3A%2F%2Ff005.backblazeb2.com%2Ffile%2Fctravel%2Fpublic%2Fpost%2F298%2Ffiles-1782384779452-865710770.jpg",
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     0
+    ],
+    "time": "09:00",
+    "venue": "Largo da Ordem / Praça Garibaldi, Centro Histórico",
+    "city": "Curitiba",
+    "uf": "PR",
+    "price": "free",
+    "priceText": "Gratuito",
+    "url": "https://curitiba-travel.com.br/feirinha-do-largo-da-ordem-tudo-o-que-voce-precisa-saber",
+    "d": {
+     "pt": "Feira de artesanato, comida e música aos domingos no Centro Histórico, das 9h às 14h. Entrada gratuita.",
+     "en": "Crafts, food and music fair on Sundays in the historic centre, 9am to 2pm. Free entry.",
+     "es": "Feria de artesanía, comida y música los domingos en el Centro Histórico, de 9:00 a 14:00. Entrada gratuita."
+    }
+   }
+  },
+  "brique-redencao": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": null,
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     0
+    ],
+    "time": "09:00",
+    "venue": "Avenida José Bonifácio, junto ao Parque Farroupilha (Redenção), Bom Fim",
+    "city": "Porto Alegre",
+    "uf": "RS",
+    "price": "unknown",
+    "priceText": null,
+    "url": "https://prefeitura.poa.br/smdete/noticias/brique-da-redencao-tem-novos-expositores-de-artesanato",
+    "d": {
+     "pt": "Feira de artesanato, antiguidades e arte aos domingos na Av. José Bonifácio, junto ao Parque Farroupilha, das 9h às 17h.",
+     "en": "Crafts, antiques and art fair on Sundays on José Bonifácio Avenue, next to Parque Farroupilha, 9am to 5pm.",
+     "es": "Feria de artesanía, antigüedades y arte los domingos en la Av. José Bonifácio, junto al Parque Farroupilha, de 9:00 a 17:00."
+    }
+   }
+  },
+  "feirinha-beira-mar": {
+   "checked": "2026-11-22",
+   "status": "confirmed",
+   "img": "https://www.fortaleza.ce.gov.br/images/images1/00008M/BeiraMar/20%2005%202022%20BeiraMar%2066.jpg",
+   "data": {
+    "occurrences": [],
+    "weekly": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "time": "16:00",
+    "venue": "Calçadão da Av. Beira Mar, 2800, Meireles",
+    "city": "Fortaleza",
+    "uf": "CE",
+    "price": "free",
+    "priceText": "Entrada gratuita",
+    "url": "https://www.fortaleza.ce.gov.br/noticias/feirinha-da-beira-mar-passa-a-funcionar-em-nova-estrutura",
+    "d": {
+     "pt": "Feira de artesanato cearense todos os dias, das 16h às 22h, no calçadão da Beira Mar, Meireles. Entrada gratuita.",
+     "en": "Ceará handicraft market every day, 4pm to 10pm, on the Beira Mar boardwalk in Meireles. Free entry.",
+     "es": "Feria de artesanía cearense todos los días, de 16:00 a 22:00, en el malecón de Beira Mar, Meireles. Entrada gratuita."
+    }
+   }
+  }
+ }
 }
