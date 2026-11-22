@@ -167,6 +167,13 @@ export async function askWithSearch(prompt, { maxSearches = 6, maxTokens = 16000
     if (res.stop_reason === 'refusal') { console.error(`${tag} declined by the model`); addUsage(acc, res); break; }
     addUsage(acc, res);
     text += (res.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('\n');
+    // web search failures come back as result blocks with an error object (HTTP 200): count them so a
+    // broken tool shows up in the run log instead of looking like "no events found"
+    for (const b of res.content || []) {
+      if (b.type === 'web_search_tool_result' && b.content && !Array.isArray(b.content) && b.content.error_code) {
+        acc.searchErrors = acc.searchErrors || {}; acc.searchErrors[b.content.error_code] = (acc.searchErrors[b.content.error_code] || 0) + 1;
+      }
+    }
     // long searches can pause mid-turn: hand the partial turn back unchanged and let it continue
     if (res.stop_reason === 'pause_turn') { messages.push({ role: 'assistant', content: res.content }); continue; }
     break;
