@@ -120,13 +120,15 @@ async function post(body) {
 }
 
 let usage = { calls: 0, input: 0, output: 0, searches: 0 };
-async function askWithSearch(prompt, { maxSearches = 6, maxTokens = 8000 } = {}) {
+// Up to 30 events x 3 languages is ~10k output tokens: 16k leaves room so answers aren't cut mid-JSON.
+async function askWithSearch(prompt, { maxSearches = 6, maxTokens = 16000, tag = '' } = {}) {
   const tools = [{ type: SEARCH_TOOL, name: 'web_search', max_uses: maxSearches,
     user_location: { type: 'approximate', country: 'BR', timezone: 'America/Sao_Paulo' } }];
   const messages = [{ role: 'user', content: prompt }];
   let text = '';
-  for (let turn = 0; turn < 4; turn++) {
+  for (let turn = 0; turn < 6; turn++) {
     const res = await post({ model: MODEL, max_tokens: maxTokens, tools, messages });
+    if (res.stop_reason === 'max_tokens') console.error(`${tag} answer hit max_tokens (${maxTokens})`);
     usage.calls++; usage.input += res.usage?.input_tokens || 0; usage.output += res.usage?.output_tokens || 0;
     usage.searches += res.usage?.server_tool_use?.web_search_requests || 0;
     text += (res.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('\n');
@@ -148,7 +150,7 @@ export function extractJSON(text) {
 
 // A search answer that is not valid JSON: one cheap call without tools to re-emit it as JSON.
 async function repairJSON(text, shape = ITEM_SHAPE) {
-  const res = await post({ model: MODEL, max_tokens: 8000, messages: [{ role: 'user', content:
+  const res = await post({ model: MODEL, max_tokens: 16000, messages: [{ role: 'user', content:
     `Converta a lista de eventos abaixo para um array JSON válido entre <json> e </json>, sem acrescentar nem inventar nada. Formato de cada item:\n${shape}\n\n---\n${String(text).slice(0, 60000)}` }] });
   usage.calls++; usage.input += res.usage?.input_tokens || 0; usage.output += res.usage?.output_tokens || 0;
   return extractJSON((res.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('\n'));
@@ -356,16 +358,15 @@ async function discoverRegions(states, cities, today, mock) {
   const jobs = AREAS.flatMap((area) => Object.keys(LENSES).map((lens) => ({ area, lens })));
   await pool(jobs, DISCOVER_PARALLEL, async ({ area, lens }) => {
     const tag = `${area.ufs.join('/')} · ${area.focus.split(' (')[0]} · ${lens}`;
-    let list;
+    let list, text;
     if (mock) list = (mock.regions && mock.regions[area.ufs[0]]) || [];
     else {
-      let text;
-      try { text = await askWithSearch(discoverPrompt(area, lens, states, today, to), { maxSearches: 5 }); }
+      try { text = await askWithSearch(discoverPrompt(area, lens, states, today, to), { maxSearches: 8, tag }); }
       catch (e) { console.error(`${tag} failed:`, e.message); return; }
       list = extractJSON(text);
       if (!Array.isArray(list)) { try { list = await repairJSON(text); } catch (e) { console.error(`${tag} repair failed:`, e.message); } }
     }
-    if (!Array.isArray(list)) { console.error(`${tag}: unparseable answer`); return; }
+    if (!Array.isArray(list)) { console.error(`${tag}: unparseable answer (${(text || '').length} chars)`); return; }
     let kept = 0;
     for (const raw of list) {
       if (raw && raw.uf && !area.ufs.includes(String(raw.uf).toUpperCase())) { rejected['wrong state'] = (rejected['wrong state'] || 0) + 1; continue; }
