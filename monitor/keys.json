@@ -1,0 +1,7 @@
+{"rows":[
+{"key":"ANTHROPIC_API_KEY","servico":"Anthropic (Claude)","onde":"GitHub Actions + Vercel","uso":"IA da varredura semanal e das buscas locais","medida":"custo estimado por tokens e buscas web"},
+{"key":"MUSE_FN_SECRET","servico":"Supabase (funções)","onde":"Vercel + Supabase","uso":"libera buscas locais e cadastros de organizadores","medida":"buscas locais + cadastros"},
+{"key":"RESEND_API_KEY","servico":"Resend (e-mail)","onde":"Vercel","uso":"e-mail de confirmação ao organizador","medida":"cadastros recebidos (1 e-mail cada)"},
+{"key":"SB_SERVICE_KEY","servico":"Supabase (service_role)","onde":"GitHub Actions","uso":"registra as varreduras e lê as métricas","medida":"varreduras registradas"},
+{"key":"VERCEL_TOKEN","servico":"Vercel","onde":"GitHub Actions","uso":"copia chaves para a Vercel e configura o DNS do e-mail","medida":"sem contagem (uso manual)"}
+],"meta":[{"label":"Origem","value":"Configuração do Muse (README): onde cada chave fica e para que serve. Nenhum valor de chave."}]}
