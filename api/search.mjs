@@ -97,10 +97,13 @@ export async function POST(request) {
       const cost = +estimateCost(acc, LOCAL_MODEL).toFixed(4);
       const secs = ((Date.now() - t0) / 1000).toFixed(1);
       console.log(`local search ${place1} cell ${cell}: ${events.length} events, $${cost}, ${secs}s`, JSON.stringify(acc));
-      try {
-        await rpc('muse_search_finish', { p_log_id: gate.log_id, p_ok: ok, p_cost: cost, p_cell: cell,
-          p_lat: place.lat, p_lng: place.lng, p_place: place1, p_events: events });
-      } catch (e) { console.error(e.message); }
+      const fin = { p_log_id: gate.log_id, p_ok: ok, p_cost: cost, p_cell: cell,
+        p_lat: place.lat, p_lng: place.lng, p_place: place1, p_events: events };
+      try { await rpc('muse_search_finish', { ...fin, p_secs: Number(secs) }); }
+      catch (e) {
+        // database without the monitoring migration yet: same call without the duration
+        try { await rpc('muse_search_finish', fin); } catch (e2) { console.error(e2.message); }
+      }
       send(ok ? { type: 'done', status: 'done', place: place1, count: events.length } : { type: 'done', status: 'error' });
       ctl.close();
     },

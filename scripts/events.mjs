@@ -423,25 +423,40 @@ async function confirmSeeds(due, state, today, mock) {
 async function discoverRegions(states, cities, today, mock) {
   const to = addDays(today, DISCOVER_DAYS);
   const found = [], rejected = {};
+  // per-area tally for the monitoring dashboard (pipeline_runs.areas): cost, candidates, valid, published
+  const areaStats = new Map();
+  const statOf = (area) => {
+    if (!areaStats.has(area)) areaStats.set(area, { area: area.focus.split(' (')[0], ufs: area.ufs.join('/'), calls: 0, input: 0, output: 0, searches: 0, candidates: 0, valid: 0, published: 0, failed: 0 });
+    return areaStats.get(area);
+  };
+  const areaOfEv = new Map();
   const jobs = AREAS.filter((a) => !AREA_FILTER || AREA_FILTER.test(a.focus))
     .flatMap((area) => Object.keys(LENSES).map((lens) => ({ area, lens })));
   await pool(jobs, DISCOVER_PARALLEL, async ({ area, lens }) => {
     const tag = `${area.ufs.join('/')} · ${area.focus.split(' (')[0]} · ${lens}`;
     let list, text;
+    const st = statOf(area);
+    const acc = { calls: 0, input: 0, output: 0, searches: 0 };
+    const merge = () => {
+      for (const k of ['calls', 'input', 'output', 'searches']) { usage[k] += acc[k]; st[k] += acc[k]; }
+      for (const [code, n] of Object.entries(acc.searchErrors || {})) { usage.searchErrors = usage.searchErrors || {}; usage.searchErrors[code] = (usage.searchErrors[code] || 0) + n; }
+    };
     if (mock) list = (mock.regions && mock.regions[area.ufs[0]]) || [];
     else {
-      try { text = await askWithSearch(discoverPrompt(area, lens, states, today, to), { maxSearches: 8, tag }); }
-      catch (e) { console.error(`${tag} failed:`, e.message); return; }
+      try { text = await askWithSearch(discoverPrompt(area, lens, states, today, to), { maxSearches: 8, tag, acc }); }
+      catch (e) { merge(); st.failed++; console.error(`${tag} failed:`, e.message); return; }
       list = extractJSON(text);
-      if (!Array.isArray(list)) { try { list = await repairJSON(text); } catch (e) { console.error(`${tag} repair failed:`, e.message); } }
+      if (!Array.isArray(list)) { try { list = await repairJSON(text, undefined, { acc }); } catch (e) { console.error(`${tag} repair failed:`, e.message); } }
+      merge();
     }
     if (!Array.isArray(list)) { console.error(`${tag}: unparseable answer (${(text || '').length} chars)`); return; }
     let kept = 0;
     for (const raw of list) {
       if (raw && raw.uf && !area.ufs.includes(String(raw.uf).toUpperCase())) { rejected['wrong state'] = (rejected['wrong state'] || 0) + 1; continue; }
       const r = normalizeCandidate(raw, { cities, src: 'search', today, until: to });
-      if (r.ok) { found.push(r.ev); kept++; } else rejected[r.why.split(' ')[0]] = (rejected[r.why.split(' ')[0]] || 0) + 1;
+      if (r.ok) { found.push(r.ev); areaOfEv.set(r.ev, st); kept++; } else rejected[r.why.split(' ')[0]] = (rejected[r.why.split(' ')[0]] || 0) + 1;
     }
+    st.candidates += list.length; st.valid += kept;
     console.log(`${tag}: ${list.length} candidates, ${kept} valid`);
     // an empty answer is worth seeing: what did the model say instead?
     if (!list.length && text) console.log(`  (${tag} said: ${text.replace(/\s+/g, ' ').slice(0, 300)})`);
@@ -449,7 +464,9 @@ async function discoverRegions(states, cities, today, mock) {
   const checked = await pool(found, 6, async (ev) => ({ ev, err: await verifySource(ev) }));
   const ok = checked.filter((c) => !c.err).map((c) => c.ev);
   for (const c of checked) if (c.err) { console.log(`  drop "${c.ev.t}": ${c.err}`); rejected.source = (rejected.source || 0) + 1; }
-  return { ok, rejected };
+  for (const ev of ok) { const st = areaOfEv.get(ev); if (st) st.published++; }
+  const areas = [...areaStats.values()].map((a) => ({ ...a, cost_usd: +estimateCost(a).toFixed(4) }));
+  return { ok, rejected, areas };
 }
 
 /* ---------------- main ---------------- */
@@ -473,12 +490,12 @@ async function main() {
     const due = AREA_FILTER ? [] : seedsDue(seeds, state, today);
     console.log(`calendar: ${due.length} seeds to confirm`);
     await confirmSeeds(due, state, today, mock);
-    const { ok, rejected } = await discoverRegions(citiesData.states, cities, today, mock);
+    const { ok, rejected, areas } = await discoverRegions(citiesData.states, cities, today, mock);
     // Every API call failed (bad key, no credit, wrong model): fail the run so an issue is filed,
     // and write nothing, so the agenda already published stays as it is.
     if (!mock && usage.calls === 0) throw new Error('discover: no Anthropic API call succeeded (see errors above); nothing written');
     searchEvents = searchEvents.concat(ok);
-    report = { ...report, model: MODEL, seedsChecked: due.length, discovered: ok.length, rejected, usage, costUSD: +estimateCost(usage).toFixed(2) };
+    report = { ...report, model: MODEL, seedsChecked: due.length, discovered: ok.length, rejected, usage, costUSD: +estimateCost(usage).toFixed(2), areas };
   }
 
   const calendarEvents = expandSeeds(seeds, state, cities, today, until);
@@ -491,9 +508,38 @@ async function main() {
 
   const byCat = Object.fromEntries(CATS.map((c) => [c, events.filter((e) => e.cat === c).length]));
   const nCal = events.filter((e) => e.src === 'calendar').length;
-  const summary = `events: ${events.length} (${nCal} calendar, ${events.length - nCal} search) · ${JSON.stringify(byCat)} · ${JSON.stringify(report)}`;
+  const { areas: areaReport, ...brief } = report;
+  const summary = `events: ${events.length} (${nCal} calendar, ${events.length - nCal} search) · ${JSON.stringify(byCat)} · ${JSON.stringify(brief)}`;
   console.log(summary);
   if (process.env.GITHUB_STEP_SUMMARY) await writeFile(process.env.GITHUB_STEP_SUMMARY, `## Muse events\n\n${summary}\n`, { flag: 'a' });
+  if (!DRY && !mock) await logRun({ report, areas: areaReport, events, byCat });
+}
+
+// One row per real run in Supabase pipeline_runs (service_role key, GitHub Actions only), read by the
+// monitoring dashboard: cost, tokens and web searches per run and per area. Never fails the run.
+async function logRun({ report, areas, events, byCat }) {
+  const key = process.env.SB_SERVICE_KEY;
+  if (!key) return;
+  const u = report.usage || {};
+  const byUf = {};
+  for (const e of events) byUf[e.uf] = (byUf[e.uf] || 0) + 1;
+  const env = process.env;
+  const row = {
+    mode: report.mode, model: report.model || null,
+    calls: u.calls || 0, input_tokens: u.input || 0, output_tokens: u.output || 0, searches: u.searches || 0,
+    cost_usd: report.costUSD || 0, discovered: report.discovered || 0, seeds_checked: report.seedsChecked || 0,
+    events_total: events.length, by_uf: byUf, by_cat: byCat, areas: areas || [], rejected: report.rejected || {},
+    search_errors: u.searchErrors || {},
+    run_url: env.GITHUB_RUN_ID ? `${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}` : null,
+  };
+  try {
+    const r = await fetch('https://esviqajfbkdnpoohjpjt.supabase.co/rest/v1/pipeline_runs', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'content-type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(row),
+    });
+    if (!r.ok) console.error('pipeline_runs log failed:', r.status, (await r.text()).slice(0, 200));
+  } catch (e) { console.error('pipeline_runs log failed:', e.message); }
 }
 
 if (process.argv[1] && new URL(import.meta.url).pathname === process.argv[1]) {

@@ -59,6 +59,7 @@ jobs:
       - name: Build events.json
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SB_SERVICE_KEY: ${{ secrets.SB_SERVICE_KEY }}
           EVENTS_MODEL: ${{ inputs.model || vars.EVENTS_MODEL }}
           WEB_SEARCH_TOOL: ${{ inputs.search_tool }}
           AREA_FILTER: ${{ inputs.areas }}

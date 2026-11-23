@@ -1,0 +1,539 @@
+{
+ "note": "Runs before pipeline_runs logging existed, read from their GitHub Actions logs. Haiku costs estimated from tokens and searches.",
+ "runs": [
+  {
+   "run_at": "2026-11-22T11:57:41Z",
+   "mode": "discover",
+   "model": "claude-haiku-5-5",
+   "calls": 14,
+   "searches": 82,
+   "input_tokens": 1139154,
+   "output_tokens": 111706,
+   "cost_usd": 0.99,
+   "discovered": 45,
+   "events_total": 106,
+   "run_url": "https://github.com/jorquesa-hue/muse/actions/runs/45019138674",
+   "areas": []
+  },
+  {
+   "run_at": "2026-11-22T12:51:26Z",
+   "mode": "discover",
+   "model": "claude-haiku-5-5",
+   "calls": 55,
+   "searches": 199,
+   "input_tokens": 2196497,
+   "output_tokens": 293003,
+   "cost_usd": 2.36,
+   "discovered": 119,
+   "events_total": 213,
+   "run_url": "https://github.com/jorquesa-hue/muse/actions/runs/45023731595",
+   "areas": []
+  },
+  {
+   "run_at": "2026-11-22T15:07:27Z",
+   "mode": "discover",
+   "model": "claude-sonnet-5-5",
+   "calls": 73,
+   "searches": 587,
+   "input_tokens": 3026469,
+   "output_tokens": 92676,
+   "cost_usd": 12.85,
+   "discovered": 48,
+   "events_total": 286,
+   "run_url": "https://github.com/jorquesa-hue/muse/actions/runs/45035656242",
+   "areas": [
+    {
+     "area": "cidade de São Paulo e Grande São Paulo",
+     "ufs": "SP",
+     "candidates": 5,
+     "valid": 5,
+     "failed": 0
+    },
+    {
+     "area": "região de Campinas e Jundiaí",
+     "ufs": "SP",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Vale do Paraíba, Serra da Mantiqueira e Litoral Norte",
+     "ufs": "SP",
+     "candidates": 2,
+     "valid": 2,
+     "failed": 0
+    },
+    {
+     "area": "Baixada Santista e Vale do Ribeira",
+     "ufs": "SP",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "região de Sorocaba",
+     "ufs": "SP",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "nordeste paulista",
+     "ufs": "SP",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "centro-oeste e oeste paulista",
+     "ufs": "SP",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "cidade do Rio de Janeiro e Região Metropolitana",
+     "ufs": "RJ",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Região Serrana e Sul Fluminense",
+     "ufs": "RJ",
+     "candidates": 7,
+     "valid": 6,
+     "failed": 0
+    },
+    {
+     "area": "Região dos Lagos e Norte Fluminense",
+     "ufs": "RJ",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Espírito Santo inteiro",
+     "ufs": "ES",
+     "candidates": 5,
+     "valid": 5,
+     "failed": 0
+    },
+    {
+     "area": "Belo Horizonte, região metropolitana e cidades históricas",
+     "ufs": "MG",
+     "candidates": 1,
+     "valid": 1,
+     "failed": 0
+    },
+    {
+     "area": "Sul de Minas",
+     "ufs": "MG",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Zona da Mata e Campo das Vertentes",
+     "ufs": "MG",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Triângulo Mineiro, Alto Paranaíba, Norte e Leste de Minas",
+     "ufs": "MG",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Curitiba, Campos Gerais e litoral do Paraná",
+     "ufs": "PR",
+     "candidates": 8,
+     "valid": 8,
+     "failed": 0
+    },
+    {
+     "area": "norte e oeste do Paraná",
+     "ufs": "PR",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Grande Florianópolis e litoral catarinense",
+     "ufs": "SC",
+     "candidates": 5,
+     "valid": 5,
+     "failed": 0
+    },
+    {
+     "area": "norte, Vale do Itajaí, serra e oeste de Santa Catarina",
+     "ufs": "SC",
+     "candidates": 7,
+     "valid": 7,
+     "failed": 0
+    },
+    {
+     "area": "Porto Alegre e região metropolitana",
+     "ufs": "RS",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Serra Gaúcha",
+     "ufs": "RS",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "interior e litoral gaúcho",
+     "ufs": "RS",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Salvador, região metropolitana e Recôncavo",
+     "ufs": "BA",
+     "candidates": 2,
+     "valid": 2,
+     "failed": 0
+    },
+    {
+     "area": "interior e litorais da Bahia",
+     "ufs": "BA",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Sergipe e Alagoas",
+     "ufs": "SE/AL",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Pernambuco inteiro",
+     "ufs": "PE",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Paraíba e Rio Grande do Norte",
+     "ufs": "PB/RN",
+     "candidates": 1,
+     "valid": 1,
+     "failed": 0
+    },
+    {
+     "area": "Ceará inteiro",
+     "ufs": "CE",
+     "candidates": 3,
+     "valid": 3,
+     "failed": 0
+    },
+    {
+     "area": "Piauí e Maranhão",
+     "ufs": "PI/MA",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Distrito Federal e entorno",
+     "ufs": "DF/GO",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Goiás",
+     "ufs": "GO",
+     "candidates": 2,
+     "valid": 2,
+     "failed": 0
+    },
+    {
+     "area": "Mato Grosso, Mato Grosso do Sul e Tocantins",
+     "ufs": "MT/MS/TO",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Pará e Amapá",
+     "ufs": "PA/AP",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 0
+    },
+    {
+     "area": "Amazonas, Roraima, Rondônia e Acre",
+     "ufs": "AM/RR/RO/AC",
+     "candidates": 3,
+     "valid": 3,
+     "failed": 0
+    }
+   ]
+  },
+  {
+   "run_at": "2026-11-22T15:15:33Z",
+   "mode": "discover",
+   "model": "claude-sonnet-5-5",
+   "calls": 20,
+   "searches": 120,
+   "input_tokens": 1902784,
+   "output_tokens": 74250,
+   "cost_usd": 5.75,
+   "discovered": 136,
+   "events_total": 403,
+   "run_url": "https://github.com/jorquesa-hue/muse/actions/runs/45037037072",
+   "areas": [
+    {
+     "area": "cidade de São Paulo e Grande São Paulo",
+     "ufs": "SP",
+     "candidates": 32,
+     "valid": 32,
+     "failed": 0
+    },
+    {
+     "area": "região de Campinas e Jundiaí",
+     "ufs": "SP",
+     "candidates": 12,
+     "valid": 12,
+     "failed": 0
+    },
+    {
+     "area": "Vale do Paraíba, Serra da Mantiqueira e Litoral Norte",
+     "ufs": "SP",
+     "candidates": 12,
+     "valid": 12,
+     "failed": 0
+    },
+    {
+     "area": "Baixada Santista e Vale do Ribeira",
+     "ufs": "SP",
+     "candidates": 7,
+     "valid": 7,
+     "failed": 0
+    },
+    {
+     "area": "região de Sorocaba",
+     "ufs": "SP",
+     "candidates": 22,
+     "valid": 22,
+     "failed": 0
+    },
+    {
+     "area": "nordeste paulista",
+     "ufs": "SP",
+     "candidates": 10,
+     "valid": 10,
+     "failed": 0
+    },
+    {
+     "area": "centro-oeste e oeste paulista",
+     "ufs": "SP",
+     "candidates": 9,
+     "valid": 9,
+     "failed": 0
+    },
+    {
+     "area": "cidade do Rio de Janeiro e Região Metropolitana",
+     "ufs": "RJ",
+     "candidates": 13,
+     "valid": 12,
+     "failed": 0
+    },
+    {
+     "area": "Região Serrana e Sul Fluminense",
+     "ufs": "RJ",
+     "candidates": 16,
+     "valid": 16,
+     "failed": 0
+    },
+    {
+     "area": "Região dos Lagos e Norte Fluminense",
+     "ufs": "RJ",
+     "candidates": 8,
+     "valid": 7,
+     "failed": 0
+    },
+    {
+     "area": "Espírito Santo inteiro",
+     "ufs": "ES",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Belo Horizonte, região metropolitana e cidades históricas",
+     "ufs": "MG",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Sul de Minas",
+     "ufs": "MG",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Zona da Mata e Campo das Vertentes",
+     "ufs": "MG",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Triângulo Mineiro, Alto Paranaíba, Norte e Leste de Minas",
+     "ufs": "MG",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Curitiba, Campos Gerais e litoral do Paraná",
+     "ufs": "PR",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "norte e oeste do Paraná",
+     "ufs": "PR",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Grande Florianópolis e litoral catarinense",
+     "ufs": "SC",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "norte, Vale do Itajaí, serra e oeste de Santa Catarina",
+     "ufs": "SC",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Porto Alegre e região metropolitana",
+     "ufs": "RS",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Serra Gaúcha",
+     "ufs": "RS",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "interior e litoral gaúcho",
+     "ufs": "RS",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Salvador, região metropolitana e Recôncavo",
+     "ufs": "BA",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "interior e litorais da Bahia",
+     "ufs": "BA",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Sergipe e Alagoas",
+     "ufs": "SE/AL",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Pernambuco inteiro",
+     "ufs": "PE",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Paraíba e Rio Grande do Norte",
+     "ufs": "PB/RN",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Ceará inteiro",
+     "ufs": "CE",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Piauí e Maranhão",
+     "ufs": "PI/MA",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Distrito Federal e entorno",
+     "ufs": "DF/GO",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Goiás",
+     "ufs": "GO",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Mato Grosso, Mato Grosso do Sul e Tocantins",
+     "ufs": "MT/MS/TO",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Pará e Amapá",
+     "ufs": "PA/AP",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    },
+    {
+     "area": "Amazonas, Roraima, Rondônia e Acre",
+     "ufs": "AM/RR/RO/AC",
+     "candidates": 0,
+     "valid": 0,
+     "failed": 2
+    }
+   ]
+  }
+ ]
+}
