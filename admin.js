@@ -1,4 +1,6 @@
-/* Muse — owner's approval queue. Open once as admin.html#k=<ADMIN_TOKEN>; the key is then kept on this device. */
+/* Muse — owner's approval queue.
+ * Sign in with Google (accounts listed in ADMIN_EMAILS on the server), or with the admin key:
+ * open once as admin.html#k=<ADMIN_TOKEN> and the key is kept on this device. */
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
@@ -10,16 +12,40 @@
   const fromHash = new URLSearchParams(location.hash.slice(1)).get('k');
   if (fromHash) { try { localStorage.setItem('muse-admin', fromHash); } catch (e) {} history.replaceState(null, '', location.pathname); }
   let key = fromHash; try { key = key || localStorage.getItem('muse-admin'); } catch (e) {}
+  // Google ID token: valid for about an hour, kept only for this tab
+  let gtoken = null; try { gtoken = sessionStorage.getItem('muse-admin-g'); } catch (e) {}
 
   async function api(method, body) {
-    const r = await fetch('/api/admin', { method, headers: { 'x-admin-key': key || '', 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+    const headers = { 'Content-Type': 'application/json' };
+    if (gtoken) headers.Authorization = 'Bearer ' + gtoken;
+    if (key) headers['x-admin-key'] = key;
+    const r = await fetch('/api/admin', { method, headers, body: body ? JSON.stringify(body) : undefined });
     return r.json().catch(() => ({ status: 'error' }));
   }
 
-  function askKey() {
-    $('sub').textContent = 'Cole a chave de administração:';
-    $('list').innerHTML = '<input id="k" type="password" autocomplete="off"><button class="yes" id="go" type="button">Entrar</button>';
+  let clientId;
+  const config = fetch('/api/admin?config=1').then((r) => r.json()).then((c) => { clientId = c.googleClientId; }).catch(() => {});
+  const gsiReady = () => new Promise((resolve) => {
+    const t0 = Date.now();
+    (function wait() { if (window.google && google.accounts && google.accounts.id) resolve(true); else if (Date.now() - t0 > 8000) resolve(false); else setTimeout(wait, 100); })();
+  });
+
+  async function askLogin(msg) {
+    $('sub').textContent = msg || 'Entre para ver os cadastros.';
+    $('list').innerHTML = '<div class="login"><p>Só as contas autorizadas conseguem entrar.</p><div id="gbtn"></div>'
+      + '<button class="linkbtn" id="usekey" type="button">Entrar com a chave de administração</button>'
+      + '<div class="keybox" id="keybox" hidden><input id="k" type="password" autocomplete="off" aria-label="Chave de administração" placeholder="Chave de administração"><button class="yes" id="go" type="button">Entrar</button></div></div>';
+    $('usekey').onclick = () => { $('keybox').hidden = false; $('usekey').hidden = true; $('k').focus(); };
     $('go').onclick = () => { key = $('k').value.trim(); try { localStorage.setItem('muse-admin', key); } catch (e) {} load(); };
+    await config;
+    if (!clientId || !(await gsiReady())) { $('usekey').click(); return; }
+    google.accounts.id.initialize({
+      client_id: clientId,
+      callback: (res) => { gtoken = res.credential; try { sessionStorage.setItem('muse-admin-g', gtoken); } catch (e) {} load(); },
+      auto_select: true,
+    });
+    google.accounts.id.renderButton($('gbtn'), { theme: 'filled_blue', size: 'large', shape: 'pill', text: 'signin_with', locale: 'pt-BR' });
+    google.accounts.id.prompt();
   }
 
   function card(x) {
@@ -40,10 +66,15 @@
   }
 
   async function load() {
-    if (!key) return askKey();
+    if (!key && !gtoken) return askLogin();
     $('sub').textContent = 'Carregando…';
     const r = await api('GET');
-    if (r.status === 'forbidden') { try { localStorage.removeItem('muse-admin'); } catch (e) {} key = null; return askKey(); }
+    if (r.status === 'forbidden') {
+      const wasGoogle = !!gtoken;
+      try { localStorage.removeItem('muse-admin'); sessionStorage.removeItem('muse-admin-g'); } catch (e) {}
+      key = null; gtoken = null;
+      return askLogin(wasGoogle ? 'Esta conta Google não tem acesso (ou a sessão expirou). Tente de novo.' : 'Chave inválida. Tente de novo.');
+    }
     if (r.status !== 'ok') { $('sub').textContent = 'Não foi possível carregar. Tente de novo.'; return; }
     const items = r.items || [];
     const n = items.filter((x) => x.status === 'pending').length;
